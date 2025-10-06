@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">UniBiblion</string>
+    <color name="nn_purple">#8A05BE</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray_700">#616161</color>
 </resources>
