@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_livraria"
+        android:icon="@drawable/ic_book"
+        android:title="Livraria" />
+
+    <item
+        android:id="@+id/nav_noticias"
+        android:icon="@drawable/ic_newspaper"
+        android:title="Notícias" />
+
+    <item
+        android:id="@+id/nav_chatbot"
+        android:icon="@drawable/ic_chat"
+        android:title="Chatbot" />
+
+    <item
+        android:id="@+id/nav_perfil"
+        android:icon="@drawable/ic_profile"
+        android:title="Perfil" />
+</menu>

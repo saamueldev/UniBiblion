@@ -12,6 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UniBiblion">
         <activity
+            android:name=".NoticiasActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".Tela_Chat_Bot"
             android:exported="false" />
         <activity
@@ -42,10 +51,7 @@
             android:name=".Tela_Notificacoes"
             android:exported="false" />
         <activity
-            android:name=".tela_Abrir_Noticia_Evento"
-            android:exported="false" />
-        <activity
-            android:name=".Tela_Noticias_Eventos"
+            android:name=".Tela_Abrir_Noticia_Evento"
             android:exported="false" />
         <activity
             android:name=".Tela_Cancelar_Reserva_Cabine_Individual"
@@ -63,10 +69,10 @@
             android:name=".Tela_Review_Livro"
             android:exported="false" />
         <activity
-            android:name=".Renovacao_Livros"
+            android:name=".Tela_Renovacao_Livros"
             android:exported="false" />
         <activity
-            android:name=".tela_Informacoes"
+            android:name=".Tela_Informacoes"
             android:exported="false" />
         <activity
             android:name=".Tela_Livro_Desejado"
@@ -104,11 +110,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
