@@ -3,4 +3,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="roxo_institucional">#7644D4</color>
+    <color name="roxo_destaque_sutil">#9059FF</color>
+    <color name="destaque_transparente">#33FFFFFF</color>
 </resources>

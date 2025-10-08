@@ -4,6 +4,7 @@ package com.example.unibiblion
 data class Noticia(
     val titulo: String,
     val preview: String,
+    val corpo: String,
     val urlImagem: String,
     val tipoLayout: Int // ESSENCIAL: define se usa Imagem Grande (1) ou Lateral (2)
 ) {

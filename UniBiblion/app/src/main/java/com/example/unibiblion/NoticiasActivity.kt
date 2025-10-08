@@ -1,5 +1,6 @@
 package com.example.unibiblion
 
+
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class NoticiasActivity : AppCompatActivity() {
 
@@ -46,10 +48,31 @@ class NoticiasActivity : AppCompatActivity() {
 
     // Função para criar dados de teste com variação de layout
     private fun criarDadosDeExemplo(): List<Noticia> {
+        // 1. Defina o texto longo que queremos ver na tela de detalhe
+        val corpoLongoExemplo = "Este é o corpo completo do artigo. Aqui você encontra todos os detalhes, parágrafos e informações que não cabem no preview. O ScrollView garantirá que o usuário possa ler tudo. O UniBiblion busca manter você sempre informado sobre os acontecimentos do campus e do mundo acadêmico. Este texto é longo o suficiente para provar que a rolagem da tela de detalhe está funcionando corretamente."
+
         return listOf(
-            Noticia("Notícia de Destaque 1", "Conteúdo de alto impacto.", "url1", Noticia.TIPO_IMAGEM_GRANDE),
-            Noticia("Notícia Lateral 1", "Conteúdo padrão e resumido.", "url2", Noticia.TIPO_IMAGEM_LATERAL),
-            Noticia("Destaque 2: Evento Importante", "Detalhes da conferência anual.", "url3", Noticia.TIPO_IMAGEM_GRANDE)
+            Noticia(
+                "Notícia de Destaque 1",
+                "Conteúdo de alto impacto. Este é o resumo.",
+                corpoLongoExemplo, // <-- ARGUMENTO 3: O CORPO COMPLETO
+                "url1",
+                Noticia.TIPO_IMAGEM_GRANDE
+            ),
+            Noticia(
+                "Notícia Lateral 1",
+                "Conteúdo padrão e resumido.",
+                corpoLongoExemplo, // <-- ARGUMENTO 3: O CORPO COMPLETO
+                "url2",
+                Noticia.TIPO_IMAGEM_LATERAL
+            ),
+            Noticia(
+                "Destaque 2: Evento Importante",
+                "Detalhes da conferência anual. Resumo aqui.",
+                corpoLongoExemplo, // <-- ARGUMENTO 3: O CORPO COMPLETO
+                "url3",
+                Noticia.TIPO_IMAGEM_GRANDE
+            )
         )
     }
 }

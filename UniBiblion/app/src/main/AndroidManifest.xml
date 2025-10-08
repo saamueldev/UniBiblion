@@ -112,6 +112,9 @@
             android:exported="true">
 
         </activity>
+
+        <activity android:name=".NoticiaDetalheActivity"
+            android:parentActivityName=".NoticiasActivity" />
     </application>
 
 </manifest>
