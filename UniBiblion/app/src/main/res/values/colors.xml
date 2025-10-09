@@ -5,4 +5,8 @@
     <color name="roxo_institucional">#7644D4</color>
     <color name="roxo_destaque_sutil">#9059FF</color>
     <color name="destaque_transparente">#33FFFFFF</color>
+    <color name="green_700">#388E3C</color>
+    <color name="red_700">#D32F2F</color>
+    <color name="blue_500">#2196F3</color>
+    <color name="blue_selected">#1976D2</color>
 </resources>
