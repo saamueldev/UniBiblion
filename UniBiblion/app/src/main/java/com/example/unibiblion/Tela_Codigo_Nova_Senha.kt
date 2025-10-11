@@ -8,11 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class Tela_Register : AppCompatActivity() {
+class Tela_Codigo_Nova_Senha : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_tela_register) // Carrega seu layout XML
+        setContentView(R.layout.activity_tela_codigo_nova_senha)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -20,18 +20,15 @@ class Tela_Register : AppCompatActivity() {
             insets
         }
 
-        // Conecta o botão de Cadastro/Avançar
-        // O ID do XML é: button_avancar
-        val registerButton: Button = findViewById(R.id.button_avancar)
-        registerButton.setOnClickListener {
+        // Conecta o botão de Avançar
+        // O ID do XML é: button_verify_and_next
+        val nextButton: Button = findViewById(R.id.button_verify_and_next)
+        nextButton.setOnClickListener {
 
-            // Lógica de Validação iria aqui.
+            // Lógica de verificação do código iria aqui.
 
-            // Navegação: Simulando cadastro bem-sucedido e voltando para a tela de seleção inicial
-            val intent = Intent(this, Tela_Login_Register::class.java)
-
-            // FLAG_ACTIVITY_CLEAR_TASK fecha a Tela_Register, completando o ciclo.
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            // Navegação: Leva para a tela final de definição da nova senha
+            val intent = Intent(this, Tela_Colocar_Nova_Senha::class.java)
             startActivity(intent)
         }
     }

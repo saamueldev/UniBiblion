@@ -97,7 +97,17 @@
             android:exported="true" />
 
         <activity
-            android:name=".Tela_Esquecer_Senha"
+            android:name=".Tela_Codigo_Nova_Senha"
+            android:exported="true" /> <activity
+        android:name=".Tela_Esquecer_Senha"
+        android:exported="true" />
+
+        <activity
+            android:name=".Tela_Login"
+            android:exported="true" />
+
+        <activity
+            android:name=".Tela_Login_Register"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -105,12 +115,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".Tela_Login"
-            android:exported="true" />
-        <activity
-            android:name=".Tela_Login_Register"
-            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true" />

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:id="@+id/main"
-    tools:context=".Tela_Colocar_Nova_Senha">
+    tools:context=".Tela_Codigo_Nova_Senha">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_card_start"
@@ -39,7 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recuperação de Senha"
+            android:text="Verificação de Código"
             android:textColor="@color/roxo_primario"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -72,48 +72,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
-                android:text="Defina sua Nova Senha"
+                android:text="Insira o código enviado para o seu e-mail."
                 android:textColor="@android:color/white"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/edit_text_new_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:autofillHints="newPassword"
-                android:background="@drawable/rounded_edittext_background_white"
-                android:hint="Nova Senha"
-                android:textColorHint="@color/text_primary"
-                android:textColor="@android:color/black"
-                android:inputType="textPassword"
-                android:minHeight="56dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
-
-            <EditText
-                android:id="@+id/edit_text_confirm_new_password"
+                android:id="@+id/edit_text_code_verification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
-                android:autofillHints="newPassword"
+                android:autofillHints="smsOTP"
                 android:background="@drawable/rounded_edittext_background_white"
-                android:hint="Confirmar Nova Senha"
+                android:hint="Código de 6 dígitos"
                 android:textColorHint="@color/text_primary"
                 android:textColor="@android:color/black"
-                android:inputType="textPassword"
+                android:inputType="number"
                 android:minHeight="56dp"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:maxLength="6" />
 
             <Button
-                android:id="@+id/button_save_password"
+                android:id="@+id/button_verify_and_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/white"
                 android:minHeight="56dp"
-                android:text="Salvar Alterações"
+                android:text="Avançar"
                 android:textColor="@color/roxo_primario"
                 android:textSize="18sp"
                 android:textStyle="bold"
