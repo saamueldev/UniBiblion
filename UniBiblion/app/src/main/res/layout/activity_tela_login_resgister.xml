@@ -22,7 +22,7 @@
 
         <ImageView
             android:id="@+id/app_logo"
-            android:layout_width="300dp"  android:layout_height="300dp" android:src="@drawable/logo_unibiblion"
+            android:layout_width="230dp"  android:layout_height="230dp" android:src="@drawable/logo_unibiblion"
             android:contentDescription="@string/app_name"
             app:tint="@color/roxo_primario" />
 
