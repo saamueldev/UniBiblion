@@ -108,23 +108,18 @@
             android:name=".Tela_Login"
             android:exported="false" />
 
-        <!-- Activity de lançamento (launcher) -->
         <activity
             android:name=".Tela_Login_Resgister"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:exported="false">
         </activity>
 
-        <!-- MainActivity (corrigida) -->
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".NoticiaDetalheActivity"
-            android:parentActivityName=".NoticiasActivity" />
+            android:parentActivityName=".NoticiasActivity"
+            android:exported="false" />
         <activity
             android:name=".CabineSelecaoPeriodoActivity"
             android:exported="false" />
