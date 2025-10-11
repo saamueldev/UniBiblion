@@ -90,22 +90,9 @@
         <activity
             android:name=".Tela_Pagina_Inicial"
             android:exported="false" />
+
         <activity
             android:name=".Tela_Register"
-            android:exported="false" />
-        <activity
-            android:name=".Tela_Colocar_Nova_Senha"
-            android:exported="false" />
-        <activity
-            android:name=".Tela_Esquecer_Senha"
-            android:exported="false" />
-        <activity
-            android:name=".Tela_Login"
-            android:exported="false" />
-
-        <!-- Activity de lançamento (launcher) -->
-        <activity
-            android:name=".Tela_Login_Resgister"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -113,7 +100,23 @@
             </intent-filter>
         </activity>
 
-        <!-- MainActivity (corrigida) -->
+        <activity
+            android:name=".Tela_Colocar_Nova_Senha"
+            android:exported="false" />
+        <activity
+            android:name=".Tela_Esquecer_Senha"
+            android:exported="false" />
+
+        <activity
+            android:name=".Tela_Login"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".Tela_Login_Register"
+            android:exported="true">
+        </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true" />
