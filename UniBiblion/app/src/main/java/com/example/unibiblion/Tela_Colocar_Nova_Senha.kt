@@ -29,7 +29,7 @@ class Tela_Colocar_Nova_Senha : AppCompatActivity() {
             // Lógica de salvar a nova senha no banco de dados iria aqui.
 
             // Navegação: Volta para a tela de seleção de Login/Cadastro
-            val intent = Intent(this, Tela_Login_Register::class.java)
+            val intent = Intent(this, Tela_Login_Resgister::class.java)
 
             // FLAG_ACTIVITY_CLEAR_TASK garante que todas as telas de recuperação (código, nova senha)
             // sejam fechadas, e o usuário retorne limpo para a tela inicial.
