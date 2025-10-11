@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.40" /> <LinearLayout
+        app:layout_constraintGuide_percent="0.30" /> <LinearLayout
     android:id="@+id/logo_section"
     android:layout_width="match_parent"
     android:layout_height="0dp"
@@ -27,9 +27,7 @@
 
     <ImageView
         android:id="@+id/app_logo"
-        android:layout_width="230dp"
-        android:layout_height="230dp"
-        android:layout_gravity="center"
+        android:layout_width="230dp"  android:layout_height="230dp" android:layout_gravity="center"
         android:contentDescription="@string/app_name"
         android:src="@drawable/logo_unibiblion"
         app:tint="@color/roxo_primario" />
