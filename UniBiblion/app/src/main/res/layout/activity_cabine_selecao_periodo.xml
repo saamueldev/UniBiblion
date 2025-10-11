@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".CabineSelecaoPeriodoActivity">
+
+    <TextView
+        android:id="@+id/tv_cabine_detalhes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="16dp"
+        tools:text="Cabine 06 - Sábado, 11/10/2025" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selecione o Período de Saída"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_time_slots"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_marginBottom="24dp"
+        tools:itemCount="5"
+        tools:listitem="@layout/item_time_slot"/>
+
+    <TextView
+        android:id="@+id/tv_resumo_periodo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:textAlignment="center"
+        android:padding="12dp"
+        android:background="@drawable/background_data_selector"
+        android:layout_marginBottom="24dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="Reserva: 13:00 até 15:00 (2 horas)"/>
+
+    <Button
+        android:id="@+id/btn_confirmar_reserva_periodo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CONFIRMAR RESERVA"
+        android:padding="16dp"
+        android:backgroundTint="@color/blue_500"
+        android:textColor="@android:color/white"
+        android:enabled="false"/> </LinearLayout>

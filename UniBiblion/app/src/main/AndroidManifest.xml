@@ -19,7 +19,12 @@
 
         <activity
             android:name=".CabinesIndividuaisActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".Tela_Chat_Bot"
@@ -117,10 +122,18 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
-
         <activity
             android:name=".NoticiaDetalheActivity"
             android:parentActivityName=".NoticiasActivity" />
+        <activity
+            android:name=".CabineSelecaoPeriodoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ReservaSucessoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MinhasReservasActivity"
+            android:exported="false" />
 
     </application>
 
