@@ -99,6 +99,9 @@
             android:name=".Tela_Colocar_Nova_Senha"
             android:exported="false" />
         <activity
+            android:name=".Tela_Codigo_Nova_Senha"
+            android:exported="false" />
+        <activity
             android:name=".Tela_Esquecer_Senha"
             android:exported="false" />
         <activity
