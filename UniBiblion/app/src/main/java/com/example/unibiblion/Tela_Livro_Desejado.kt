@@ -1,6 +1,8 @@
 package com.example.unibiblion
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,6 +17,15 @@ class Tela_Livro_Desejado : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        val buttonAlugarLivro = findViewById<Button>(R.id.buttonAlugarLivro)
+
+        buttonAlugarLivro.setOnClickListener {
+
+            val intent = Intent(this, Tela_Informacoes1::class.java)
+
+            startActivity(intent)
         }
     }
 }

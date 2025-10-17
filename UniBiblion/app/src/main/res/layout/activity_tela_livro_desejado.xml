@@ -7,4 +7,205 @@
     android:layout_height="match_parent"
     tools:context=".Tela_Livro_Desejado">
 
+    <TextView
+        android:id="@+id/resumoLivroLabel"
+        android:layout_width="382dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="13dp"
+        android:text="Resumo:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/resumoLivro"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/capaLivro" />
+
+    <TextView
+        android:id="@+id/estadoLivroLabel"
+        android:layout_width="119dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="6dp"
+        android:text="Estado do Livro:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/estoqueLivroLabel"
+        app:layout_constraintEnd_toStartOf="@+id/estadoLivro"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/resumoLivro" />
+
+    <TextView
+        android:id="@+id/estoqueLivroLabel"
+        android:layout_width="67dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="8dp"
+        android:text="Estoque:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/buttonAlugarLivro"
+        app:layout_constraintEnd_toStartOf="@+id/estoqueLivro"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/estadoLivroLabel" />
+
+    <TextView
+        android:id="@+id/estoqueLivro"
+        android:layout_width="33dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="296dp"
+        android:layout_marginBottom="20dp"
+        android:text="5"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonAlugarLivro"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/estoqueLivroLabel"
+        app:layout_constraintTop_toBottomOf="@+id/estadoLivroLabel" />
+
+    <TextView
+        android:id="@+id/nomeAutorLabel"
+        android:layout_width="200dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="5dp"
+        android:text="Ian Sommerville"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/idiomaLivroLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/capaLivro"
+        app:layout_constraintTop_toBottomOf="@+id/nomeLivroLabel" />
+
+    <TextView
+        android:id="@+id/idiomaLivro"
+        android:layout_width="200dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="92dp"
+        android:text="Português Brasileiro"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/resumoLivroLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/capaLivro"
+        app:layout_constraintTop_toBottomOf="@+id/idiomaLivroLabel" />
+
+    <TextView
+        android:id="@+id/idiomaLivroLabel"
+        android:layout_width="200dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="6dp"
+        android:text="Idioma:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/idiomaLivro"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/capaLivro"
+        app:layout_constraintTop_toBottomOf="@+id/nomeAutorLabel" />
+
+    <TextView
+        android:id="@+id/nomeLivroLabel"
+        android:layout_width="200dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="5dp"
+        android:text="Engenharia de Software - 9ª Edição"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/nomeAutorLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/capaLivro"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/capaLivro"
+        android:layout_width="182dp"
+        android:layout_height="245dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/DataLabel"
+        app:layout_constraintEnd_toStartOf="@+id/NomeLivroLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/sommervile" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:background="@color/roxo_unibiblion"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu"
+        tools:ignore="VisualLintBottomNav" />
+
+    <TextView
+        android:id="@+id/resumoLivro"
+        android:layout_width="382dp"
+        android:layout_height="177dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="8dp"
+        android:text="No intuito de atender às necessidades de alunos e professores dos cursos de computação, engenharia da computação e sistema de informação, esta nona edição de Engenharia de software teve seu conteúdo reestruturado e totalmente atualizado. A obra conta agora com novos capítulos que focalizam o desenvolvimento ágil de software e os sistemas embarcados, além de trazer novas abordagens sobre engenharia dirigida a modelos e desenvolvimento open source. Essas novidades, somadas à manutenção dos pontos fortes que consagraram a obra, como a clareza de conteúdo e a didática dinâmica, fazem dela um excelente guia para as mais diversas aplicações, independentemente das ferramentas ou processos de software disponíveis ou propostos."
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/estadoLivroLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/resumoLivroLabel" />
+
+    <TextView
+        android:id="@+id/estadoLivro"
+        android:layout_width="60dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="216dp"
+        android:layout_marginBottom="139dp"
+        android:text="Perfeito"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/estadoLivroLabel"
+        app:layout_constraintTop_toBottomOf="@+id/resumoLivro" />
+
+    <Button
+        android:id="@+id/buttonAlugarLivro"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="104dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="291dp"
+        android:layout_marginBottom="50dp"
+        android:gravity="left"
+        android:insetLeft="0dp"
+        android:insetRight="0dp"
+        android:paddingLeft="1dp"
+        android:text="Alugar Livro"
+        android:textColor="@color/azul_link"
+        android:textColorHighlight="@color/azul_link"
+        android:textColorHint="@color/azul_link"
+        android:textColorLink="@color/azul_link"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/estoqueLivroLabel" />
 </androidx.constraintlayout.widget.ConstraintLayout>
