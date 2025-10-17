@@ -7,4 +7,82 @@
     android:layout_height="match_parent"
     tools:context=".Tela_Central_Livraria">
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/roxo_institucional"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+    <Button
+        android:id="@+id/buttonCatalogo"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="6dp"
+        android:text="Catálogo"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonAlugarLivros"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonAlugarLivros"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="6dp"
+        android:text="Alugar livros"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSala"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonCatalogo" />
+
+    <Button
+        android:id="@+id/buttonSala"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="6dp"
+        android:text="Alugar sala individual"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonRenovarLivros"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonAlugarLivros" />
+
+    <Button
+        android:id="@+id/buttonRenovarLivros"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="6dp"
+        android:text="Renovar livros"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonSala" />
 </androidx.constraintlayout.widget.ConstraintLayout>
