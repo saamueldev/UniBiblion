@@ -12,17 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UniBiblion">
-
+        <activity
+            android:name=".Tela_Informacoes2"
+            android:exported="false" />
         <activity
             android:name=".NoticiasActivity"
             android:exported="false" />
-
         <activity
             android:name=".CabinesIndividuaisActivity"
-            android:exported="false">
-
-        </activity>
-
+            android:exported="false"></activity>
         <activity
             android:name=".Tela_Chat_Bot"
             android:exported="false" />
@@ -107,23 +105,22 @@
         <activity
             android:name=".Tela_Login"
             android:exported="false" />
-
         <activity
             android:name=".Tela_Login_Resgister"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".NoticiaDetalheActivity"
-            android:parentActivityName=".NoticiasActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".NoticiasActivity" />
         <activity
             android:name=".CabineSelecaoPeriodoActivity"
             android:exported="false" />
@@ -133,7 +130,6 @@
         <activity
             android:name=".MinhasReservasActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>
