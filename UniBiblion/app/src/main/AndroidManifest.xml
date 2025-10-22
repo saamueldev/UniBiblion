@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.UniBiblion">
+        android:theme="@style/Theme.Unibiblion">
         <activity
             android:name=".Tela_Informacoes2"
             android:exported="false" />
@@ -23,16 +23,24 @@
             android:exported="false"></activity>
         <activity
             android:name=".Tela_Chat_Bot"
-            android:exported="false" />
+            android:exported="true" >
+        </activity>
         <activity
             android:name=".Tela_De_Perfil"
-            android:exported="false" />
+            android:exported="true" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity
             android:name=".Tela_De_Perfil_Dados"
             android:exported="false" />
         <activity
             android:name=".Tela_De_Perfil_Foto"
             android:exported="false" />
+
         <activity
             android:name=".Tela_De_Perfil_Nome"
             android:exported="false" />
@@ -70,7 +78,7 @@
             android:name=".Tela_Renovacao_Livros"
             android:exported="false" />
         <activity
-            android:name=".Tela_Informacoes"
+            android:name=".Tela_Informacoes1"
             android:exported="false" />
         <activity
             android:name=".Tela_Livro_Desejado"
@@ -107,12 +115,7 @@
             android:exported="false" />
         <activity
             android:name=".Tela_Login_Resgister"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:exported="false">
         </activity>
         <activity
             android:name=".MainActivity"
@@ -130,6 +133,9 @@
         <activity
             android:name=".MinhasReservasActivity"
             android:exported="false" />
+        <activity
+            android:name=".Tela_"
+            android:exported="false"/>
     </application>
 
 </manifest>
