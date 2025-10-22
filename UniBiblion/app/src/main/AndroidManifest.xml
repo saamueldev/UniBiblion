@@ -134,8 +134,8 @@
             android:name=".MinhasReservasActivity"
             android:exported="false" />
         <activity
-            android:name=".Tela_"
-            android:exported="false"/>
+            android:name=".Tela_Editar_Perfil"
+            android:exported="false" />
     </application>
 
 </manifest>
