@@ -25,15 +25,12 @@
             android:name=".Tela_Chat_Bot"
             android:exported="true" >
         </activity>
+
         <activity
             android:name=".Tela_De_Perfil"
-            android:exported="true" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+            android:exported="false" >
         </activity>
+
         <activity
             android:name=".Tela_De_Perfil_Dados"
             android:exported="false" />
@@ -136,6 +133,14 @@
         <activity
             android:name=".Tela_Editar_Perfil"
             android:exported="false" />
+
+        <activity
+            android:name=".ReviewsActivity"
+            android:exported="true">  <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
     </application>
 
 </manifest>
