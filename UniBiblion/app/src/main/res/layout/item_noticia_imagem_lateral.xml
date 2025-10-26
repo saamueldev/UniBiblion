@@ -27,10 +27,23 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:contentDescription="Imagem Lateral da Notícia" />
 
+        <ImageButton
+            android:id="@+id/button_edit_lateral"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_edit_pencil"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Editar Anúncio"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@android:color/darker_gray" />
+
         <TextView
             android:id="@+id/text_titulo_lateral"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -38,7 +51,7 @@
             android:maxLines="2"
             android:ellipsize="end"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/button_edit_lateral"
             app:layout_constraintEnd_toStartOf="@id/img_noticia_lateral"
             android:text="Novos Livros Chegando ao Acervo." />
 
