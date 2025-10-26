@@ -82,7 +82,7 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_livraria -> {
-                    startActivity(Intent(this, Tela_Central_Livraria::class.java))
+                    startActivity(Intent(this, Adm_Tela_Central_Livraria::class.java))
                     true
                 }
                 R.id.nav_noticias -> {
@@ -94,6 +94,7 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
                     true
                 }
                 R.id.nav_perfil -> {
+                    startActivity(Intent(this, Adm_Tela_De_Perfil::class.java))
                     true
                 }
                 else -> false
