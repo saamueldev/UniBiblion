@@ -11,19 +11,21 @@ import android.view.View
 import android.widget.Button
 import java.util.Calendar
 import android.content.Intent
+import com.google.android.material.bottomnavigation.BottomNavigationView // 1. IMPORT NECESSÁRIO
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class CabinesIndividuaisActivity : AppCompatActivity() {
 
     private lateinit var dataHoraSelecionada: Calendar
-
     private lateinit var dateSelectorTextView: TextView
-
     private lateinit var btnReservarCabine: Button
-
     private lateinit var btnMinhasReservas: Button
-
     private lateinit var listaCabines: MutableList<Cabine>
     private lateinit var cabinesAdapter: CabinesAdapter
+
+    // 2. DECLARAÇÃO: Variável de classe para a Bottom Navigation
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +33,12 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
 
         dataHoraSelecionada = Calendar.getInstance()
 
+        // 3. INICIALIZAÇÃO DA BOTTOM NAVIGATION
+        bottomNavigation = findViewById(R.id.bottom_navigation)
+
         // 1. OBTÉM AS REFERÊNCIAS
         dateSelectorTextView = findViewById(R.id.date_selector)
-        // ** MOVEMOS ESTA LINHA PARA CÁ **
         btnReservarCabine = findViewById(R.id.btn_reservar_cabine)
-
         btnMinhasReservas = findViewById(R.id.btn_minhas_reservas)
 
         // Inicializa dados e Grid
@@ -50,7 +53,7 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
             mostrarDatePicker()
         }
 
-        // ** LISTENER DO BOTÃO RESERVAR (AGORA PODE SER CHAMADO) **
+        // LISTENER DO BOTÃO RESERVAR
         btnReservarCabine.setOnClickListener {
             reservarCabineSelecionada()
         }
@@ -61,14 +64,12 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
         // Adapter e GridView
         cabinesAdapter = CabinesAdapter(this, listaCabines)
         gridCabines.adapter = cabinesAdapter
 
         // 4. Configurar o clique do usuário com a restrição
         gridCabines.setOnItemClickListener { parent, view, position, id ->
-
             val cabineClicada = listaCabines[position]
 
             if (cabineClicada.estado == Cabine.ESTADO_LIVRE) {
@@ -78,28 +79,69 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
                 Toast.makeText(this, "A Cabine ${cabineClicada.numero} está ocupada.", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // 5. CONFIGURAÇÃO DA BOTTOM NAVIGATION LISTENER (NOVO)
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_livraria -> {
+                    // Item: ic_book (Livraria). Navega para a Home da Livraria.
+                    val intent = Intent(this, Tela_Central_Livraria::class.java)
+                    // Flags para limpar a pilha e evitar múltiplas instâncias da Home
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_noticias -> {
+                    // Item: ic_newspaper (Notícias)
+                    val intent = Intent(this, NoticiasActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_chatbot -> {
+                    // Item: ic_chat (Chatbot)
+                    val intent = Intent(this, Tela_Chat_Bot::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_perfil -> {
+                    // Item: ic_profile (Perfil)
+                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                else -> false
+            }
+        }
     }
 
+    // 6. SOLUÇÃO DE ESTADO: Garante que o ícone da Livraria esteja selecionado ao retomar a tela
+    override fun onResume() {
+        super.onResume()
+        // Força a seleção do ícone Livraria (o fluxo desta tela)
+        bottomNavigation.menu.findItem(R.id.nav_livraria).isChecked = true
+    }
 
-    // Função para criar dados de teste (sem alterações)
+    // Funções mantidas do seu código original (sem alterações)
     private fun criarDadosDeExemplo(): MutableList<Cabine> {
         val cabines = mutableListOf<Cabine>()
-
         for (i in 1..25) {
             val numeroStr = String.format("%02d", i)
             val estado = if (i % 3 == 0) Cabine.ESTADO_OCUPADO else Cabine.ESTADO_LIVRE
-
             cabines.add(Cabine(numeroStr, estado))
         }
         return cabines
     }
+
     private fun atualizarVisibilidadeBotaoReservar() {
         val algumaCabineSelecionada = cabinesAdapter.getSelectedPosition() != -1
-
         if (algumaCabineSelecionada) {
-            btnReservarCabine.visibility = View.VISIBLE // Mostra o botão
+            btnReservarCabine.visibility = View.VISIBLE
         } else {
-            btnReservarCabine.visibility = View.GONE    // Esconde o botão
+            btnReservarCabine.visibility = View.GONE
         }
     }
 
@@ -111,9 +153,8 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
         val datePickerDialog = DatePickerDialog(
             this,
             { _, year, monthOfYear, dayOfMonth ->
-                // Quando a data é selecionada, atualiza a variável e chama o seletor de hora
                 dataHoraSelecionada.set(year, monthOfYear, dayOfMonth)
-                mostrarTimePicker() // <--- Chama o seletor de hora
+                mostrarTimePicker()
             },
             ano, mes, dia
         )
@@ -125,34 +166,26 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
 
         val timePickerDialog = TimePickerDialog(
             this,
-            { _, hourOfDay, _ -> // O terceiro argumento (minute) será ignorado!
-                // Atualiza a hora para a hora cheia selecionada e o minuto para 00
+            { _, hourOfDay, _ ->
                 dataHoraSelecionada.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                dataHoraSelecionada.set(Calendar.MINUTE, 0) // <--- FORÇA MINUTO ZERO (HORA CHEIA)
+                dataHoraSelecionada.set(Calendar.MINUTE, 0)
 
-                // Atualiza o texto exibido na tela
                 atualizarTextoSeletorData(dataHoraSelecionada)
-
-                // Opcional: Recarrega a grade com o novo horário (ficará para a lógica futura)
-                // recarregarGradeCabines()
             },
             hora,
-            0, // Minuto inicial (sempre 0)
-            true // true = 24h format, false = AM/PM format
+            0,
+            true
         )
         timePickerDialog.show()
     }
 
     private fun atualizarTextoSeletorData(calendar: Calendar) {
-        // Formato para a data: Ex: Segunda-feira, 14 de Outubro de 2025
-        val dateFormat = java.text.SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy", java.util.Locale("pt", "BR"))
+        val dateFormat = SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy", Locale("pt", "BR"))
         val dataFormatada = dateFormat.format(calendar.time)
 
-        // Formato para a hora: Ex: 10:00
-        val timeFormat = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
         val horaFormatada = timeFormat.format(calendar.time)
 
-        // Combina e define o texto
         val textoFinal = "$dataFormatada às $horaFormatada"
         dateSelectorTextView.text = textoFinal
     }
@@ -160,23 +193,15 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
     private fun reservarCabineSelecionada() {
         val selectedPosition = cabinesAdapter.getSelectedPosition()
 
-        // Verifica se há uma cabine selecionada
         if (selectedPosition != -1) {
             val cabineSelecionada = listaCabines[selectedPosition]
 
-            // Inicia a nova Activity de Confirmação, passando os dados
             val intent = Intent(this, CabineSelecaoPeriodoActivity::class.java).apply {
                 putExtra("EXTRA_NUMERO_CABINE", cabineSelecionada.numero)
-                // Usamos o tempo em milissegundos para passar a data/hora
                 putExtra("EXTRA_DATA_HORA", dataHoraSelecionada.timeInMillis)
             }
             startActivity(intent)
-
-            // Opcional: Aqui você faria uma chamada API para reservar.
-            // Para simulação, vamos apenas ir para a tela.
-
         } else {
-            // Caso de segurança (não deve acontecer, pois o botão estaria invisível)
             Toast.makeText(this, "Selecione uma cabine antes de reservar.", Toast.LENGTH_SHORT).show()
         }
     }

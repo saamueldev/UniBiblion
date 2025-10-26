@@ -1,8 +1,8 @@
 package com.example.unibiblion
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 // Implementa a interface de clique do nosso novo Adapter
 class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener {
@@ -19,36 +20,73 @@ class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener {
     private lateinit var adapter: AdminReviewsAdapter
     private lateinit var reviewsList: MutableList<Review>
 
+    // 1. DECLARAÇÃO: Declara a BottomNavigationView como variável da classe
+    private lateinit var bottomNavigation: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reviews) // Reutiliza o layout principal
 
-        // 1. Ocultar a Bottom Navigation (REMOVIDO/COMENTADO)
-        // findViewById<View>(R.id.bottom_navigation).visibility = View.GONE
-        // A Bottom Navigation JÁ ESTARÁ VISÍVEL, pois o código acima foi removido.
+        // 2. INICIALIZAÇÃO: Inicializa a variável aqui
+        bottomNavigation = findViewById(R.id.bottom_navigation)
 
-        // 2. Configurar RecyclerView e Dados
+        // 3. Configurar RecyclerView e Dados
         recyclerView = findViewById(R.id.recycler_reviews)
-        reviewsList = criarDadosDeExemplo().toMutableList() // Converte para MutableList
+        reviewsList = criarDadosDeExemplo().toMutableList()
 
-        adapter = AdminReviewsAdapter(reviewsList, this) // Passa 'this' como listener
+        adapter = AdminReviewsAdapter(reviewsList, this)
         recyclerView.adapter = adapter
 
-        // 3. Configurar a barra de título/pesquisa (RF 04.02.10)
-        // O layout da barra de pesquisa e filtro já está pronto no XML reutilizado.
+        // 4. Configurar a barra de título/pesquisa
         findViewById<android.widget.ImageButton>(R.id.btn_filter).setOnClickListener {
             Toast.makeText(this, "Abrir Filtro de Reviews Admin", Toast.LENGTH_SHORT).show()
         }
 
-        // FUTURO: Se você precisar configurar a Bottom Navigation aqui, adicione o código
-        // Exemplo:
-        // findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnItemSelectedListener { item ->
-        //     // Lógica de navegação
-        //     true
-        // }
+        // 5. CONFIGURAÇÃO DA BOTTOM NAVIGATION
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_livraria -> {
+                    // Navegar de volta para o Dashboard Central/Home Admin
+                    val intent = Intent(this, Adm_Tela_Central_Livraria::class.java)
+                    // Estas flags ajudam a limpar a pilha e trazer a tela principal para frente
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_noticias -> {
+                    val intent = Intent(this, NoticiasActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_chatbot -> {
+                    val intent = Intent(this, Tela_Chat_Bot::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_perfil -> {
+                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                else -> false
+            }
+        }
     }
 
-    // Função de simulação de dados (Copiada do seu ReviewsActivity.kt)
+    // 6. SOLUÇÃO: Mover a lógica de seleção para onResume()
+    override fun onResume() {
+        super.onResume()
+        // Esta função é chamada toda vez que a Activity se torna visível novamente,
+        // garantindo que o ícone de Livraria (o fluxo desta tela) seja selecionado.
+        bottomNavigation.menu.findItem(R.id.nav_livraria).isChecked = true
+    }
+
+    // Funções de simulação de dados e modais (Sem alterações)
+    // ...
     private fun criarDadosDeExemplo(): List<Review> {
         val user1 = UsuarioReview("Ana Lúcia", android.R.drawable.ic_menu_help)
         val user2 = UsuarioReview("Marcos Vinicius", android.R.drawable.ic_menu_help)
@@ -62,22 +100,13 @@ class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener {
         )
     }
 
-    // --- Implementação do Fluxo de Exclusão (RF 04.02.11) ---
-
-    /**
-     * Chamada pelo Adapter quando o Administrador clica em uma review.
-     */
     override fun onReviewClicked(review: Review) {
         showReviewDetailModal(review)
     }
 
-    /**
-     * Mostra o modal com a review completa e o botão 'Excluir Review'.
-     */
     private fun showReviewDetailModal(review: Review) {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_admin_review_detail, null)
 
-        // 1. Preencher os dados no modal
         view.findViewById<TextView>(R.id.tv_detail_user_name).text = review.usuario.nome
         view.findViewById<TextView>(R.id.tv_detail_book_title).text = "Livro: ${review.livroTitulo}"
         view.findViewById<TextView>(R.id.tv_detail_review_text).text = review.textoReview
@@ -88,40 +117,29 @@ class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener {
             .setView(view)
             .create()
 
-        // 2. Listener do Botão Excluir
         view.findViewById<Button>(R.id.btn_delete_review).setOnClickListener {
-            dialog.dismiss() // Fecha o modal de detalhes
-            showDeleteConfirmationPopup(review) // Abre o pop-up de confirmação
+            dialog.dismiss()
+            showDeleteConfirmationPopup(review)
         }
 
         dialog.show()
     }
 
-    /**
-     * Mostra o pop-up de confirmação de exclusão (Sim/Não).
-     */
     private fun showDeleteConfirmationPopup(review: Review) {
         AlertDialog.Builder(this)
             .setTitle("Confirmar Exclusão")
             .setMessage("Deseja realmente remover a review de ${review.usuario.nome} sobre o livro ${review.livroTitulo}?")
             .setPositiveButton("Sim") { _, _ ->
-                // Remove a review e notifica o usuário
                 performReviewDeletion(review)
             }
             .setNegativeButton("Não") { dialog, _ ->
-                dialog.dismiss() // Fecha o pop-up
+                dialog.dismiss()
             }
             .show()
     }
 
-    /**
-     * Simula a remoção da review do backend (localmente, remove da lista do Adapter).
-     */
     private fun performReviewDeletion(review: Review) {
-        // Simulação de exclusão:
         adapter.removeReview(review)
-
         Toast.makeText(this, "Review de ${review.usuario.nome} removida com sucesso!", Toast.LENGTH_SHORT).show()
-        // FUTURO: Aqui você adicionaria a chamada API/Firestore para deletar
     }
 }

@@ -1,5 +1,6 @@
 package com.example.unibiblion
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -9,13 +10,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-
 class NoticiasActivity : AppCompatActivity() {
+
+    // 1. DECLARAÇÃO: Variável de classe para a Bottom Navigation
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_noticias)
+
+        // 2. OBTÉM AS REFERÊNCIAS
+        bottomNavigation = findViewById(R.id.bottom_navigation) // Inicialização da Bottom Nav
 
         // Código Edge-to-Edge (mantido)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -25,18 +31,55 @@ class NoticiasActivity : AppCompatActivity() {
         }
 
         // --- PREPARAÇÃO DO RECYCLERVIEW ---
-
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view_noticias)
         val dadosNoticias = criarDadosDeExemplo()
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // CORREÇÃO CRÍTICA: Adiciona o segundo argumento 'isAdmin = false'
-        // Isso resolve o erro de construtor e garante que o usuário comum não veja o lápis.
         recyclerView.adapter = NoticiasAdapter(dadosNoticias.toMutableList(), isAdmin = false)
 
-        val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
-        bottomNav.selectedItemId = R.id.nav_noticias
+        // 3. CONFIGURAÇÃO DA BOTTOM NAVIGATION LISTENER (NOVO)
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_livraria -> {
+                    // Item: ic_book. Navega para a Tela Central Livraria (Home)
+                    val intent = Intent(this, Tela_Central_Livraria::class.java)
+                    // Flags para limpar a pilha e evitar múltiplas instâncias da Home
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    startActivity(intent)
+                    true
+                }
 
+                R.id.nav_noticias -> {
+                    // Já estamos aqui. Não faz nada (ou retorna true).
+                    true
+                }
+
+                R.id.nav_chatbot -> {
+                    // Item: ic_chat. Navega para o Chatbot
+                    val intent = Intent(this, Tela_Chat_Bot::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_perfil -> {
+                    // Item: ic_profile. Navega para o Perfil
+                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                else -> false
+            }
+        }
+    }
+
+    // 4. SOLUÇÃO DE ESTADO: Garante que o ícone de Notícias esteja selecionado ao retornar
+    override fun onResume() {
+        super.onResume()
+        // Força a seleção do ícone de Notícias
+        if (::bottomNavigation.isInitialized) { // Verifica se foi inicializada (segurança)
+            bottomNavigation.menu.findItem(R.id.nav_noticias).isChecked = true
+        }
     }
 
     private fun criarDadosDeExemplo(): List<Noticia> {

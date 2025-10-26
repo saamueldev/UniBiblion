@@ -13,72 +13,102 @@ import java.util.Calendar
 import android.content.Intent
 import java.text.SimpleDateFormat
 import java.util.Locale
+import com.google.android.material.bottomnavigation.BottomNavigationView // Importação necessária
 
 // ESTA É A VERSÃO DO ADMINISTRADOR
 class CabinesAdminActivity : AppCompatActivity() {
 
     private lateinit var dataHoraSelecionada: Calendar
-
     private lateinit var dateSelectorTextView: TextView
-
     private lateinit var listaCabines: MutableList<Cabine>
     private lateinit var cabinesAdapter: CabinesAdapter
-
-    // NOTA: O botão btnReservarCabine e btnMinhasReservas não são necessários para o Admin,
-    // mas vamos mantê-los para evitar erros de referência no layout se você não for removê-los.
-    // Vamos apenas escondê-los.
     private lateinit var btnReservarCabine: Button
     private lateinit var btnMinhasReservas: Button
+
+    // 1. DECLARAÇÃO: Variável para a Bottom Navigation
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cabines_individuais)
 
-        // 1. Configurar Título (Opcional, para indicar que é a tela do Admin)
-        supportActionBar?.title = "Mapa de Cabines - ADMIN"
-
-        dataHoraSelecionada = Calendar.getInstance()
-
         // 2. OBTÉM AS REFERÊNCIAS
+        bottomNavigation = findViewById(R.id.bottom_navigation) // Inicializa a Bottom Nav
         dateSelectorTextView = findViewById(R.id.date_selector)
         btnReservarCabine = findViewById(R.id.btn_reservar_cabine)
         btnMinhasReservas = findViewById(R.id.btn_minhas_reservas)
         val gridCabines: GridView = findViewById(R.id.grid_cabines)
 
+        // Configuração de Título (Opcional, para indicar que é a tela do Admin)
+        supportActionBar?.title = "Mapa de Cabines - ADMIN"
+
+        dataHoraSelecionada = Calendar.getInstance()
+
         // ** AÇÃO 1: ESCONDER BOTÕES DE USUÁRIO **
         btnReservarCabine.visibility = View.GONE
         btnMinhasReservas.visibility = View.GONE
-        // Nota: Você pode esconder o seletor de data/hora também se ele não for relevante aqui
-        // dateSelectorTextView.visibility = View.GONE
 
         // 3. Inicializa dados e Grid
         listaCabines = criarDadosDeExemplo()
 
         // 4. Configura Adapters
-        // Usamos o mesmo Adapter, mas no modo Admin, ele deve apenas exibir as cabines
         cabinesAdapter = CabinesAdapter(this, listaCabines)
         gridCabines.adapter = cabinesAdapter
 
-        // 5. Configurar o clique (Diferente da versão do usuário)
+        // 5. Configurar o clique do Grid
         gridCabines.setOnItemClickListener { parent, view, position, id ->
-
             val cabineClicada = listaCabines[position]
-
-            // NOVO FLUXO: Ao clicar em QUALQUER cabine (livre ou ocupada),
-            // o Admin é levado para a tela de edição.
             navigateToAdminEdit(cabineClicada.numero)
         }
 
         // 6. Atualiza o texto do seletor (necessário para inicialização)
         atualizarTextoSeletorData(dataHoraSelecionada)
 
-        // Opcional: Desabilitar o clique no seletor de data para o Admin, já que
-        // ele não está reservando
+        // 7. Opcional: Desabilitar o clique no seletor de data para o Admin
         dateSelectorTextView.setOnClickListener {
             Toast.makeText(this, "Seletor desabilitado no modo Admin.", Toast.LENGTH_SHORT).show()
         }
+
+        // 8. CONFIGURAÇÃO DA BOTTOM NAVIGATION
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_livraria -> {
+                    // Item: ic_book (Livraria/Home Admin)
+                    val intent = Intent(this, Adm_Tela_Central_Livraria::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_noticias -> {
+                    val intent = Intent(this, NoticiasActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_chatbot -> {
+                    val intent = Intent(this, Tela_Chat_Bot::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.nav_perfil -> {
+                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                else -> false
+            }
+        }
     }
 
+    // 9. SOLUÇÃO: Mover a lógica de seleção para onResume()
+    override fun onResume() {
+        super.onResume()
+        // Força a seleção do ícone de Livraria (o fluxo desta tela) sempre que a tela é retomada.
+        bottomNavigation.menu.findItem(R.id.nav_livraria).isChecked = true
+    }
 
     /**
      * Função para navegar para a tela de Edição do Administrador.
@@ -90,8 +120,7 @@ class CabinesAdminActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    // Funções mantidas do seu código original para garantir a inicialização correta:
-
+    // Funções de dados e formatação (sem alterações)
     private fun criarDadosDeExemplo(): MutableList<Cabine> {
         val cabines = mutableListOf<Cabine>()
         for (i in 1..25) {
@@ -112,15 +141,4 @@ class CabinesAdminActivity : AppCompatActivity() {
         val textoFinal = "$dataFormatada às $horaFormatada"
         dateSelectorTextView.text = textoFinal
     }
-
-    // As funções mostrarDatePicker, mostrarTimePicker, atualizarVisibilidadeBotaoReservar
-    // e reservarCabineSelecionada não são mais necessárias nesta Activity,
-    // mas não causarão problemas se existirem, desde que não sejam chamadas.
-    // Para um código mais limpo, você pode removê-las se não for usá-las.
-
-    // ... (Seu código original continha estas, remova-as se quiser limpar)
-    private fun mostrarDatePicker() { /* ... */ }
-    private fun mostrarTimePicker() { /* ... */ }
-    private fun atualizarVisibilidadeBotaoReservar() { /* ... */ }
-    private fun reservarCabineSelecionada() { /* ... */ }
 }
