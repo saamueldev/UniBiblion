@@ -6,14 +6,12 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:id="@+id/main"
-    tools:context=".Tela_Trocar_Senha_Via_Perfil">
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_card_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.40" />
+    tools:context=".Tela_Email_Trocar_Senha_Via_Perfil"> <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline_card_start"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.40" />
 
     <LinearLayout
         android:id="@+id/logo_section"
@@ -38,7 +36,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Definir Nova Senha"
+            android:text="Verificação de Segurança"
             android:textColor="@color/roxo_primario"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -47,7 +45,7 @@
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/reset_password_card"
+        android:id="@+id/code_card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:cardCornerRadius="32dp"
@@ -69,49 +67,43 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Crie uma nova senha segura."
+                android:text="Insira o Código de Verificação"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="O código de 6 dígitos foi enviado para o seu e-mail."
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
                 android:layout_marginBottom="32dp"/>
 
             <EditText
-                android:id="@+id/edit_text_new_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:autofillHints="newPassword"
-                android:background="@drawable/rounded_edittext_background_white"
-                android:hint="Nova Senha"
-                android:textColorHint="@color/text_primary"
-                android:textColor="@android:color/black"
-                android:inputType="textPassword"
-                android:minHeight="56dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
-
-            <EditText
-                android:id="@+id/edit_text_confirm_password"
+                android:id="@+id/edit_text_code_verification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
-                android:autofillHints="newPassword"
+                android:autofillHints="smsOTP"
                 android:background="@drawable/rounded_edittext_background_white"
-                android:hint="Confirmar Nova Senha"
+                android:hint="Código de 6 dígitos"
                 android:textColorHint="@color/text_primary"
                 android:textColor="@android:color/black"
-                android:inputType="textPassword"
+                android:inputType="number"
+                android:maxLength="6"
                 android:minHeight="56dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp" />
 
             <Button
-                android:id="@+id/button_save_changes"
+                android:id="@+id/button_verify_and_next"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/white"
                 android:minHeight="56dp"
-                android:text="Salvar Alteração"
+                android:text="Avançar"
                 android:textColor="@color/roxo_primario"
                 android:textSize="18sp"
                 android:textStyle="bold"
