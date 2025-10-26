@@ -7,7 +7,6 @@
     tools:context=".AdminDashboardActivity"
     android:background="@color/white">
 
-    <!-- AppBar/Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_admin"
         android:layout_width="match_parent"
@@ -30,7 +29,6 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp" />
 
-    <!-- Opção "Gerenciar reviews" (RF04.02.09) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/card_manage_reviews"
         android:layout_width="0dp"
@@ -68,7 +66,8 @@
                 android:text="Gerenciar Reviews"
                 android:textSize="18sp"
                 android:textColor="@color/black"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                />
 
             <ImageView
                 android:layout_width="24dp"
@@ -77,5 +76,18 @@
                 android:contentDescription="Ir para" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/bottom_nav_icon_color"
+        app:itemTextColor="@color/black"
+        android:background="@color/roxo_institucional" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

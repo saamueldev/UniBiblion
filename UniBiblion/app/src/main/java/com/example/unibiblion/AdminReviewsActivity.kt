@@ -23,8 +23,9 @@ class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reviews) // Reutiliza o layout principal
 
-        // 1. Ocultar a Bottom Navigation (Não necessária para a tela Admin)
-        findViewById<View>(R.id.bottom_navigation).visibility = View.GONE
+        // 1. Ocultar a Bottom Navigation (REMOVIDO/COMENTADO)
+        // findViewById<View>(R.id.bottom_navigation).visibility = View.GONE
+        // A Bottom Navigation JÁ ESTARÁ VISÍVEL, pois o código acima foi removido.
 
         // 2. Configurar RecyclerView e Dados
         recyclerView = findViewById(R.id.recycler_reviews)
@@ -38,9 +39,16 @@ class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener {
         findViewById<android.widget.ImageButton>(R.id.btn_filter).setOnClickListener {
             Toast.makeText(this, "Abrir Filtro de Reviews Admin", Toast.LENGTH_SHORT).show()
         }
+
+        // FUTURO: Se você precisar configurar a Bottom Navigation aqui, adicione o código
+        // Exemplo:
+        // findViewById<BottomNavigationView>(R.id.bottom_navigation).setOnItemSelectedListener { item ->
+        //     // Lógica de navegação
+        //     true
+        // }
     }
 
-    // Função de simulação de dados (Copie do seu ReviewsActivity.kt)
+    // Função de simulação de dados (Copiada do seu ReviewsActivity.kt)
     private fun criarDadosDeExemplo(): List<Review> {
         val user1 = UsuarioReview("Ana Lúcia", android.R.drawable.ic_menu_help)
         val user2 = UsuarioReview("Marcos Vinicius", android.R.drawable.ic_menu_help)
