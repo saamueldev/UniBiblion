@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detalhes da Review"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="16dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:id="@+id/img_detail_user_photo"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:src="@tools:sample/avatars"
+                android:contentDescription="Foto de perfil do usuário" />
+
+            <TextView
+                android:id="@+id/tv_detail_user_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                app:layout_constraintTop_toTopOf="@id/img_detail_user_photo"
+                app:layout_constraintStart_toEndOf="@id/img_detail_user_photo"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Nome do Usuário Completo" />
+
+            <RatingBar
+                android:id="@+id/rb_detail_rating"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:stepSize="0.5"
+                android:isIndicator="true"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_detail_user_name"
+                app:layout_constraintStart_toStartOf="@id/tv_detail_user_name"
+                tools:rating="3.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_detail_review_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:padding="10dp"
+            android:background="@drawable/background_search_bar"
+            android:layout_marginBottom="8dp"
+            tools:text="Este é o texto completo da review do usuário, sem cortes ou abreviações." />
+
+        <TextView
+            android:id="@+id/tv_detail_book_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:textSize="14sp"
+            android:textColor="@color/blue_900"
+            android:textStyle="italic"
+            tools:text="Livro: O Título Avaliado" />
+
+        <Button
+            android:id="@+id/btn_delete_review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Excluir Review"
+            android:backgroundTint="@color/red_400"
+            android:textColor="@android:color/white"
+            style="@style/Widget.AppCompat.Button.Colored" />
+
+    </LinearLayout>
+</ScrollView>
