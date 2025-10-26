@@ -13,27 +13,44 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Unibiblion">
 
+        <!-- TELA DE ENTRADA PRINCIPAL -->
         <activity
-            android:name=".Adm_Tela_Central_Livraria"
+            android:name=".Tela_Login_Resgister"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Adm_Tela_Mural_Noticias_Eventos" android:exported="false" />
-        <activity android:name=".Adm_Tela_Criacao_Anuncio_Eventos" android:exported="false" />
-        <activity android:name=".Adm_Tela_Cadastro_Livro" android:exported="false" />
-        <activity android:name=".Adm_Tela_Acervo_Livros" android:exported="false" />
-        <activity android:name=".Adm_Tela_Detalhes_Livro" android:exported="false" />
 
+        <!-- FLUXO ADMINISTRATIVO (CONSOLIDADO) -->
+        <activity
+            android:name=".Adm_Tela_Mural_Noticias_Eventos"
+            android:exported="false" />
+        <activity
+            android:name=".Adm_Tela_Criacao_Anuncio_Eventos"
+            android:exported="false" />
+        <activity
+            android:name=".Adm_Tela_Cadastro_Livro"
+            android:exported="false" />
+        <activity
+            android:name=".Adm_Tela_Acervo_Livros"
+            android:exported="false" />
+        <activity
+            android:name=".Adm_Tela_Central_Livraria"
+            android:exported="false" />
+        <activity
+            android:name=".Adm_Tela_Detalhes_Livro"
+            android:exported="false" />
+
+        <!-- TELAS DE ADMINISTRAÇÃO QUE CRIAMOS JUNTOS (REVIEW/DASHBOARD) -->
         <activity android:name=".AdminDashboardActivity" android:exported="false" />
         <activity android:name=".AdminReviewsActivity" android:exported="false" />
         <activity android:name=".CabinesAdminActivity" android:exported="false" />
         <activity android:name=".CabineAdminEditActivity" android:exported="false"/>
 
+        <!-- FLUXO GERAL E DE USUÁRIO (MANTIDO) -->
         <activity android:name=".MainActivity" android:exported="false" />
-        <activity android:name=".Tela_Login_Resgister" android:exported="false" />
         <activity android:name=".Tela_Login" android:exported="false" />
         <activity android:name=".Tela_Register" android:exported="false" />
         <activity android:name=".Tela_Pagina_Inicial" android:exported="false" />
@@ -42,7 +59,6 @@
         <activity android:name=".Tela_Colocar_Nova_Senha" android:exported="false" />
         <activity android:name=".Tela_Email_Trocar_Senha_Via_Perfil" android:exported="false" />
         <activity android:name=".Tela_Trocar_Senha_Via_Perfil" android:exported="false" />
-
         <activity android:name=".Tela_Chat_Bot" android:exported="false" />
         <activity android:name=".Tela_De_Perfil" android:exported="false" />
         <activity android:name=".Tela_De_Perfil_Dados" android:exported="false" />
@@ -54,7 +70,6 @@
         <activity android:name=".Tela_Config_geral" android:exported="false" />
         <activity android:name=".Tela_Notificacoes" android:exported="false" />
         <activity android:name=".Tela_Sobre_sistema" android:exported="false" />
-
         <activity android:name=".Tela_Central_Livraria" android:exported="false" />
         <activity android:name=".Tela_Acervo_Livros" android:exported="false" />
         <activity android:name=".Tela_Livros_Curso" android:exported="false" />
@@ -65,11 +80,9 @@
         <activity android:name=".Tela_Confirmacao_Renovacao" android:exported="false" />
         <activity android:name=".Tela_Review_Livro" android:exported="false" />
         <activity android:name=".ReviewsActivity" android:exported="false" />
-
         <activity android:name=".NoticiasActivity" android:exported="false" />
         <activity android:name=".Tela_Abrir_Noticia_Evento" android:exported="false" />
         <activity android:name=".NoticiaDetalheActivity" android:exported="false" />
-
         <activity android:name=".CabinesIndividuaisActivity" android:exported="false" />
         <activity android:name=".Tela_Cabine_Individual_Selecionada" android:exported="false" />
         <activity android:name=".CabineSelecaoPeriodoActivity" android:exported="false" />
