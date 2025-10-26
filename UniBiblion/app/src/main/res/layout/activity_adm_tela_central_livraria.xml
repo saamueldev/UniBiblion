@@ -21,7 +21,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonRenovarLivros"
         app:menu="@menu/bottom_nav_menu" />
 
     <Button
@@ -33,7 +32,7 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="55dp"
         android:layout_marginBottom="6dp"
-        android:text="Catálogo"
+        android:text="Gerenciar Catálogo"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonGerenciarCabines"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,7 +48,7 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="55dp"
         android:layout_marginBottom="6dp"
-        android:text="Alugar livros"
+        android:text="Gerenciar Cabines"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonGerenciamentoGeral"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,27 +64,11 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="55dp"
         android:layout_marginBottom="6dp"
-        android:text="Alugar sala individual"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonRenovarLivros"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonGerenciarCabines" />
-
-    <Button
-        android:id="@+id/buttonRenovarLivros"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="55dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="55dp"
-        android:layout_marginBottom="6dp"
-        android:text="Renovar livros"
-        android:textColorLink="@color/bottom_nav_background_selector"
+        android:text="Gerenciamento Geral"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonGerenciamentoGeral" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonGerenciarCabines" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
