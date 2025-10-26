@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Unibiblion">
 
         <activity
-            android:name=".Adm_Tela_Mural_Noticias_Eventos"
+            android:name=".Adm_Tela_Central_Livraria"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,22 +23,23 @@
         </activity>
 
         <activity
-            android:name=".Adm_Tela_Criacao_Anuncio_Eventos"
-            android:exported="false" />
+            android:name=".Adm_Tela_Mural_Noticias_Eventos"
+            android:exported="false" /> <activity
+        android:name=".Adm_Tela_Criacao_Anuncio_Eventos"
+        android:exported="false" />
         <activity
             android:name=".Adm_Tela_Cadastro_Livro"
             android:exported="false" />
         <activity
-            android:name=".NoticiasActivity"
+            android:name=".Adm_Tela_Acervo_Livros"
             android:exported="false" />
         <activity
-            android:name=".Tela_Abrir_Noticia_Evento"
+            android:name=".Adm_Tela_Detalhes_Livro"
             android:exported="false" />
+
         <activity
-            android:name=".NoticiaDetalheActivity"
-            android:exported="false" /> <activity
-        android:name=".MainActivity"
-        android:exported="false" />
+            android:name=".MainActivity"
+            android:exported="false" />
         <activity
             android:name=".Tela_Login_Resgister"
             android:exported="false" />
@@ -63,10 +64,10 @@
             android:exported="false" />
         <activity
             android:name=".Tela_Email_Trocar_Senha_Via_Perfil"
-            android:exported="false" /> <activity
-        android:name=".Tela_Trocar_Senha_Via_Perfil"
-        android:exported="false" />
-
+            android:exported="false" />
+        <activity
+            android:name=".Tela_Trocar_Senha_Via_Perfil"
+            android:exported="false" />
 
         <activity
             android:name=".Tela_Chat_Bot"
@@ -132,6 +133,16 @@
             android:exported="false" />
         <activity
             android:name=".ReviewsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".NoticiasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Tela_Abrir_Noticia_Evento"
+            android:exported="false" />
+        <activity
+            android:name=".NoticiaDetalheActivity"
             android:exported="false" />
 
         <activity
