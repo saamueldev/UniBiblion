@@ -40,5 +40,32 @@ class Adm_Tela_Central_Livraria : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val buttonGerenciarCatalogo = findViewById<Button>(R.id.buttonGerenciarCatalogo)
+
+        buttonGerenciarCatalogo.setOnClickListener {
+
+            val intent = Intent(this, Adm_Tela_Acervo_Livros::class.java)
+
+            startActivity(intent)
+        }
+
+        val buttonGerenciarCabines = findViewById<Button>(R.id.buttonGerenciarCabines)
+
+        buttonGerenciarCabines.setOnClickListener {
+
+            val intent = Intent(this, CabineAdminEditActivity::class.java)
+
+            startActivity(intent)
+        }
+
+        val buttonGerenciamentoGeral = findViewById<Button>(R.id.buttonGerenciamentoGeral)
+
+        buttonGerenciamentoGeral.setOnClickListener {
+
+            val intent = Intent(this, AdminDashboardActivity::class.java)
+
+            startActivity(intent)
+        }
     }
 }
