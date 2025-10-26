@@ -10,9 +10,9 @@ class Tela_Central_Livraria : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tela_central_livraria)
 
-        val buttonAcervo = findViewById<Button>(R.id.buttonCatalogo)
-        val buttonLivros = findViewById<Button>(R.id.buttonAlugarLivros)
-        val buttonSala = findViewById<Button>(R.id.buttonSala)
+        val buttonAcervo = findViewById<Button>(R.id.buttonGerenciarCatalogo)
+        val buttonLivros = findViewById<Button>(R.id.buttonGerenciarCabines)
+        val buttonSala = findViewById<Button>(R.id.buttonGerenciamentoGeral)
         val buttonRenovar = findViewById<Button>(R.id.buttonRenovarLivros)
 
         buttonAcervo.setOnClickListener {

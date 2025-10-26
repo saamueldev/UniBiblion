@@ -27,6 +27,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:contentDescription="Imagem de Destaque da Notícia" />
 
+        <ImageButton
+            android:id="@+id/button_edit_grande"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_edit_pencil"
+            android:background="@drawable/rounded_button_background"
+            android:contentDescription="Editar Anúncio"
+            android:visibility="gone"
+            android:elevation="4dp"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="@id/img_noticia_grande"
+            app:layout_constraintEnd_toEndOf="@id/img_noticia_grande"
+            app:tint="@android:color/white" />
+
         <TextView
             android:id="@+id/text_titulo_grande"
             android:layout_width="0dp"

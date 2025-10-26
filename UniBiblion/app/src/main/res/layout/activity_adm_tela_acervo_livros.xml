@@ -36,11 +36,11 @@
     <ImageButton
         android:id="@+id/btnAdicionar"
         android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Abrir Filtros"
-        android:src="@drawable/ic_filter"
+        android:contentDescription="Adicionar"
+        android:src="@drawable/ic_arrow_down"
         app:layout_constraintBottom_toBottomOf="@+id/searchViewLivros"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/searchViewLivros" />

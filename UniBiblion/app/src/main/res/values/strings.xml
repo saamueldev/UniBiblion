@@ -3,5 +3,22 @@
     <string name="logo_desc">Logo UniBiblion</string>
     <string name="entrar">Entrar</string>
     <string name="cadastrar">Cadastrar</string>
+    <string name="profile_picture">Foto de perfil do usuário</string>
+
+    <string-array name="cursos_array">
+        <item>Selecione o Curso</item>
+        <item>Administração</item>
+        <item>Ciência da Computação</item>
+        <item>Engenharia Civil</item>
+        <item>Medicina</item>
+    </string-array>
+
+    <string-array name="idiomas_array">
+        <item>Selecione o Idioma</item>
+        <item>Português</item>
+        <item>Inglês</item>
+        <item>Espanhol</item>
+        <item>Francês</item>
+    </string-array>
 
 </resources>

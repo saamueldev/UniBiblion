@@ -26,7 +26,7 @@ class Tela_Acervo_Livros : AppCompatActivity() {
         // Inicializa as views
         recyclerViewLivros = findViewById(R.id.recyclerViewLivros)
         searchViewLivros = findViewById(R.id.searchViewLivros)
-        btnFiltro = findViewById(R.id.btnFiltro)
+        btnFiltro = findViewById(R.id.btnAdicionar)
 
         // Aplica os insets (boa prática com enableEdgeToEdge)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
