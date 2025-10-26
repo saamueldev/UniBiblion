@@ -3,7 +3,15 @@
 
     <item
         android:id="@+id/action_editar_perfil"
-        android:title="Editar perfil" />
+        android:title="Editar Perfil" />
+
+    <item
+        android:id="@+id/action_acessar_perfil"
+        android:title="Acessar Perfil do Usuário" />
+
+    <item
+        android:id="@+id/action_gerenciar_notificacoes"
+        android:title="Gerenciar Notificações" />
 
     <item
         android:id="@+id/action_acessibilidade"
@@ -12,5 +20,8 @@
     <item
         android:id="@+id/action_configuracoes_gerais"
         android:title="Configurações Gerais" />
+    <item
+        android:id="@+id/action_permissoes"
+        android:title="permissões" />
 
 </menu>
