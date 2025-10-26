@@ -57,7 +57,7 @@ class Tela_Livros_Curso : AppCompatActivity() {
 
         recyclerViewLivros = findViewById(R.id.recyclerViewLivros)
         searchViewLivros = findViewById(R.id.searchViewLivros)
-        btnFiltro = findViewById(R.id.btnFiltro)
+        btnFiltro = findViewById(R.id.btnAdicionar)
 
         cardViewFiltro = findViewById(R.id.cardViewFiltro)
         recyclerViewCursos = findViewById(R.id.recyclerViewCursos)
