@@ -5,8 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Toast
-import android.widget.PopupMenu // IMPORT NECESSÁRIO
-import android.view.View        // IMPORT NECESSÁRIO
+import android.widget.PopupMenu
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -42,7 +42,7 @@ class Tela_De_Perfil : AppCompatActivity() {
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_editar_perfil -> {
-                    startActivity(Intent(this, Tela_Editar_Perfil::class.java))
+                    startActivity(Intent(this, Tela_De_Perfil_Dados::class.java))
                     true
                 }
                 R.id.action_acessibilidade -> {
@@ -70,7 +70,7 @@ class Tela_De_Perfil : AppCompatActivity() {
                     true
                 }
                 R.id.nav_noticias -> {
-                    startActivity(Intent(this, Tela_Abrir_Noticia_Evento::class.java))
+                    startActivity(Intent(this, NoticiasActivity::class.java))
                     true
                 }
                 R.id.nav_chatbot -> {

@@ -70,7 +70,7 @@ class Tela_Chat_Bot : AppCompatActivity() {
                     true
                 }
                 R.id.nav_noticias -> {
-                    startActivity(Intent(this, Tela_Abrir_Noticia_Evento::class.java))
+                    startActivity(Intent(this, NoticiasActivity::class.java))
                     finish()
                     true
                 }

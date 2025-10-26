@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray_100">#E6E6E6</color>
@@ -8,19 +9,36 @@
     <color name="roxo_institucional">#7644D4</color>
     <color name="roxo_destaque_sutil">#9059FF</color>
     <color name="destaque_transparente">#33FFFFFF</color>
-    <color name="purple_700">#5E2EA6</color> <color name="purple_800">#3B1588</color>
+    <color name="purple_700">#5E2EA6</color>
+    <color name="purple_800">#3B1588</color>
     <color name="roxo_unibiblion">#7644D4</color>
+    <color name="roxo_primario">#3B1588</color>
+    <color name="roxo_botao">#5E2EA6</color>
+    <color name="azul_link">#2196F3</color>
 
     <color name="green_700">#388E3C</color>
     <color name="red_700">#D32F2F</color>
     <color name="blue_500">#2196F3</color>
     <color name="blue_selected">#1976D2</color>
     <color name="blue_900">#0D47A1</color>
-
-    <color name="roxo_primario">#3B1588</color>
-    <color name="roxo_botao">#5E2EA6</color>
-    <color name="azul_link">#2196F3</color>
-
     <color name="cinza_fundo_edittext">#E6E6E6</color>
     <color name="cinza_borda_edittext">#E6E6E6</color>
+
+    <color name="light_primary">@color/roxo_institucional</color>
+    <color name="light_primary_variant">@color/purple_700</color>
+    <color name="light_surface">@color/white</color>
+    <color name="light_background">@color/gray_100</color>
+    <color name="light_on_surface">@color/text_primary</color>
+
+    <color name="dark_primary">@color/roxo_destaque_sutil</color>
+    <color name="dark_primary_variant">@color/purple_800</color>
+    <color name="dark_surface">#121212</color>
+    <color name="dark_background">#000000</color>
+    <color name="dark_on_surface">@color/white</color>
+
+    <color name="hc_background">@color/white</color>
+    <color name="hc_surface">@color/white</color>
+    <color name="hc_text">@color/black</color>
+    <color name="hc_primary">@color/black</color>
+    <color name="hc_accent">@color/red_700</color>
 </resources>

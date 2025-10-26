@@ -3,5 +3,5 @@
     <string name="logo_desc">Logo UniBiblion</string>
     <string name="entrar">Entrar</string>
     <string name="cadastrar">Cadastrar</string>
-
+    <string name="profile_picture">Foto de perfil do usuário</string>
 </resources>
