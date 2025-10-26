@@ -28,7 +28,7 @@ class Tela_Register : AppCompatActivity() {
             // Lógica de Validação iria aqui.
 
             // Navegação: Simulando cadastro bem-sucedido e voltando para a tela de seleção inicial
-            val intent = Intent(this, Tela_Login_Resgister::class.java)
+            val intent = Intent(this, Tela_Login::class.java)
 
             // FLAG_ACTIVITY_CLEAR_TASK fecha a Tela_Register, completando o ciclo.
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
