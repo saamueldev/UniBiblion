@@ -13,13 +13,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Unibiblion">
         <activity
+            android:name=".Tela_Confirmacao_Renovacao"
+            android:exported="false" />
+        <activity
             android:name=".Tela_Email_Trocar_Senha_Via_Perfil"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> </activity>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Tela_Informacoes2"
             android:exported="false" />
@@ -31,10 +35,10 @@
             android:exported="false" />
         <activity
             android:name=".Tela_Chat_Bot"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".Tela_De_Perfil"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".Tela_De_Perfil_Dados"
             android:exported="false" />
@@ -115,7 +119,7 @@
             android:exported="false" />
         <activity
             android:name=".Tela_Login_Resgister"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
@@ -137,8 +141,7 @@
             android:exported="false" />
         <activity
             android:name=".ReviewsActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"></activity>
     </application>
 
 </manifest>
