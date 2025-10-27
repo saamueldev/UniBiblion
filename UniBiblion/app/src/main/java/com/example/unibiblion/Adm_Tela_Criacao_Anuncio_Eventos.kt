@@ -62,10 +62,9 @@ class Adm_Tela_Criacao_Anuncio_Eventos : AppCompatActivity() {
 
         // 4. Ações de Imagem (Simulação)
         selectCoverButton.setOnClickListener {
-            Toast.makeText(this, "Abrir galeria para selecionar capa...", Toast.LENGTH_SHORT).show()
         }
         addExtraPhotosButton.setOnClickListener {
-            Toast.makeText(this, "Abrir galeria para fotos extras...", Toast.LENGTH_SHORT).show()
+
         }
 
         // 5. Ação do Botão Principal (Publicar/Salvar Alterações)
