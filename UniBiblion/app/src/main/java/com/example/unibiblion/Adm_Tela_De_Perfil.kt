@@ -45,7 +45,7 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
 
     private fun showPopupMenu(view: View) {
         val popup = PopupMenu(this, view)
-        popup.menuInflater.inflate(R.menu.menu_perfil_opcoes, popup.menu)
+        popup.menuInflater.inflate(R.menu.adm_menu_perfil, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
