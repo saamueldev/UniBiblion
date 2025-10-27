@@ -45,7 +45,7 @@ class Tela_De_Perfil_Dados : AppCompatActivity() {
         }
 
         buttonTrocarSenha.setOnClickListener {
-            startActivity(Intent(this, Tela_Trocar_Senha_Via_Perfil::class.java))
+            startActivity(Intent(this, Tela_Email_Trocar_Senha_Via_Perfil::class.java))
         }
 
         bottomNavigation.selectedItemId = R.id.nav_perfil
