@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -16,12 +17,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.widget.Toast
+// [O restante do seu código da Activity...]
+
 data class Curso(val nome: String)
 
 class CursosAdapter(private val listaDeCursos: List<Curso>) :
     RecyclerView.Adapter<CursosAdapter.CursoViewHolder>() {
-
+    // [Seu CursosAdapter... (Mantido como estava)]
     inner class CursoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(android.R.id.text1)
     }
@@ -41,6 +43,7 @@ class CursosAdapter(private val listaDeCursos: List<Curso>) :
 }
 
 class Tela_Livros_Curso : AppCompatActivity() {
+    // [Seus atributos 'lateinit var'...]
 
     private lateinit var recyclerViewLivros: RecyclerView
     private lateinit var searchViewLivros: SearchView
@@ -50,11 +53,17 @@ class Tela_Livros_Curso : AppCompatActivity() {
     private lateinit var recyclerViewCursos: RecyclerView
     private lateinit var btnAplicarFiltro: Button
 
+    // Lista de livros (variável de estado para a tela)
+    private lateinit var listaDeLivros: List<Livro>
+    private lateinit var livroAdapter: LivroAdapter
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_tela_livros_curso)
 
+        // [Seu código de inicialização de Views e Insets...]
         recyclerViewLivros = findViewById(R.id.recyclerViewLivros)
         searchViewLivros = findViewById(R.id.searchViewLivros)
         btnFiltro = findViewById(R.id.btnAdicionar)
@@ -69,7 +78,21 @@ class Tela_Livros_Curso : AppCompatActivity() {
             insets
         }
 
+        // --- COMEÇO DA CORREÇÃO/ADIÇÃO DOS LIVROS ---
+
+        // 1. Obtém os dados de livros
+        listaDeLivros = obterDadosDosLivros()
+
+        // 2. Cria o Adapter dos Livros
+        livroAdapter = LivroAdapter(listaDeLivros)
+
+        // 3. Define o LayoutManager (GridLayoutManager para grade de 2 colunas)
         recyclerViewLivros.layoutManager = GridLayoutManager(this, 2)
+
+        // 4. ATRIBUI o Adapter à RecyclerView
+        recyclerViewLivros.adapter = livroAdapter
+
+        // --- FIM DA CORREÇÃO/ADIÇÃO DOS LIVROS ---
 
         searchViewLivros.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -78,11 +101,12 @@ class Tela_Livros_Curso : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
+                // Lógica para filtrar livros deve ser implementada aqui, usando o livroAdapter
                 return true
             }
         })
 
+        // [Seu código do CursosAdapter e botões...]
         val listaDeCursos = obterDadosDosCursos()
         recyclerViewCursos.layoutManager = LinearLayoutManager(this)
         recyclerViewCursos.adapter = CursosAdapter(listaDeCursos)
@@ -98,8 +122,20 @@ class Tela_Livros_Curso : AppCompatActivity() {
 
         btnAplicarFiltro.setOnClickListener {
             Toast.makeText(this, "Filtros aplicados (Lógica a ser implementada)", Toast.LENGTH_SHORT).show()
-            cardViewFiltro.visibility = View.GONE // Oculta a aba após aplicar
+            cardViewFiltro.visibility = View.GONE
         }
+    }
+
+    private fun obterDadosDosLivros(): List<Livro> {
+        // ATENÇÃO: SUBSTITUA R.drawable.sommervile por um recurso de imagem real do seu projeto!
+        // Se a imagem não existir, o aplicativo irá CRASHAR!
+        return listOf(
+            Livro(1, "Livro 1: Design UX/UI", "Autor A", R.drawable.sommervile),
+            Livro(2, "Livro 2: Padrões de Projeto", "Autor B", R.drawable.sommervile),
+            Livro(3, "Livro 3: Clean Code", "Autor C", R.drawable.sommervile),
+            Livro(4, "Livro 4: Redes TCP/IP", "Autor D", R.drawable.sommervile),
+            Livro(5, "Livro 5: Testes de Software", "Autor E", R.drawable.sommervile)
+        )
     }
 
     private fun obterDadosDosCursos(): List<Curso> {
