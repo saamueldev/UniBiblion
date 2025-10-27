@@ -24,7 +24,8 @@
 
         <activity
             android:name=".Adm_Tela_Mural_Noticias_Eventos"
-            android:exported="false" /> <activity
+            android:exported="false" />
+        <activity
         android:name=".Adm_Tela_Criacao_Anuncio_Eventos"
         android:exported="false" />
         <activity
@@ -35,6 +36,22 @@
             android:exported="false" />
         <activity
             android:name=".Adm_Tela_Detalhes_Livro"
+            android:exported="false" />
+
+        <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminReviewsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CabinesAdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CabineAdminEditActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".Adm_Tela_De_Perfil"
             android:exported="false" />
 
         <activity
@@ -106,7 +123,9 @@
 
         <activity
             android:name=".Tela_Central_Livraria"
-            android:exported="false" />
+            android:exported="false">
+        </activity>
+
         <activity
             android:name=".Tela_Acervo_Livros"
             android:exported="false" />
@@ -130,10 +149,14 @@
             android:exported="false" />
         <activity
             android:name=".Tela_Review_Livro"
-            android:exported="false" />
+            android:exported="false">
+        </activity>
+
         <activity
             android:name=".ReviewsActivity"
-            android:exported="false" />
+            android:exported="false">
+
+        </activity>
 
         <activity
             android:name=".NoticiasActivity"
@@ -166,6 +189,7 @@
         <activity
             android:name=".MinhasReservasActivity"
             android:exported="false" />
+
 
     </application>
 
