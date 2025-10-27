@@ -1,4 +1,5 @@
-package com.example.unibiblion
+// Em: app/src/main/java/com/example/unibiblion/LivroAdapter.kt
+package com.example.unibiblion // CORRIGIDO: "import" removido do final
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,48 +7,43 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.unibiblion.Livro
+// REMOVIDO: 'import androidx.compose...' que estava causando o erro
 
-class LivroAdapter(private val listaLivros: List<Livro>) :
-    RecyclerView.Adapter<LivroAdapter.LivroViewHolder>() {
+// A classe LivroAdapter agora funciona com a data class Livro que tem um Int para a imagem.
+class LivroAdapter(private val livros: List<Livro>) : RecyclerView.Adapter<LivroAdapter.LivroViewHolder>() {
 
-    // 1. Cria o ViewHolder, infla o layout (item_livro.xml) e o anexa ao RecyclerView
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LivroViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_livro, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_livro, parent, false)
         return LivroViewHolder(view)
     }
 
-    // 2. Vincula os dados (Livro) com as Views do item_livro.xml
     override fun onBindViewHolder(holder: LivroViewHolder, position: Int) {
-        val livro = listaLivros[position]
+        val livro = livros[position]
         holder.bind(livro)
     }
 
-    // 3. Retorna o número total de itens na lista
-    override fun getItemCount(): Int = listaLivros.size
+    override fun getItemCount(): Int {
+        return livros.size
+    }
 
-    // Classe interna que segura as referências das Views para evitar findViewById() repetidas vezes
-    inner class LivroViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        // Referências das Views do layout item_livro.xml
+    class LivroViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tituloTextView: TextView = itemView.findViewById(R.id.textViewTitulo)
+        private val autorTextView: TextView = itemView.findViewById(R.id.textViewAutor)
+        // Se seu item_livro.xml não tiver um textViewAno, pode remover a linha abaixo
+        private val anoTextView: TextView = itemView.findViewById(R.id.textViewAno)
         private val capaImageView: ImageView = itemView.findViewById(R.id.imageViewCapa)
-
-        // Aqui você pode adicionar outras views (ex: Autor) se seu item_livro.xml tiver.
 
         fun bind(livro: Livro) {
             tituloTextView.text = livro.titulo
+            autorTextView.text = livro.autor
 
-            // Define a imagem da capa usando o ID do recurso (Drawable)
-            capaImageView.setImageResource(livro.capaResourceId)
+            // CORREÇÃO 1: A data class Livro não tem mais 'anoPublicacao'.
+            // Vamos esconder ou definir um texto padrão por enquanto.
+            anoTextView.visibility = View.GONE // Opção 1: Esconde o campo de ano
 
-            // Se você quiser que o item seja clicável (opcional)
-            itemView.setOnClickListener {
-                // Faça algo quando o livro for clicado, ex:
-                // val context = itemView.context
-                // Toast.makeText(context, "Clicou em: ${livro.titulo}", Toast.LENGTH_SHORT).show()
-            }
+            // CORREÇÃO 2: Carregar a imagem usando o ID do resource (Int).
+            // A função setImageResource é feita exatamente para isso.
+            capaImageView.setImageResource(livro.imagemId)
         }
     }
 }

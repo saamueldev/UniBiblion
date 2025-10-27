@@ -19,8 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 // [O restante do seu código da Activity...]
 
-data class Curso(val nome: String)
-
 class CursosAdapter(private val listaDeCursos: List<Curso>) :
     RecyclerView.Adapter<CursosAdapter.CursoViewHolder>() {
     // [Seu CursosAdapter... (Mantido como estava)]
@@ -138,15 +136,17 @@ class Tela_Livros_Curso : AppCompatActivity() {
         )
     }
 
+    // A ÚNICA ALTERAÇÃO FOI NESTA FUNÇÃO
     private fun obterDadosDosCursos(): List<Curso> {
+        // CORRIGIDO: Adicionado um ID (Int) para cada Curso
         return listOf(
-            Curso("Ciência da Computação"),
-            Curso("Engenharia Civil"),
-            Curso("Direito"),
-            Curso("Medicina"),
-            Curso("Arquitetura"),
-            Curso("Psicologia"),
-            Curso("Administração")
+            Curso(1, "Ciência da Computação"),
+            Curso(2, "Engenharia Civil"),
+            Curso(3, "Direito"),
+            Curso(4, "Medicina"),
+            Curso(5, "Arquitetura"),
+            Curso(6, "Psicologia"),
+            Curso(7, "Administração")
         )
     }
 }
