@@ -6,6 +6,14 @@
         android:title="Editar Perfil" />
 
     <item
+        android:id="@+id/action_acessar_perfil"
+        android:title="Acessar Perfil do Usuário" />
+
+    <item
+        android:id="@+id/action_gerenciar_notificacoes"
+        android:title="Gerenciar Notificações" />
+
+    <item
         android:id="@+id/action_acessibilidade"
         android:title="Acessibilidade" />
 

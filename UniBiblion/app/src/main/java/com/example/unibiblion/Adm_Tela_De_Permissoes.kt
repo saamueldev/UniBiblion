@@ -33,21 +33,19 @@ class Adm_Tela_De_Permissoes : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_livraria -> {
-                    startActivity(Intent(this, Tela_Central_Livraria::class.java))
-                    finish()
+                    startActivity(Intent(this, Adm_Tela_Central_Livraria::class.java))
                     true
                 }
                 R.id.nav_noticias -> {
                     startActivity(Intent(this, NoticiasActivity::class.java))
-                    finish()
                     true
                 }
                 R.id.nav_chatbot -> {
                     startActivity(Intent(this, Tela_Chat_Bot::class.java))
-                    finish()
                     true
                 }
                 R.id.nav_perfil -> {
+                    startActivity(Intent(this, Adm_Tela_De_Perfil::class.java))
                     true
                 }
                 else -> false

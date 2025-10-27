@@ -46,7 +46,7 @@ class Adm_Tela_Perfil_Usuario : AppCompatActivity() {
 
     private fun showPopupMenu(view: View) {
         val popup = PopupMenu(this, view)
-        popup.menuInflater.inflate(R.menu.menu_perfil_opcoes, popup.menu)
+        popup.menuInflater.inflate(R.menu.adm_menu_perfil, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -70,10 +70,6 @@ class Adm_Tela_Perfil_Usuario : AppCompatActivity() {
                     startActivity(Intent(this, Tela_Config_geral::class.java))
                     true
                 }
-                R.id.action_permissoes -> {
-                    startActivity(Intent(this, Adm_Tela_De_Permissoes::class.java))
-                    true
-                }
                 else -> false
             }
         }
@@ -87,7 +83,7 @@ class Adm_Tela_Perfil_Usuario : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_livraria -> {
-                    startActivity(Intent(this, Tela_Central_Livraria::class.java))
+                    startActivity(Intent(this, Adm_Tela_Central_Livraria::class.java))
                     true
                 }
                 R.id.nav_noticias -> {
@@ -99,6 +95,7 @@ class Adm_Tela_Perfil_Usuario : AppCompatActivity() {
                     true
                 }
                 R.id.nav_perfil -> {
+                    startActivity(Intent(this, Adm_Tela_De_Perfil::class.java))
                     true
                 }
                 else -> false
