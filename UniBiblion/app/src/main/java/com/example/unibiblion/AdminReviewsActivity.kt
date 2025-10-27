@@ -55,7 +55,7 @@ class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener {
                 }
 
                 R.id.nav_noticias -> {
-                    val intent = Intent(this, NoticiasActivity::class.java)
+                    val intent = Intent(this, Adm_Tela_Mural_Noticias_Eventos::class.java)
                     startActivity(intent)
                     true
                 }
@@ -67,7 +67,7 @@ class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener {
                 }
 
                 R.id.nav_perfil -> {
-                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    val intent = Intent(this, Adm_Tela_De_Perfil::class.java)
                     startActivity(intent)
                     true
                 }
