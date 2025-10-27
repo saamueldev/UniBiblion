@@ -43,8 +43,6 @@ class Tela_Email_Trocar_Senha_Via_Perfil : AppCompatActivity() {
             // Lógica de validação: SÓ AVANÇA SE O CÓDIGO FOR 000000
             if (enteredCode == EXPECTED_CODE) {
 
-                Toast.makeText(this, "Código verificado (SIMULADO). Prossiga.", Toast.LENGTH_SHORT).show()
-
                 // NAVEGAÇÃO: Vai para a SEGUNDA TELA do fluxo
                 val intent = Intent(this, Tela_Trocar_Senha_Via_Perfil::class.java)
                 startActivity(intent)

@@ -58,6 +58,6 @@ class Adm_Tela_Mural_Noticias_Eventos : AppCompatActivity() {
 
         val dadosAtualizados = NoticiasRepositorySimulado.getAllNoticias()
         noticiasAdapter.updateList(dadosAtualizados)
-        Toast.makeText(this, "Mural atualizado: ${dadosAtualizados.size} itens.", Toast.LENGTH_SHORT).show()
+
     }
 }

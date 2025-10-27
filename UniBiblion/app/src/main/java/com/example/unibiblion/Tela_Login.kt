@@ -69,14 +69,14 @@ class Tela_Login : AppCompatActivity() {
         // LÓGICA DE LOGIN: Verifica as credenciais e redireciona
         if (email == ADMIN_EMAIL && senha == ADMIN_SENHA) {
             // Se for Admin, abre a tela de Cadastro de Livro
-            Toast.makeText(this, "Login de Administrador bem-sucedido!", Toast.LENGTH_LONG).show()
+
             val intent = Intent(this, Adm_Tela_Central_Livraria::class.java)
             startActivity(intent)
             finish()
 
         } else if (email == ALUNO_EMAIL && senha == ALUNO_SENHA) {
             // Se for Aluno, abre a tela Central da Livraria
-            Toast.makeText(this, "Login de Aluno bem-sucedido!", Toast.LENGTH_LONG).show()
+
             val intent = Intent(this, Tela_Central_Livraria::class.java)
             startActivity(intent)
             finish()

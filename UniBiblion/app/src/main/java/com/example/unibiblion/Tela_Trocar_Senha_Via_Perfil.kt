@@ -39,7 +39,7 @@ class Tela_Trocar_Senha_Via_Perfil : AppCompatActivity() {
                 // **** MUDANÇA AQUI: NAVEGAÇÃO PARA Tela_Editar_Perfil ****
                 // Usa FLAG_ACTIVITY_CLEAR_TOP para fechar as telas de código/troca de senha
                 // e voltar para a Tela_Editar_Perfil (ou para onde ela estiver na pilha).
-                val intent = Intent(this, Tela_Editar_Perfil::class.java)
+                val intent = Intent(this, Tela_De_Perfil_Dados::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(intent)
 
