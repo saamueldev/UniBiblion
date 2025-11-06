@@ -2,6 +2,7 @@ package com.example.unibiblion
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -10,17 +11,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 
 class Tela_Login : AppCompatActivity() {
 
+    private val TAG = "Tela_Login"
     private lateinit var emailEditText: EditText
     private lateinit var senhaEditText: EditText
-
-    // Dados de Login Fictícios para Simulação
-    private val ADMIN_EMAIL = "adm@gmail.com"
-    private val ADMIN_SENHA = "adm123"
-    private val ALUNO_EMAIL = "aluno@gmail.com"
-    private val ALUNO_SENHA = "aluno123"
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,57 +33,72 @@ class Tela_Login : AppCompatActivity() {
             insets
         }
 
-        // --- 1. Conexão dos campos de E-mail e Senha ---
-        // Certifique-se que esses IDs (edit_text_email, edit_text_password) existem no seu XML
         emailEditText = findViewById(R.id.edit_text_email)
         senhaEditText = findViewById(R.id.edit_text_password)
+        db = Firebase.firestore
 
-        // --- 2. Conexão e Lógica do botão de LOGIN ---
         val loginButton: Button = findViewById(R.id.button_login)
-
         loginButton.setOnClickListener {
             handleLogin()
         }
 
-        // --- 3. Conexão do link "Esqueci minha senha" ---
         val forgotPasswordLink: TextView = findViewById(R.id.text_view_forgot_password)
-
         forgotPasswordLink.setOnClickListener {
             val intent = Intent(this, Tela_Esquecer_Senha::class.java)
             startActivity(intent)
         }
     }
 
-    /**
-     * Função que contém a lógica de autenticação (Admin vs. Aluno) e redirecionamento
-     */
     private fun handleLogin() {
         val email = emailEditText.text.toString().trim()
-        val senha = senhaEditText.text.toString()
+        val senha = senhaEditText.text.toString().trim() // Adicionado .trim() para segurança
 
         if (email.isEmpty() || senha.isEmpty()) {
             Toast.makeText(this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // LÓGICA DE LOGIN: Verifica as credenciais e redireciona
-        if (email == ADMIN_EMAIL && senha == ADMIN_SENHA) {
-            // Se for Admin, abre a tela de Cadastro de Livro
+        authenticateUser(email, senha)
+    }
 
-            val intent = Intent(this, Adm_Tela_Central_Livraria::class.java)
-            startActivity(intent)
-            finish()
+    private fun authenticateUser(email: String, senha: String) {
+        db.collection("usuarios")
+            .whereEqualTo("email", email)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    // ...
+                    return@addOnSuccessListener
+                }
 
-        } else if (email == ALUNO_EMAIL && senha == ALUNO_SENHA) {
-            // Se for Aluno, abre a tela Central da Livraria
+                val document = querySnapshot.documents[0]
+                val storedPassword = document.getString("senha")?.trim()
 
-            val intent = Intent(this, Tela_Central_Livraria::class.java)
-            startActivity(intent)
-            finish()
+                // 🛑 MUDANÇA AQUI: Obtendo o booleano de forma mais robusta e registrando o valor
+                val isAdmin = document.getBoolean("admin") == true
 
-        } else {
-            // Credenciais inválidas
-            Toast.makeText(this, "E-mail ou Senha incorretos.", Toast.LENGTH_SHORT).show()
-        }
+                Log.d(TAG, "Valor lido para 'admin': ${document.getBoolean("admin")}") // Adicione esta linha para debug
+                Log.d(TAG, "Resultado da verificação isAdmin: $isAdmin") // Adicione esta linha para debug
+
+                if (senha == storedPassword) {
+                    Toast.makeText(this, "Login efetuado com sucesso!", Toast.LENGTH_SHORT).show()
+
+                    if (isAdmin) {
+                        Log.i(TAG, "Login de Administrador.")
+                        val intent = Intent(this, Adm_Tela_Central_Livraria::class.java)
+                        startActivity(intent)
+                    } else {
+                        Log.i(TAG, "Login de Usuário Comum.")
+                        val intent = Intent(this, Tela_Central_Livraria::class.java)
+                        startActivity(intent)
+                    }
+                    finish()
+
+                } else {
+                    // ...
+                }
+            }
+        // ...
     }
 }
