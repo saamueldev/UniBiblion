@@ -1,13 +1,21 @@
 package com.example.unibiblion
 
+import com.google.firebase.firestore.DocumentId
+
+// Adicionamos valores padrão nulos e um construtor vazio implícito para o Firestore.
 data class Cabine(
-    val numero: String,
-    val estado: Int, // Usaremos constantes para definir o estado de ocupação (Livre/Ocupado)
-    var isSelecionada: Boolean = false // Booleano para rastrear se o usuário clicou nela
+    @DocumentId // Mapeia o ID do documento (se você quiser usar o ID do Firestore como identificador)
+    val id: String? = null,
+    val numero: String? = null,
+    val estado: String? = null // Armazenaremos a String do estado
 ) {
-    // Definimos constantes para facilitar a leitura e evitar 'números mágicos'
+    // Definimos as constantes como strings que serão salvas no Firestore
     companion object {
-        const val ESTADO_LIVRE = 1
-        const val ESTADO_OCUPADO = 2
+        const val ESTADO_LIVRE = "LIVRE"
+        const val ESTADO_OCUPADO = "OCUPADO"
     }
+
+    // Construtor sem argumentos necessário para o Firestore
+    @Suppress("unused")
+    constructor() : this(null, null, null)
 }

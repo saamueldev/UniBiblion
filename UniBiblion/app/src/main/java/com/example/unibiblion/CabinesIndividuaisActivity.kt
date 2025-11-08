@@ -5,13 +5,16 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.GridView
 import android.widget.TextView
-import android.widget.Toast // Import necessário para a mensagem de erro
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 import java.util.Calendar
 import android.content.Intent
-import com.google.android.material.bottomnavigation.BottomNavigationView // 1. IMPORT NECESSÁRIO
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ListenerRegistration
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -24,7 +27,9 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
     private lateinit var listaCabines: MutableList<Cabine>
     private lateinit var cabinesAdapter: CabinesAdapter
 
-    // 2. DECLARAÇÃO: Variável de classe para a Bottom Navigation
+    private lateinit var db: FirebaseFirestore
+    private var cabinesListener: ListenerRegistration? = null
+
     private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,110 +38,141 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
 
         dataHoraSelecionada = Calendar.getInstance()
 
-        // 3. INICIALIZAÇÃO DA BOTTOM NAVIGATION
+        db = FirebaseFirestore.getInstance()
         bottomNavigation = findViewById(R.id.bottom_navigation)
 
-        // 1. OBTÉM AS REFERÊNCIAS
         dateSelectorTextView = findViewById(R.id.date_selector)
         btnReservarCabine = findViewById(R.id.btn_reservar_cabine)
         btnMinhasReservas = findViewById(R.id.btn_minhas_reservas)
 
-        // Inicializa dados e Grid
-        listaCabines = criarDadosDeExemplo()
-        val gridCabines: GridView = findViewById(R.id.grid_cabines)
+        carregarCabinesDoFirebase()
 
-        // 2. CONFIGURA LISTENERS/ADAPTERS USANDO AS REFERÊNCIAS
-
-        // Listener do Seletor de Data
         atualizarTextoSeletorData(dataHoraSelecionada)
         dateSelectorTextView.setOnClickListener {
             mostrarDatePicker()
         }
 
-        // LISTENER DO BOTÃO RESERVAR
         btnReservarCabine.setOnClickListener {
             reservarCabineSelecionada()
         }
 
         btnMinhasReservas.setOnClickListener {
-            // Crie e inicie o Intent para a MinhasReservasActivity
             val intent = Intent(this, MinhasReservasActivity::class.java)
             startActivity(intent)
         }
 
-        // Adapter e GridView
-        cabinesAdapter = CabinesAdapter(this, listaCabines)
-        gridCabines.adapter = cabinesAdapter
-
-        // 4. Configurar o clique do usuário com a restrição
-        gridCabines.setOnItemClickListener { parent, view, position, id ->
-            val cabineClicada = listaCabines[position]
-
-            if (cabineClicada.estado == Cabine.ESTADO_LIVRE) {
-                cabinesAdapter.selectSingleCabine(position)
-                atualizarVisibilidadeBotaoReservar()
-            } else {
-                Toast.makeText(this, "A Cabine ${cabineClicada.numero} está ocupada.", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        // 5. CONFIGURAÇÃO DA BOTTOM NAVIGATION LISTENER (NOVO)
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_livraria -> {
-                    // Item: ic_book (Livraria). Navega para a Home da Livraria.
                     val intent = Intent(this, Tela_Central_Livraria::class.java)
-                    // Flags para limpar a pilha e evitar múltiplas instâncias da Home
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
                     true
                 }
-
                 R.id.nav_noticias -> {
-                    // Item: ic_newspaper (Notícias)
                     val intent = Intent(this, NoticiasActivity::class.java)
                     startActivity(intent)
                     true
                 }
-
                 R.id.nav_chatbot -> {
-                    // Item: ic_chat (Chatbot)
                     val intent = Intent(this, Tela_Chat_Bot::class.java)
                     startActivity(intent)
                     true
                 }
-
                 R.id.nav_perfil -> {
-                    // Item: ic_profile (Perfil)
                     val intent = Intent(this, Tela_De_Perfil::class.java)
                     startActivity(intent)
                     true
                 }
-
                 else -> false
             }
         }
     }
 
-    // 6. SOLUÇÃO DE ESTADO: Garante que o ícone da Livraria esteja selecionado ao retomar a tela
+    override fun onDestroy() {
+        super.onDestroy()
+        cabinesListener?.remove()
+    }
+
     override fun onResume() {
         super.onResume()
-        // Força a seleção do ícone Livraria (o fluxo desta tela)
         bottomNavigation.menu.findItem(R.id.nav_livraria).isChecked = true
     }
 
-    // Funções mantidas do seu código original (sem alterações)
-    private fun criarDadosDeExemplo(): MutableList<Cabine> {
-        val cabines = mutableListOf<Cabine>()
-        for (i in 1..25) {
-            val numeroStr = String.format("%02d", i)
-            val estado = if (i % 3 == 0) Cabine.ESTADO_OCUPADO else Cabine.ESTADO_LIVRE
-            cabines.add(Cabine(numeroStr, estado))
-        }
-        return cabines
+    // ==========================================================
+    // LÓGICA DE BUSCA EM TEMPO REAL DO FIREBASE
+    // ==========================================================
+
+    private fun carregarCabinesDoFirebase() {
+
+        cabinesListener?.remove()
+
+        cabinesListener = db.collection("cabines")
+            .orderBy("numero", Query.Direction.ASCENDING)
+            .addSnapshotListener { snapshots, e ->
+
+                if (e != null) {
+                    Toast.makeText(this, "Erro ao observar cabines: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                    if (!::listaCabines.isInitialized) {
+                        listaCabines = mutableListOf()
+                        configurarGridView()
+                    }
+                    return@addSnapshotListener
+                }
+
+                if (snapshots != null) {
+                    listaCabines = snapshots.toObjects(Cabine::class.java).toMutableList()
+                    configurarGridView()
+                }
+            }
     }
 
+    /**
+     * Configura o GridView e o Adapter.
+     */
+    private fun configurarGridView() {
+        val gridCabines: GridView = findViewById(R.id.grid_cabines)
+
+        if (!::cabinesAdapter.isInitialized) {
+            cabinesAdapter = CabinesAdapter(this, listaCabines)
+            gridCabines.adapter = cabinesAdapter
+
+            // 🎯 CORREÇÃO: VERIFICAÇÃO DE ESTADO NO CLIQUE
+            gridCabines.setOnItemClickListener { parent, view, position, id ->
+
+                val cabineClicada = listaCabines[position] // Obtém o objeto Cabine
+
+                if (cabineClicada.estado == Cabine.ESTADO_OCUPADO) {
+
+                    // 1. Se a cabine OCUPADA for a que estava selecionada, desmarcamos.
+                    if (cabinesAdapter.getSelectedPosition() == position) {
+                        cabinesAdapter.selectSingleCabine(position) // Desmarca a seleção
+                    } else {
+                        // 2. Se for uma cabine ocupada e não estava selecionada, bloqueamos a seleção
+                        Toast.makeText(this, "A Cabine ${cabineClicada.numero} está ocupada e não pode ser selecionada.", Toast.LENGTH_SHORT).show()
+                    }
+
+                    atualizarVisibilidadeBotaoReservar()
+                    return@setOnItemClickListener // Impede qualquer ação de seleção
+                }
+
+                // Se a cabine estiver LIVRE, permite o toggle normal de seleção/deseleção
+                cabinesAdapter.selectSingleCabine(position)
+                atualizarVisibilidadeBotaoReservar()
+            }
+        } else {
+            // Atualiza a lista interna do Adapter (solução para tempo real)
+            cabinesAdapter.updateCabines(listaCabines)
+        }
+    }
+
+    // ==========================================================
+    // FUNÇÕES DE UI E NAVEGAÇÃO
+    // ==========================================================
+
     private fun atualizarVisibilidadeBotaoReservar() {
+        if (!::listaCabines.isInitialized) return
+
         val algumaCabineSelecionada = cabinesAdapter.getSelectedPosition() != -1
         if (algumaCabineSelecionada) {
             btnReservarCabine.visibility = View.VISIBLE
@@ -196,8 +232,20 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
         if (selectedPosition != -1) {
             val cabineSelecionada = listaCabines[selectedPosition]
 
+            val numeroCabine = cabineSelecionada.numero ?: run {
+                Toast.makeText(this, "Erro: Número da cabine não encontrado.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            // Esta verificação já existia, mas é crucial: se, por algum motivo,
+            // o clique foi permitido, o botão final ainda checa.
+            if (cabineSelecionada.estado != Cabine.ESTADO_LIVRE) {
+                Toast.makeText(this, "A Cabine $numeroCabine não está disponível para reserva.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
             val intent = Intent(this, CabineSelecaoPeriodoActivity::class.java).apply {
-                putExtra("EXTRA_NUMERO_CABINE", cabineSelecionada.numero)
+                putExtra("EXTRA_NUMERO_CABINE", numeroCabine)
                 putExtra("EXTRA_DATA_HORA", dataHoraSelecionada.timeInMillis)
             }
             startActivity(intent)

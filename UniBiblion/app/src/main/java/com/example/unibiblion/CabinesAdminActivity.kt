@@ -13,33 +13,32 @@ import java.util.Calendar
 import android.content.Intent
 import java.text.SimpleDateFormat
 import java.util.Locale
-import com.google.android.material.bottomnavigation.BottomNavigationView // Importação necessária
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 // ESTA É A VERSÃO DO ADMINISTRADOR
 class CabinesAdminActivity : AppCompatActivity() {
 
+    // ... (declarações de variáveis)
     private lateinit var dataHoraSelecionada: Calendar
     private lateinit var dateSelectorTextView: TextView
     private lateinit var listaCabines: MutableList<Cabine>
     private lateinit var cabinesAdapter: CabinesAdapter
     private lateinit var btnReservarCabine: Button
     private lateinit var btnMinhasReservas: Button
-
-    // 1. DECLARAÇÃO: Variável para a Bottom Navigation
     private lateinit var bottomNavigation: BottomNavigationView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cabines_individuais)
 
         // 2. OBTÉM AS REFERÊNCIAS
-        bottomNavigation = findViewById(R.id.bottom_navigation) // Inicializa a Bottom Nav
+        bottomNavigation = findViewById(R.id.bottom_navigation)
         dateSelectorTextView = findViewById(R.id.date_selector)
         btnReservarCabine = findViewById(R.id.btn_reservar_cabine)
         btnMinhasReservas = findViewById(R.id.btn_minhas_reservas)
         val gridCabines: GridView = findViewById(R.id.grid_cabines)
 
-        // Configuração de Título (Opcional, para indicar que é a tela do Admin)
         supportActionBar?.title = "Mapa de Cabines - ADMIN"
 
         dataHoraSelecionada = Calendar.getInstance()
@@ -48,7 +47,7 @@ class CabinesAdminActivity : AppCompatActivity() {
         btnReservarCabine.visibility = View.GONE
         btnMinhasReservas.visibility = View.GONE
 
-        // 3. Inicializa dados e Grid
+        // 3. Inicializa dados e Grid (Usando dados de exemplo, pois esta é a versão ADMIN sem Firebase)
         listaCabines = criarDadosDeExemplo()
 
         // 4. Configura Adapters
@@ -58,10 +57,12 @@ class CabinesAdminActivity : AppCompatActivity() {
         // 5. Configurar o clique do Grid
         gridCabines.setOnItemClickListener { parent, view, position, id ->
             val cabineClicada = listaCabines[position]
+
+            // 🎯 CORREÇÃO: Passa o campo numero (String?) para a função
             navigateToAdminEdit(cabineClicada.numero)
         }
 
-        // 6. Atualiza o texto do seletor (necessário para inicialização)
+        // 6. Atualiza o texto do seletor
         atualizarTextoSeletorData(dataHoraSelecionada)
 
         // 7. Opcional: Desabilitar o clique no seletor de data para o Admin
@@ -73,7 +74,6 @@ class CabinesAdminActivity : AppCompatActivity() {
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_livraria -> {
-                    // Item: ic_book (Livraria/Home Admin)
                     val intent = Intent(this, Adm_Tela_Central_Livraria::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
@@ -106,14 +106,20 @@ class CabinesAdminActivity : AppCompatActivity() {
     // 9. SOLUÇÃO: Mover a lógica de seleção para onResume()
     override fun onResume() {
         super.onResume()
-        // Força a seleção do ícone de Livraria (o fluxo desta tela) sempre que a tela é retomada.
         bottomNavigation.menu.findItem(R.id.nav_livraria).isChecked = true
     }
 
     /**
      * Função para navegar para a tela de Edição do Administrador.
+     * 🎯 CORREÇÃO: Agora a função aceita String? e verifica se é nulo.
      */
-    private fun navigateToAdminEdit(cabineId: String) {
+    private fun navigateToAdminEdit(cabineId: String?) {
+        // Verifica se o ID é nulo (caso venha do Firestore e falhe)
+        if (cabineId == null) {
+            Toast.makeText(this, "Erro: Não foi possível obter o ID da cabine.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val intent = Intent(this, CabineAdminEditActivity::class.java).apply {
             putExtra("CABINE_ID", cabineId)
         }
@@ -126,7 +132,8 @@ class CabinesAdminActivity : AppCompatActivity() {
         for (i in 1..25) {
             val numeroStr = String.format("%02d", i)
             val estado = if (i % 3 == 0) Cabine.ESTADO_OCUPADO else Cabine.ESTADO_LIVRE
-            cabines.add(Cabine(numeroStr, estado))
+            // Note que estamos usando o construtor Cabine(numero: String?, estado: String?)
+            cabines.add(Cabine(numero = numeroStr, estado = estado))
         }
         return cabines
     }
