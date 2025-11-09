@@ -51,7 +51,7 @@ class Tela_Login : AppCompatActivity() {
 
     private fun handleLogin() {
         val email = emailEditText.text.toString().trim()
-        val senha = senhaEditText.text.toString().trim() // Adicionado .trim() para segurança
+        val senha = senhaEditText.text.toString().trim()
 
         if (email.isEmpty() || senha.isEmpty()) {
             Toast.makeText(this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show()
@@ -68,18 +68,18 @@ class Tela_Login : AppCompatActivity() {
             .get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
-                    // ...
+                    // 🚨 E-mail não encontrado -> Toast
+                    Toast.makeText(this, "Dados incorretos", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
                 }
 
                 val document = querySnapshot.documents[0]
                 val storedPassword = document.getString("senha")?.trim()
 
-                // 🛑 MUDANÇA AQUI: Obtendo o booleano de forma mais robusta e registrando o valor
                 val isAdmin = document.getBoolean("admin") == true
 
-                Log.d(TAG, "Valor lido para 'admin': ${document.getBoolean("admin")}") // Adicione esta linha para debug
-                Log.d(TAG, "Resultado da verificação isAdmin: $isAdmin") // Adicione esta linha para debug
+                Log.d(TAG, "Valor lido para 'admin': ${document.getBoolean("admin")}")
+                Log.d(TAG, "Resultado da verificação isAdmin: $isAdmin")
 
                 if (senha == storedPassword) {
                     Toast.makeText(this, "Login efetuado com sucesso!", Toast.LENGTH_SHORT).show()
@@ -96,9 +96,14 @@ class Tela_Login : AppCompatActivity() {
                     finish()
 
                 } else {
-                    // ...
+                    // 🚨 Senha incorreta -> Toast
+                    Toast.makeText(this, "Dados incorretos", Toast.LENGTH_SHORT).show()
                 }
             }
-        // ...
+            .addOnFailureListener { e ->
+                // Trata falha na comunicação com o Firestore
+                Log.e(TAG, "Erro ao tentar login: ${e.message}", e)
+                Toast.makeText(this, "Erro de conexão. Tente novamente.", Toast.LENGTH_LONG).show()
+            }
     }
 }
