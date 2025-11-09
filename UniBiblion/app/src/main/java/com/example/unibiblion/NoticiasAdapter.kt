@@ -5,27 +5,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.ImageButton // Import necessário
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import android.content.Intent
-import android.content.Context // Import necessário
+import android.content.Context
 import android.widget.Toast
 import com.example.unibiblion.Noticia.Companion.TIPO_IMAGEM_GRANDE
 import com.example.unibiblion.Noticia.Companion.TIPO_IMAGEM_LATERAL
 
-// NOVO: Adiciona 'isAdmin' ao construtor
+// 🎯 NOVO IMPORT: Necessário para carregar imagens da URL
+import com.bumptech.glide.Glide
+
+// Adiciona 'isAdmin' ao construtor
 class NoticiasAdapter(
     private var listaNoticias: MutableList<Noticia>,
     private val isAdmin: Boolean
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    // --- 1. ViewHolders (COM LÓGICA DO LÁPIS) ---
+    // --- 1. ViewHolders (Com Lógica do Glide) ---
 
     inner class ImagemGrandeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val titulo: TextView = view.findViewById(R.id.text_titulo_grande)
         val preview: TextView = view.findViewById(R.id.text_preview_grande)
         val imagem: ImageView = view.findViewById(R.id.img_noticia_grande)
-        // CONECTA o botão de Edição
         val editButton: ImageButton = view.findViewById(R.id.button_edit_grande)
 
         fun bind(noticia: Noticia) {
@@ -33,12 +35,19 @@ class NoticiasAdapter(
             preview.text = noticia.preview
             val context = itemView.context
 
+            // 🎯 CARREGAMENTO DA IMAGEM COM GLIDE
+            Glide.with(context)
+                .load(noticia.urlImagem) // URL que vem do Firebase
+                .placeholder(R.drawable.placeholder_covid) // Placeholder enquanto carrega (se existir)
+                .error(R.drawable.placeholder_covid) // Imagem caso a URL falhe
+                .into(imagem)
+
             // Ação de Detalhe
             itemView.setOnClickListener {
                 abrirDetalhe(noticia, context)
             }
 
-            // LÓGICA DO LÁPIS RESTAURADA
+            // Lógica do Lápis
             if (isAdmin) {
                 editButton.visibility = View.VISIBLE
                 editButton.setOnClickListener {
@@ -54,7 +63,6 @@ class NoticiasAdapter(
         val titulo: TextView = view.findViewById(R.id.text_titulo_lateral)
         val preview: TextView = view.findViewById(R.id.text_preview_lateral)
         val imagem: ImageView = view.findViewById(R.id.img_noticia_lateral)
-        // CONECTA o botão de Edição
         val editButton: ImageButton = view.findViewById(R.id.button_edit_lateral)
 
         fun bind(noticia: Noticia) {
@@ -62,12 +70,19 @@ class NoticiasAdapter(
             preview.text = noticia.preview
             val context = itemView.context
 
+            // 🎯 CARREGAMENTO DA IMAGEM COM GLIDE
+            Glide.with(context)
+                .load(noticia.urlImagem) // URL que vem do Firebase
+                .placeholder(R.drawable.placeholder_covid) // Placeholder enquanto carrega
+                .error(R.drawable.placeholder_covid) // Imagem caso a URL falhe
+                .into(imagem)
+
             // Ação de Detalhe
             itemView.setOnClickListener {
                 abrirDetalhe(noticia, context)
             }
 
-            // LÓGICA DO LÁPIS RESTAURADA
+            // Lógica do Lápis
             if (isAdmin) {
                 editButton.visibility = View.VISIBLE
                 editButton.setOnClickListener {
@@ -110,7 +125,7 @@ class NoticiasAdapter(
 
     override fun getItemCount() = listaNoticias.size
 
-    // --- 3. Funções de Navegação (Com a função de Edição RESTAURADA) ---
+    // --- 3. Funções de Navegação (Mantidas) ---
 
     private fun abrirDetalhe(noticia: Noticia, context: Context) {
         val intent = Intent(context, NoticiaDetalheActivity::class.java).apply {
@@ -135,7 +150,23 @@ class NoticiasAdapter(
         Toast.makeText(context, "Abrindo Edição de: ${noticia.titulo}", Toast.LENGTH_SHORT).show()
     }
 
-    // --- 4. MÉTODO DE ATUALIZAÇÃO (Mantido) ---
+    // --- 4. MÉTODO DE FILTRAGEM (Mantido) ---
+
+    fun filtrar(termo: String, listaCompleta: List<Noticia>) {
+        val termoNormalizado = termo.lowercase().trim()
+        val listaFiltrada = if (termoNormalizado.isEmpty()) {
+            listaCompleta
+        } else {
+            listaCompleta.filter { noticia ->
+                noticia.titulo.lowercase().contains(termoNormalizado) ||
+                        noticia.preview.lowercase().contains(termoNormalizado)
+            }
+        }
+
+        listaNoticias.clear()
+        listaNoticias.addAll(listaFiltrada)
+        notifyDataSetChanged()
+    }
 
     fun updateList(newList: List<Noticia>) {
         listaNoticias.clear()

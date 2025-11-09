@@ -1,12 +1,15 @@
 package com.example.unibiblion
 
+import com.google.firebase.Timestamp // NOVO IMPORT NECESSÁRIO!
+
 // Usamos um data class para facilitar a manipulação de dados
 data class Noticia(
-    val titulo: String,
-    val preview: String,
-    val corpo: String,
-    val urlImagem: String,
-    val tipoLayout: Int // ESSENCIAL: define se usa Imagem Grande (1) ou Lateral (2)
+    val titulo: String = "", // Adicionado valor padrão para mapeamento do Firestore
+    val preview: String = "", // Adicionado valor padrão
+    val corpo: String = "", // Adicionado valor padrão
+    val urlImagem: String = "", // Adicionado valor padrão
+    val tipoLayout: Int = 0, // Adicionado valor padrão
+    val timestamp: Timestamp? = null // NOVO CAMPO para ordenação e mapeamento
 ) {
     // Definimos constantes para os tipos de layout para evitar números mágicos
     companion object {
