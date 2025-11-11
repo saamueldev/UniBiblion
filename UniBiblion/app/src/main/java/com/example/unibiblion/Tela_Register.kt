@@ -13,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth // Importa FirebaseAuth
-import com.google.firebase.auth.auth // Importa a extensão ktx
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
@@ -26,8 +26,9 @@ class Tela_Register : AppCompatActivity() {
     private lateinit var confirmPasswordEditText: EditText
     private lateinit var confirmPasswordErrorTextView: TextView
     private lateinit var db: FirebaseFirestore
-    private lateinit var auth: FirebaseAuth // 1. Declaração do Firebase Auth
+    private lateinit var auth: FirebaseAuth
 
+    // Use os Drawables corretos para o seu projeto
     private val DRAWABLE_BORDER_NORMAL = R.drawable.rounded_edittext_background_white
     private val DRAWABLE_BORDER_ERROR = R.drawable.rounded_edittext_background_red
 
@@ -49,7 +50,7 @@ class Tela_Register : AppCompatActivity() {
         confirmPasswordErrorTextView = findViewById(R.id.text_view_confirm_password_error)
 
         db = Firebase.firestore
-        auth = Firebase.auth // 2. Inicialização do Firebase Auth
+        auth = Firebase.auth
 
         confirmPasswordEditText.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
@@ -86,6 +87,7 @@ class Tela_Register : AppCompatActivity() {
     }
 
     private fun isPasswordValid(password: String): Boolean {
+        // A senha deve ter entre 6 e 16 dígitos e conter pelo menos uma letra e um número.
         if (password.length < 6 || password.length > 16) return false
         val hasLetters = password.any { it.isLetter() }
         val hasDigits = password.any { it.isDigit() }
@@ -119,24 +121,21 @@ class Tela_Register : AppCompatActivity() {
             return
         }
 
-        // 3. Chamamos a nova função de autenticação
         registerUserWithAuth(nome, email, senha)
     }
 
     /**
-     * 4. Nova função: Cria o usuário no Firebase Auth.
+     * Cria o usuário no Firebase Auth.
      */
     private fun registerUserWithAuth(nome: String, email: String, senha: String) {
         auth.createUserWithEmailAndPassword(email, senha)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Autenticação bem-sucedida. O Firebase Auth salvou a senha de forma segura.
                     Log.d(TAG, "Usuário do Auth criado com sucesso.")
                     val firebaseUser = auth.currentUser
                     val uid = firebaseUser?.uid
 
                     if (uid != null) {
-                        // Agora salvamos os dados adicionais no Firestore usando o UID.
                         saveUserToFirestore(uid, nome, email)
                     } else {
                         Log.e(TAG, "UID do usuário Auth é nulo após o registro.")
@@ -144,13 +143,11 @@ class Tela_Register : AppCompatActivity() {
                     }
 
                 } else {
-                    // Falha na autenticação (ex: email já em uso, senha inválida).
                     val exception = task.exception
                     val errorMessage = exception?.localizedMessage ?: "Erro desconhecido de autenticação."
 
                     Log.w(TAG, "Falha no Auth: $errorMessage", exception)
 
-                    // Tratamento de erro mais amigável
                     if (errorMessage.contains("email address is already in use")) {
                         Toast.makeText(this, "Este email já está cadastrado.", Toast.LENGTH_LONG).show()
                     } else {
@@ -162,17 +159,22 @@ class Tela_Register : AppCompatActivity() {
 
 
     /**
-     * 5. Função atualizada: Salva os dados do usuário (exceto a senha) no Firestore.
+     * Salva os dados do usuário no Firestore, incluindo a URL de foto de perfil padrão.
      */
     private fun saveUserToFirestore(uid: String, nome: String, email: String) {
+
+        // **IMPORTANTE:** Substitua esta URL pela URL real da sua imagem de perfil padrão no Firebase Storage.
+        val defaultProfilePicUrl = "https://firebasestorage.googleapis.com/v0/b/nome-do-seu-projeto.appspot.com/o/default_profile.png?alt=media&token=SUA_TOKEN_AQUI"
+
         val user = hashMapOf(
             "nome" to nome,
-            "email" to email
-            // A senha NÃO é salva aqui, pois o Firebase Auth já a está gerenciando com segurança.
+            "email" to email,
+            "url_foto_perfil" to defaultProfilePicUrl, // Campo com URL padrão
+            "admin" to false // Inicializa como usuário comum
         )
 
         db.collection("usuarios")
-            .document(uid) // Usa o UID do Auth como ID do documento para vinculação 1:1
+            .document(uid)
             .set(user)
             .addOnSuccessListener {
                 Log.d(TAG, "Dados do usuário salvos no Firestore com UID: $uid")
@@ -186,13 +188,10 @@ class Tela_Register : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Log.w(TAG, "Erro ao salvar dados adicionais no Firestore", e)
 
-                // Prática de segurança: se a autenticação funcionou, mas o Firestore falhou,
-                // devemos excluir o usuário do Auth para evitar contas "órfãs".
+                // Se o Firestore falhar, tentamos apagar a conta recém-criada no Auth
                 auth.currentUser?.delete()
 
                 Toast.makeText(this, "Erro ao finalizar cadastro. Tente novamente.", Toast.LENGTH_LONG).show()
             }
     }
-
-    // A função checkEmailUniqueness e a versão antiga de saveUserToFirestore foram removidas/substituídas.
 }
