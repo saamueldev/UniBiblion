@@ -40,8 +40,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/login_card"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:cardCornerRadius="32dp"
+        android:layout_height="wrap_content" app:cardCornerRadius="32dp"
         app:cardElevation="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -49,78 +48,87 @@
         app:cardBackgroundColor="@color/roxo_primario"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline_card_start"
-        app:layout_constraintVertical_weight="1.0">
+        app:layout_constraintVertical_bias="0.5" > <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical"
+        android:padding="32dp">
 
-        <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="Login"
+            android:textColor="@android:color/white"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edit_text_email"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="32dp">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:autofillHints="emailAddress"
+            android:background="@drawable/rounded_edittext_background_white"
+            android:hint="Email: exemplo@gmail.com"
+            android:textColorHint="@color/text_primary"
+            android:textColor="@android:color/black"
+            android:inputType="textEmailAddress"
+            android:minHeight="56dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:text="Login"
-                android:textColor="@android:color/white"
-                android:textSize="36sp"
-                android:textStyle="bold" />
+        <EditText
+            android:id="@+id/edit_text_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:autofillHints="password"
+            android:background="@drawable/rounded_edittext_background_white"
+            android:hint="Senha"
+            android:textColorHint="@color/text_primary"
+            android:textColor="@android:color/black"
+            android:inputType="textPassword"
+            android:minHeight="56dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" />
 
-            <EditText
-                android:id="@+id/edit_text_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:autofillHints="emailAddress"
-                android:background="@drawable/rounded_edittext_background_white"
-                android:hint="Email: exemplo@gmail.com"
-                android:textColorHint="@color/text_primary"
-                android:textColor="@android:color/black"
-                android:inputType="textEmailAddress"
-                android:minHeight="56dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+        <TextView
+            android:id="@+id/text_view_forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="4dp"
+            android:text="Esqueci minha senha"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edit_text_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:autofillHints="password"
-                android:background="@drawable/rounded_edittext_background_white"
-                android:hint="Senha"
-                android:textColorHint="@color/text_primary"
-                android:textColor="@android:color/black"
-                android:inputType="textPassword"
-                android:minHeight="56dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+        <Button
+            android:id="@+id/button_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/white"
+            android:minHeight="56dp"
+            android:text="Entrar"
+            android:textColor="@color/roxo_primario"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:cornerRadius="28dp" />
 
-            <TextView
-                android:id="@+id/text_view_forgot_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginBottom="32dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="4dp"
-                android:text="Esqueci minha senha"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/button_login"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/white"
-                android:minHeight="56dp"
-                android:text="Entrar"
-                android:textColor="@color/roxo_primario"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:cornerRadius="28dp" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/text_view_register_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="4dp"
+            android:text="Não tem conta? Cadastre-se agora!"  android:textColor="@android:color/white"
+            android:textSize="16sp"
+            />
+    </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
