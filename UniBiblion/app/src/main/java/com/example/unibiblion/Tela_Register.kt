@@ -154,7 +154,7 @@ class Tela_Register : AppCompatActivity() {
                     if (errorMessage.contains("email address is already in use")) {
                         Toast.makeText(this, "Este email já está cadastrado.", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(this, "Erro no cadastro. Verifique a senha e o email.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Erro no cadastro. Verifique a senha, o e-mail e sua conexão.", Toast.LENGTH_LONG).show()
                     }
                 }
             }
