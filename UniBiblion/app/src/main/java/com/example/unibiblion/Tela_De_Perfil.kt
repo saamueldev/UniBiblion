@@ -46,6 +46,8 @@ class Tela_De_Perfil : AppCompatActivity() {
     }
 
     // Função mantida para carregar NOME e FOTO do usuário
+    // Função mantida para carregar NOME e FOTO do usuário, adaptada com o seu exemplo
+
     private fun loadUserProfile() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
@@ -57,19 +59,30 @@ class Tela_De_Perfil : AppCompatActivity() {
                         val profileImageUrl = document.getString("url_foto_perfil")
 
                         nameTextView.text = name
+
+                        // Lógica adaptada do seu exemplo
                         if (!profileImageUrl.isNullOrEmpty()) {
-                            Glide.with(this)
-                                .load(profileImageUrl)
-                                .placeholder(R.drawable.ic_profile)
-                                .error(R.drawable.ic_profile)
-                                .circleCrop()
-                                .into(profileImageView)
+                            Log.d("GlideDebug", "URL encontrada: $profileImageUrl")
+                            Glide.with(this) // 'this' é o contexto da Activity
+                                .load(profileImageUrl) // URL que vem do Firebase
+                                .placeholder(R.drawable.ic_profile) // Placeholder enquanto carrega
+                                .error(R.drawable.ic_profile) // Imagem caso a URL falhe
+                                .circleCrop() // Adiciona o corte circular para a foto de perfil
+                                .into(profileImageView) // O ImageView onde a imagem será exibida
+                        } else {
+                            Log.w("GlideDebug", "URL da foto de perfil está vazia ou nula.")
+                            // Se não houver URL, define a imagem padrão explicitamente
+                            profileImageView.setImageResource(R.drawable.ic_profile)
                         }
+                    } else {
+                        Log.w("GlideDebug", "Documento do usuário não foi encontrado no Firestore.")
                     }
                 }
                 .addOnFailureListener { exception ->
                     Log.e("Tela_De_Perfil", "Erro ao buscar perfil: ", exception)
                 }
+        } else {
+            Log.w("GlideDebug", "Nenhum usuário logado.")
         }
     }
 

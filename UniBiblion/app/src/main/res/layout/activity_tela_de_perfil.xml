@@ -60,13 +60,14 @@
                     android:id="@+id/profile_image"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:background="@android:color/darker_gray"
                     android:src="@drawable/ic_profile"
-                    android:padding="8dp"
-                    android:tint="@color/white"
+                    android:padding="5dp"
+                    app:strokeColor="@android:color/darker_gray"
+                    app:strokeWidth="2dp"
                     app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
                     android:scaleType="centerCrop"
                     android:contentDescription="Foto de Perfil" />
+
 
                 <TextView
                     android:id="@+id/text_name"
