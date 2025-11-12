@@ -9,7 +9,6 @@ import android.widget.ImageButton
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
@@ -17,11 +16,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-// [O restante do seu código da Activity...]
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
+// A classe CursosAdapter permanece a mesma, pois usa dados locais.
 class CursosAdapter(private val listaDeCursos: List<Curso>) :
     RecyclerView.Adapter<CursosAdapter.CursoViewHolder>() {
-    // [Seu CursosAdapter... (Mantido como estava)]
     inner class CursoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(android.R.id.text1)
     }
@@ -34,88 +35,85 @@ class CursosAdapter(private val listaDeCursos: List<Curso>) :
 
     override fun onBindViewHolder(holder: CursoViewHolder, position: Int) {
         holder.textView.text = listaDeCursos[position].nome
-
     }
 
     override fun getItemCount() = listaDeCursos.size
 }
 
+
 class Tela_Livros_Curso : AppCompatActivity() {
-    // [Seus atributos 'lateinit var'...]
 
     private lateinit var recyclerViewLivros: RecyclerView
     private lateinit var searchViewLivros: SearchView
     private lateinit var btnFiltro: ImageButton
-
     private lateinit var cardViewFiltro: CardView
     private lateinit var recyclerViewCursos: RecyclerView
     private lateinit var btnAplicarFiltro: Button
 
-    // Lista de livros (variável de estado para a tela)
-    private lateinit var listaDeLivros: List<Livro>
-    private lateinit var livroAdapter: LivroAdapter
-
+    // O adapter agora é inicializado como nulo e gerenciado no ciclo de vida
+    private var livroAdapter: LivroAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_tela_livros_curso)
 
-        // [Seu código de inicialização de Views e Insets...]
+        // Inicialização das Views
         recyclerViewLivros = findViewById(R.id.recyclerViewLivros)
         searchViewLivros = findViewById(R.id.searchViewLivros)
         btnFiltro = findViewById(R.id.btnAdicionar)
-
         cardViewFiltro = findViewById(R.id.cardViewFiltro)
         recyclerViewCursos = findViewById(R.id.recyclerViewCursos)
         btnAplicarFiltro = findViewById(R.id.btnAplicarFiltro)
 
+        // Lida com as barras de sistema (insets)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // --- COMEÇO DA CORREÇÃO/ADIÇÃO DOS LIVROS ---
+        // --- LÓGICA COM FIREBASE ---
 
-        // 1. Obtém os dados de livros
-        listaDeLivros = obterDadosDosLivros()
+        // 1. Configurar a consulta ao Firestore para buscar os livros
+        val db = FirebaseFirestore.getInstance()
+        val query: Query = db.collection("livros").orderBy("titulo", Query.Direction.ASCENDING)
 
-        // 2. Cria o Adapter dos Livros
-        livroAdapter = LivroAdapter(listaDeLivros)
+        // 2. Configurar as opções do FirestoreRecyclerAdapter
+        val options = FirestoreRecyclerOptions.Builder<Livro>()
+            .setQuery(query, Livro::class.java) // Conecta a consulta e o modelo de dados
+            .build()
 
-        // 3. Define o LayoutManager (GridLayoutManager para grade de 2 colunas)
+        // 3. Inicializar o LivroAdapter com as opções do Firestore
+        livroAdapter = LivroAdapter(options)
+
+        // 4. Configurar a RecyclerView para os livros
         recyclerViewLivros.layoutManager = GridLayoutManager(this, 2)
-
-        // 4. ATRIBUI o Adapter à RecyclerView
         recyclerViewLivros.adapter = livroAdapter
 
-        // --- FIM DA CORREÇÃO/ADIÇÃO DOS LIVROS ---
+        // --- FIM DA LÓGICA COM FIREBASE ---
 
+        // Configuração do SearchView
         searchViewLivros.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // Lógica para filtrar livros deve ser implementada aqui, usando o livroAdapter
+                // A lógica de filtro com FirestoreRecyclerAdapter é diferente e mais complexa.
+                // Requer a criação de uma nova query e a atualização do adapter.
+                // Manteremos a funcionalidade básica por enquanto.
                 return true
             }
         })
 
-        // [Seu código do CursosAdapter e botões...]
+        // Configuração da RecyclerView de Cursos (usa dados locais)
         val listaDeCursos = obterDadosDosCursos()
         recyclerViewCursos.layoutManager = LinearLayoutManager(this)
         recyclerViewCursos.adapter = CursosAdapter(listaDeCursos)
 
+        // Lógica dos botões de filtro
         btnFiltro.setOnClickListener {
-
-            if (cardViewFiltro.visibility == View.GONE) {
-                cardViewFiltro.visibility = View.VISIBLE
-            } else {
-                cardViewFiltro.visibility = View.GONE
-            }
+            cardViewFiltro.visibility = if (cardViewFiltro.visibility == View.GONE) View.VISIBLE else View.GONE
         }
 
         btnAplicarFiltro.setOnClickListener {
@@ -124,21 +122,23 @@ class Tela_Livros_Curso : AppCompatActivity() {
         }
     }
 
-    private fun obterDadosDosLivros(): List<Livro> {
-        // ATENÇÃO: SUBSTITUA R.drawable.sommervile por um recurso de imagem real do seu projeto!
-        // Se a imagem não existir, o aplicativo irá CRASHAR!
-        return listOf(
-            Livro(1, "Livro 1: Design UX/UI", "Autor A", R.drawable.sommervile),
-            Livro(2, "Livro 2: Padrões de Projeto", "Autor B", R.drawable.sommervile),
-            Livro(3, "Livro 3: Clean Code", "Autor C", R.drawable.sommervile),
-            Livro(4, "Livro 4: Redes TCP/IP", "Autor D", R.drawable.sommervile),
-            Livro(5, "Livro 5: Testes de Software", "Autor E", R.drawable.sommervile)
-        )
+    // --- CICLO DE VIDA DO ADAPTER DO FIREBASE ---
+
+    override fun onStart() {
+        super.onStart()
+        // Inicia a escuta por atualizações do Firestore quando a tela fica visível
+        livroAdapter?.startListening()
     }
 
-    // A ÚNICA ALTERAÇÃO FOI NESTA FUNÇÃO
+    override fun onStop() {
+        super.onStop()
+        // Para a escuta para economizar recursos quando a tela não está visível
+        livroAdapter?.stopListening()
+    }
+
+    // --- FUNÇÕES DE DADOS LOCAIS (APENAS PARA CURSOS) ---
+
     private fun obterDadosDosCursos(): List<Curso> {
-        // CORRIGIDO: Adicionado um ID (Int) para cada Curso
         return listOf(
             Curso(1, "Ciência da Computação"),
             Curso(2, "Engenharia Civil"),

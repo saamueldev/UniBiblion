@@ -1,11 +1,30 @@
 package com.example.unibiblion
 
-import androidx.annotation.DrawableRes
+import com.google.firebase.firestore.PropertyName
 
-// A anotação @DrawableRes é opcional, mas ajuda a garantir que você sempre passe um ID de imagem válido.
+/**
+ * Modelo de dados (POJO) que representa um Livro no Firestore.
+ * O construtor vazio com valores padrão é essencial para o Firestore.
+ */
 data class Livro(
-    val id: Int,
-    val titulo: String,
-    val autor: String,
-    @DrawableRes val imagemId: Int // <-- CORRIGIDO de String para Int
+    @get:PropertyName("titulo") @set:PropertyName("titulo")
+    var titulo: String = "",
+
+    @get:PropertyName("autor") @set:PropertyName("autor")
+    var autor: String = "",
+
+    @get:PropertyName("ano") @set:PropertyName("ano")
+    var ano: Long = 0,
+
+    @get:PropertyName("capaURL") @set:PropertyName("capaURL")
+    var capaUrl: String = "",
+
+    @get:PropertyName("estado") @set:PropertyName("estado")
+    var estado: String = "",
+
+    @get:PropertyName("idioma") @set:PropertyName("idioma")
+    var idioma: String = "",
+
+    @get:PropertyName("qEstoque") @set:PropertyName("qEstoque")
+    var qEstoque: Long = 0
 )

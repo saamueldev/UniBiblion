@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:background="@color/roxo_institucional"
-        app:itemIconTint="@color/bottom_nav_icon_color"
 
+        app:itemIconTint="@color/bottom_nav_icon_color"
         app:itemTextColor="@color/black"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
