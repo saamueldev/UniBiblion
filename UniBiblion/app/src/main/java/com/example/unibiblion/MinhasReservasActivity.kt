@@ -8,13 +8,14 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.firebase.auth.FirebaseAuth // Importar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 class MinhasReservasActivity : AppCompatActivity() {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
-    private lateinit var auth: FirebaseAuth // Variável para o Firebase Auth
+    private lateinit var auth: FirebaseAuth
 
     // Títulos das abas (Tabs)
     private val tabTitles = listOf("Reservas Ativas", "Histórico")
@@ -30,27 +31,27 @@ class MinhasReservasActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance() // Inicializar Auth
 
-        // ==========================================================
-        // ⚠️ AUTENTICAÇÃO TEMPORÁRIA PARA TESTE ⚠️
-        // Faz o login do usuário de teste antes de configurar a UI
-        // ==========================================================
-        auth.signInWithEmailAndPassword("teste@unibiblion.com", "senha12345")
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Login de teste bem-sucedido. Continua a configuração.
-                    configurarUI()
-                } else {
-                    Toast.makeText(this, "ERRO: Falha no login de teste. Verifique credenciais.", Toast.LENGTH_LONG).show()
-                }
-            }
+        // 🎯 LÓGICA DE AUTENTICAÇÃO REAL
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            // Se houver um usuário real (autenticado), configura a UI
+            configurarUI(currentUser)
+        } else {
+            // Caso contrário, mostra um erro e encerra a Activity
+            Toast.makeText(this, "Usuário não autenticado. Acesso negado.", Toast.LENGTH_LONG).show()
+            finish()
+        }
+
+        // ⚠️ REMOVIDO: O bloco auth.signInWithEmailAndPassword temporário
     }
 
     /**
-     * Configura o ViewPager e o TabLayout após o login ser confirmado.
+     * Configura o ViewPager e o TabLayout após a autenticação ser confirmada.
      */
-    private fun configurarUI() {
+    private fun configurarUI(currentUser: FirebaseUser) {
         // 1. Configurar o Adapter para o ViewPager2
-        val adapter = ViewPagerAdapter(this)
+        val adapter = ViewPagerAdapter(this) // ESTE ERA ONDE A REFERÊNCIA ESTAVA FALHANDO
         viewPager.adapter = adapter
 
         // 2. Conectar o TabLayout ao ViewPager2
@@ -59,6 +60,7 @@ class MinhasReservasActivity : AppCompatActivity() {
         }.attach()
     }
 
+    // 🎯 CLASSE INTERNA: A DEFINIÇÃO QUE ESTAVA FALTANDO OU FOI PERDIDA
     // Adapter Interno para gerenciar os Fragments das abas
     private inner class ViewPagerAdapter(activity: AppCompatActivity) :
         FragmentStateAdapter(activity) {

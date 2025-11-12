@@ -31,41 +31,38 @@ class ReservasAdapter(
 
         fun bind(reserva: Reserva) {
 
-            if (reserva.dataReserva == null || reserva.horaInicio == null || reserva.horaFim == null || reserva.cabineNumero == null || reserva.status == null) {
+            // 🎯 SIMPLIFICADO: Leitura direta dos campos (Sem .replace("\"", ""))
+            val cabineNumero = reserva.cabineNumero
+            val dataReserva = reserva.dataReserva
+            val horaInicio = reserva.horaInicio
+            val horaFim = reserva.horaFim
+            val statusStr = reserva.status
+
+            if (dataReserva == null || horaInicio == null || horaFim == null || cabineNumero == null || statusStr == null) {
                 tvCabineData.text = "Erro: Dados da reserva incompletos"
                 tvHorario.text = ""
                 return
             }
 
-            // 🎯 INÍCIO DA CORREÇÃO: Remoção de aspas para exibição
-            val cabineNumeroLimpo = reserva.cabineNumero.replace("\"", "")
-            val dataReservaLimpa = reserva.dataReserva.replace("\"", "")
-            val horaInicioLimpa = reserva.horaInicio.replace("\"", "")
-            val horaFimLimpa = reserva.horaFim.replace("\"", "")
-            // 🎯 FIM DA CORREÇÃO
-
             // 1. FORMATAR DATA
-            tvCabineData.text = "Cabine $cabineNumeroLimpo - $dataReservaLimpa"
+            tvCabineData.text = "Cabine $cabineNumero - $dataReserva"
 
             // 2. CALCULAR DURAÇÃO
             try {
-                // Usamos os campos LIMPOS para o parsing, garantindo que o SimpleDateFormat não quebre
-                val dateInicio: Date = timeParser.parse(horaInicioLimpa) ?: throw IllegalStateException("Erro no parsing da hora de início")
-                val dateFim: Date = timeParser.parse(horaFimLimpa) ?: throw IllegalStateException("Erro no parsing da hora de fim")
+                val dateInicio: Date = timeParser.parse(horaInicio) ?: throw IllegalStateException("Erro no parsing da hora de início")
+                val dateFim: Date = timeParser.parse(horaFim) ?: throw IllegalStateException("Erro no parsing da hora de fim")
 
                 val duracaoMillis = dateFim.time - dateInicio.time
                 val duracaoHoras = TimeUnit.MILLISECONDS.toHours(duracaoMillis)
 
-                // Usamos os campos LIMPOS na exibição
-                tvHorario.text = "$horaInicioLimpa às $horaFimLimpa (${duracaoHoras}h)"
+                tvHorario.text = "$horaInicio às $horaFim (${duracaoHoras}h)"
 
             } catch (e: Exception) {
-                // Usamos os campos LIMPOS na exibição de erro
-                tvHorario.text = "$horaInicioLimpa às $horaFimLimpa (Erro no cálculo de duração)"
+                tvHorario.text = "$horaInicio às $horaFim (Erro no cálculo de duração)"
             }
 
             // 3. ESTILIZAÇÃO E AÇÕES BASEADAS NO STATUS
-            val status = StatusReserva.valueOf(reserva.status)
+            val status = StatusReserva.valueOf(statusStr)
 
             when (status) {
                 StatusReserva.ATIVA -> {
@@ -79,7 +76,6 @@ class ReservasAdapter(
                         onActionClick(reserva)
                     }
                 }
-                // ... (outros status)
                 StatusReserva.CONCLUIDA -> {
                     val color = ContextCompat.getColor(itemView.context, android.R.color.darker_gray)
                     imgStatusIndicator.setColorFilter(color)
