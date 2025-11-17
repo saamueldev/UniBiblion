@@ -13,7 +13,7 @@ import java.util.Locale
 
 class LivroAdapter(
     options: FirestoreRecyclerOptions<Livro>,
-    private val listener: OnItemClickListener
+    private val listener: OnItemClickListener?
 ) : FirestoreRecyclerAdapter<Livro, LivroAdapter.LivroViewHolder>(options) {
 
     private val listaCompleta = ArrayList<Livro>()
@@ -72,7 +72,7 @@ class LivroAdapter(
 
     class LivroViewHolder(
         itemView: View,
-        private val listener: OnItemClickListener,
+        private val listener: OnItemClickListener?,
         private val listaLivros: List<Livro>
     ) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
@@ -88,7 +88,7 @@ class LivroAdapter(
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION && position < listaLivros.size) {
-                listener.onItemClick(listaLivros[position])
+                listener?.onItemClick(listaLivros[position])
             }
         }
 
