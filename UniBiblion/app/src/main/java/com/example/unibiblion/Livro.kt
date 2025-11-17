@@ -2,10 +2,7 @@ package com.example.unibiblion
 
 import com.google.firebase.firestore.PropertyName
 
-/**
- * Modelo de dados (POJO) que representa um Livro no Firestore.
- * O construtor vazio com valores padrão é essencial para o Firestore.
- */
+// A linha com erro foi removida e a declaração da classe está correta agora.
 data class Livro(
     @get:PropertyName("titulo") @set:PropertyName("titulo")
     var titulo: String = "",
@@ -21,6 +18,10 @@ data class Livro(
 
     @get:PropertyName("estado") @set:PropertyName("estado")
     var estado: String = "",
+
+    // NOVO CAMPO ADICIONADO PARA O FILTRO
+    @get:PropertyName("curso") @set:PropertyName("curso")
+    var curso: String = "",
 
     @get:PropertyName("idioma") @set:PropertyName("idioma")
     var idioma: String = "",
