@@ -11,47 +11,38 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import java.util.Locale
 
-class LivroAdapter(options: FirestoreRecyclerOptions<Livro>) :
-    FirestoreRecyclerAdapter<Livro, LivroAdapter.LivroViewHolder>(options) {
+class LivroAdapter(
+    options: FirestoreRecyclerOptions<Livro>,
+    private val listener: OnItemClickListener
+) : FirestoreRecyclerAdapter<Livro, LivroAdapter.LivroViewHolder>(options) {
 
     private val listaCompleta = ArrayList<Livro>()
     private val listaVisivel = ArrayList<Livro>()
+    private var isUsingFilter = false // Flag para controlar qual lista usar
 
     override fun onDataChanged() {
         super.onDataChanged()
-        listaCompleta.clear()
-        listaCompleta.addAll(snapshots)
-        // Na primeira vez, a lista visível é a lista completa (sem filtros)
-        aplicarFiltrosCombinados("", "Todos", "Todos")
+        if (!isUsingFilter) {
+            listaVisivel.clear()
+            listaVisivel.addAll(snapshots)
+            notifyDataSetChanged()
+        }
     }
 
-    /**
-     * Método público que aplica os três filtros de uma vez.
-     */
     fun aplicarFiltrosCombinados(texto: String, estado: String, curso: String) {
+        isUsingFilter = true
         val resultados = ArrayList<Livro>()
         val textoBusca = texto.lowercase(Locale.ROOT).trim()
 
+        if (listaCompleta.isEmpty()){
+            listaCompleta.addAll(snapshots)
+        }
+
         for (livro in listaCompleta) {
-            val correspondeTexto = if (textoBusca.isEmpty()) {
-                true
-            } else {
-                livro.titulo.lowercase(Locale.ROOT).contains(textoBusca)
-            }
+            val correspondeTexto = if (textoBusca.isEmpty()) true else livro.titulo.lowercase(Locale.ROOT).contains(textoBusca)
+            val correspondeEstado = if (estado == "Todos") true else livro.estado.equals(estado, ignoreCase = true)
+            val correspondeCurso = if (curso == "Todos") true else livro.curso.equals(curso, ignoreCase = true)
 
-            val correspondeEstado = if (estado == "Todos") {
-                true
-            } else {
-                livro.estado.equals(estado, ignoreCase = true)
-            }
-
-            val correspondeCurso = if (curso == "Todos") {
-                true
-            } else {
-                livro.curso.equals(curso, ignoreCase = true)
-            }
-
-            // O livro só é adicionado se corresponder a TODOS os filtros
             if (correspondeTexto && correspondeEstado && correspondeCurso) {
                 resultados.add(livro)
             }
@@ -63,21 +54,43 @@ class LivroAdapter(options: FirestoreRecyclerOptions<Livro>) :
     }
 
     override fun onBindViewHolder(holder: LivroViewHolder, position: Int, model: Livro) {
-        holder.bind(listaVisivel[position])
+        if (position < listaVisivel.size) {
+            holder.bind(listaVisivel[position])
+        }
     }
 
     override fun getItemCount(): Int = listaVisivel.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LivroViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_livro, parent, false)
-        return LivroViewHolder(view)
+        return LivroViewHolder(view, listener, listaVisivel)
     }
 
-    class LivroViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    interface OnItemClickListener {
+        fun onItemClick(livro: Livro)
+    }
+
+    class LivroViewHolder(
+        itemView: View,
+        private val listener: OnItemClickListener,
+        private val listaLivros: List<Livro>
+    ) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+
         private val tituloTextView: TextView = itemView.findViewById(R.id.textViewTitulo)
         private val autorTextView: TextView = itemView.findViewById(R.id.textViewAutor)
         private val anoTextView: TextView = itemView.findViewById(R.id.textViewAno)
         private val capaImageView: ImageView = itemView.findViewById(R.id.imageViewCapa)
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION && position < listaLivros.size) {
+                listener.onItemClick(listaLivros[position])
+            }
+        }
 
         fun bind(livro: Livro) {
             tituloTextView.text = livro.titulo
@@ -86,7 +99,7 @@ class LivroAdapter(options: FirestoreRecyclerOptions<Livro>) :
             if (livro.capaUrl.isNotEmpty()) {
                 Glide.with(itemView.context).load(livro.capaUrl).into(capaImageView)
             } else {
-                capaImageView.setImageDrawable(null)
+                capaImageView.setImageDrawable(null) // ou uma imagem placeholder
             }
         }
     }

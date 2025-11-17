@@ -1,8 +1,8 @@
 package com.example.unibiblion
 
 import com.google.firebase.firestore.PropertyName
+import java.io.Serializable
 
-// A linha com erro foi removida e a declaração da classe está correta agora.
 data class Livro(
     @get:PropertyName("titulo") @set:PropertyName("titulo")
     var titulo: String = "",
@@ -13,13 +13,13 @@ data class Livro(
     @get:PropertyName("ano") @set:PropertyName("ano")
     var ano: Long = 0,
 
+    // Corrigido para corresponder à capitalização comum em Kotlin (camelCase)
     @get:PropertyName("capaURL") @set:PropertyName("capaURL")
     var capaUrl: String = "",
 
     @get:PropertyName("estado") @set:PropertyName("estado")
     var estado: String = "",
 
-    // NOVO CAMPO ADICIONADO PARA O FILTRO
     @get:PropertyName("curso") @set:PropertyName("curso")
     var curso: String = "",
 
@@ -27,5 +27,9 @@ data class Livro(
     var idioma: String = "",
 
     @get:PropertyName("qEstoque") @set:PropertyName("qEstoque")
-    var qEstoque: Long = 0
-)
+    var qEstoque: Long = 0,
+
+    // --- CAMPO ADICIONADO ---
+    @get:PropertyName("resumo") @set:PropertyName("resumo")
+    var resumo: String = ""
+) : Serializable
