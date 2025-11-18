@@ -1,6 +1,10 @@
 package com.example.unibiblion
 
+import com.google.firebase.Timestamp
+
 data class Message(
-    val text: String,
-    val isSent: Boolean
+    val role: String = "",
+    val content: String = "",
+    val createTime: Timestamp? = null
+
 )

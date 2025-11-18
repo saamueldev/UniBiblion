@@ -130,7 +130,8 @@
                 android:paddingVertical="8dp"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="4"  android:orientation="vertical"
+                app:spanCount="4"
+                android:orientation="vertical"
                 tools:itemCount="8"
                 tools:listitem="@layout/item_book_card" />
 
