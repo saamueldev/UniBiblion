@@ -17,31 +17,40 @@ import kotlinx.coroutines.launch
 
 class Tela_Chat_Bot : AppCompatActivity() {
 
-    // --- Componentes da UI ---
     private lateinit var chatRecyclerView: RecyclerView
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var messageInput: EditText
     private lateinit var sendButton: ImageButton
     private lateinit var bottomNavigation: BottomNavigationView
 
-    // --- Modelo Gemini ---
     private lateinit var generativeModel: GenerativeModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tela_chat_bot)
 
-        // --- Inicialização da UI ---
         chatRecyclerView = findViewById(R.id.chat_recycler_view)
         messageInput = findViewById(R.id.edit_text_message)
         sendButton = findViewById(R.id.button_send)
         bottomNavigation = findViewById(R.id.bottom_navigation)
 
-        // 1. INICIALIZA O MODELO GEMINI com a sua API Key segura
         try {
+            val systemInstructionText = """
+                você é um assistente virtual para um app de biblioteca
+                quero que seja um especialista em livros 
+                caso demonstrem estresse quero que fique gago 
+                
+                """.trimIndent()
+
+            val systemInstruction = com.google.ai.client.generativeai.type.content {
+                role = "system"
+                text(systemInstructionText)
+            }
+
             generativeModel = GenerativeModel(
-                modelName = "gemini-1.5-flash-latest",
-                apiKey = BuildConfig.GEMINI_API_KEY
+                modelName = "gemini-2.5-flash",
+                apiKey = BuildConfig.GEMINI_API_KEY,
+                systemInstruction = systemInstruction
             )
         } catch (e: Exception) {
             Log.e("GeminiChat", "Erro ao inicializar o modelo. Verifique a API Key e a configuração do build.", e)
@@ -52,18 +61,14 @@ class Tela_Chat_Bot : AppCompatActivity() {
         setupBottomNavigation()
         setupSendButton()
 
-        // Adiciona uma mensagem de boas-vindas do bot
         addMessageToChat("Biblion: Como posso te ajudar?", "model")
     }
 
     private fun setupRecyclerView() {
-        // Inicializa o adapter com uma lista vazia. As mensagens serão adicionadas dinamicamente.
         chatAdapter = ChatAdapter(mutableListOf())
         chatRecyclerView.adapter = chatAdapter
 
         val layoutManager = LinearLayoutManager(this)
-        // Opcional: para o teclado não sobrepor a última mensagem
-        // layoutManager.stackFromEnd = true
         chatRecyclerView.layoutManager = layoutManager
     }
 
