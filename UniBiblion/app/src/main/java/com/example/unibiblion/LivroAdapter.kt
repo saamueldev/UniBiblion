@@ -3,8 +3,6 @@ package com.example.unibiblion
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,99 +11,95 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import java.util.Locale
 
-class LivroAdapter(options: FirestoreRecyclerOptions<Livro>) :
-    FirestoreRecyclerAdapter<Livro, LivroAdapter.LivroViewHolder>(options), Filterable {
+class LivroAdapter(
+    options: FirestoreRecyclerOptions<Livro>,
+    private val listener: OnItemClickListener?
+) : FirestoreRecyclerAdapter<Livro, LivroAdapter.LivroViewHolder>(options) {
 
-    // Lista de backup (modificável) para guardar todos os itens originais.
     private val listaCompleta = ArrayList<Livro>()
-    // Lista (modificável) que será exibida e alterada pelo filtro.
-    private val listaFiltrada = ArrayList<Livro>()
+    private val listaVisivel = ArrayList<Livro>()
+    private var isUsingFilter = false // Flag para controlar qual lista usar
 
-    /**
-     * *** CORREÇÃO PRINCIPAL ***
-     * Este método é chamado automaticamente pelo FirebaseUI quando os dados são carregados.
-     * É o momento perfeito para popular nossas listas.
-     */
     override fun onDataChanged() {
         super.onDataChanged()
-        // Limpa as listas para o caso de uma atualização de dados.
-        listaCompleta.clear()
-        // A lista 'snapshots' do adapter original contém todos os dados do Firestore.
-        listaCompleta.addAll(snapshots)
+        if (!isUsingFilter) {
+            listaVisivel.clear()
+            listaVisivel.addAll(snapshots)
+            notifyDataSetChanged()
+        }
+    }
 
-        // Popula a lista visível (filtrada) com todos os itens para a exibição inicial.
-        listaFiltrada.clear()
-        listaFiltrada.addAll(snapshots)
+    fun aplicarFiltrosCombinados(texto: String, estado: String, curso: String) {
+        isUsingFilter = true
+        val resultados = ArrayList<Livro>()
+        val textoBusca = texto.lowercase(Locale.ROOT).trim()
+
+        if (listaCompleta.isEmpty()){
+            listaCompleta.addAll(snapshots)
+        }
+
+        for (livro in listaCompleta) {
+            val correspondeTexto = if (textoBusca.isEmpty()) true else livro.titulo.lowercase(Locale.ROOT).contains(textoBusca)
+            val correspondeEstado = if (estado == "Todos") true else livro.estado.equals(estado, ignoreCase = true)
+            val correspondeCurso = if (curso == "Todos") true else livro.curso.equals(curso, ignoreCase = true)
+
+            if (correspondeTexto && correspondeEstado && correspondeCurso) {
+                resultados.add(livro)
+            }
+        }
+
+        listaVisivel.clear()
+        listaVisivel.addAll(resultados)
         notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: LivroViewHolder, position: Int, model: Livro) {
-        // Agora usamos a lista filtrada para obter o item correto.
-        holder.bind(listaFiltrada[position])
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LivroViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_livro, parent, false)
-        return LivroViewHolder(view)
-    }
-
-    // O adapter agora usa o tamanho da lista filtrada para saber quantos itens desenhar.
-    override fun getItemCount(): Int {
-        return listaFiltrada.size
-    }
-
-    override fun getFilter(): Filter {
-        return object : Filter() {
-            override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val textoFiltrado = constraint.toString().lowercase(Locale.ROOT).trim()
-                val resultadosDaBusca = ArrayList<Livro>()
-
-                if (textoFiltrado.isEmpty()) {
-                    // Se a pesquisa estiver vazia, retorna a lista completa de backup.
-                    resultadosDaBusca.addAll(listaCompleta)
-                } else {
-                    // Caso contrário, filtra a partir da lista completa.
-                    for (livro in listaCompleta) {
-                        if (livro.titulo.lowercase(Locale.ROOT).contains(textoFiltrado)) {
-                            resultadosDaBusca.add(livro)
-                        }
-                    }
-                }
-
-                val filterResults = FilterResults()
-                filterResults.values = resultadosDaBusca
-                return filterResults
-            }
-
-            @Suppress("UNCHECKED_CAST")
-            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                // Limpa e preenche nossa lista filtrada com os resultados da busca.
-                listaFiltrada.clear()
-                if (results?.values is List<*>) {
-                    listaFiltrada.addAll(results.values as List<Livro>)
-                }
-                // Notifica o RecyclerView que os dados mudaram.
-                notifyDataSetChanged()
-            }
+        if (position < listaVisivel.size) {
+            holder.bind(listaVisivel[position])
         }
     }
 
-    class LivroViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    override fun getItemCount(): Int = listaVisivel.size
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LivroViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_livro, parent, false)
+        return LivroViewHolder(view, listener, listaVisivel)
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(livro: Livro)
+    }
+
+    class LivroViewHolder(
+        itemView: View,
+        private val listener: OnItemClickListener?,
+        private val listaLivros: List<Livro>
+    ) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+
         private val tituloTextView: TextView = itemView.findViewById(R.id.textViewTitulo)
         private val autorTextView: TextView = itemView.findViewById(R.id.textViewAutor)
         private val anoTextView: TextView = itemView.findViewById(R.id.textViewAno)
         private val capaImageView: ImageView = itemView.findViewById(R.id.imageViewCapa)
 
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION && position < listaLivros.size) {
+                listener?.onItemClick(listaLivros[position])
+            }
+        }
+
         fun bind(livro: Livro) {
             tituloTextView.text = livro.titulo
             autorTextView.text = livro.autor
             anoTextView.text = if (livro.ano > 0) livro.ano.toString() else ""
-
             if (livro.capaUrl.isNotEmpty()) {
                 Glide.with(itemView.context).load(livro.capaUrl).into(capaImageView)
             } else {
-                capaImageView.setImageDrawable(null)
+                capaImageView.setImageDrawable(null) // ou uma imagem placeholder
             }
         }
     }

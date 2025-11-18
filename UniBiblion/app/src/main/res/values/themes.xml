@@ -1,7 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- 1. TEMA BASE CORRIGIDO: Adicionados os atributos de cor necessários -->
     <style name="Theme.Unibiblion" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Cores primárias da marca (sinta-se à vontade para alterar os valores) -->
+        <item name="colorPrimary">#6200EE</item> <!-- Exemplo: Roxo -->
+        <item name="colorPrimaryVariant">#3700B3</item> <!-- Exemplo: Roxo mais escuro -->
+        <item name="colorOnPrimary">#FFFFFF</item> <!-- Cor do texto sobre a cor primária -->
+
+        <!-- Cores secundárias da marca -->
+        <item name="colorSecondary">#03DAC6</item> <!-- Exemplo: Teal -->
+        <item name="colorSecondaryVariant">#018786</item> <!-- Exemplo: Teal mais escuro -->
+        <item name="colorOnSecondary">#000000</item> <!-- Cor do texto sobre a cor secundária -->
+
+        <!-- Cor da barra de status -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
     </style>
+
+    <!-- 2. SEUS ESTILOS PERSONALIZADOS FORAM MANTIDOS INTACTOS -->
 
     <style name="Theme.Unibiblion.AltoContraste" parent="Theme.Unibiblion">
         <item name="colorSurface">#FFFFFF</item>
@@ -19,7 +34,6 @@
         <item name="cornerSize">50%</item>
     </style>
 
-
     <style name="OptionItemStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -30,8 +44,8 @@
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
 
-
-    <style name="DividerStyle">Central
+    <!-- Corrigido: Texto "Central" removido de dentro da tag de estilo -->
+    <style name="DividerStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:background">#22000000</item>
@@ -45,4 +59,5 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
+
 </resources>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Grupo de Filtro por Estado (permanece igual) -->
+    <item
+        android:id="@+id/menu_filtro_estado_group"
+        android:title="Filtrar por Estado">
+        <menu>
+            <group android:checkableBehavior="single" android:id="@+id/menu_filtro_estado">
+                <item
+                    android:id="@+id/filtro_estado_todos"
+                    android:title="Todos os Estados"
+                    android:checked="true" />
+                <item
+                    android:id="@+id/filtro_estado_novo"
+                    android:title="Novo" />
+                <item
+                    android:id="@+id/filtro_estado_usado"
+                    android:title="Usado" />
+            </group>
+        </menu>
+    </item>
+
+    <!-- Grupo de Filtro por Curso -->
+    <item
+        android:id="@+id/menu_filtro_curso_group"
+        android:title="Filtrar por Curso">
+        <menu>
+            <group android:checkableBehavior="single" android:id="@+id/menu_filtro_curso">
+                <item
+                    android:id="@+id/filtro_curso_todos"
+                    android:title="Todos os Cursos"
+                    android:checked="true" />
+                <item
+                    android:id="@+id/filtro_curso_medicina"
+                    android:title="Medicina" />
+                <item
+                    android:id="@+id/filtro_curso_direito"
+                    android:title="Direito" />
+                <item
+                    android:id="@+id/filtro_curso_administracao"
+                    android:title="Administração" />
+                <item
+                    android:id="@+id/filtro_curso_computacao"
+                    android:title="Ciência da Computação" />
+                <!-- *** NOVA OPÇÃO ADICIONADA AQUI *** -->
+                <item
+                    android:id="@+id/filtro_curso_outros"
+                    android:title="Outros" />
+            </group>
+        </menu>
+    </item>
+
+    <!-- Ação para limpar os filtros -->
+    <item
+        android:id="@+id/menu_limpar_filtros"
+        android:title="Limpar Todos os Filtros" />
+
+</menu>

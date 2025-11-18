@@ -28,7 +28,8 @@
             android:exported="false" />
         <activity
             android:name=".Adm_Tela_Cadastro_Livro"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Unibiblion" />
         <activity
             android:name=".Adm_Tela_Acervo_Livros"
             android:exported="false" />

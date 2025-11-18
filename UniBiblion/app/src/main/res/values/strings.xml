@@ -7,15 +7,16 @@
 
     <string-array name="cursos_array">
         <item>Selecione o Curso</item>
+        <item>Medicina</item>
+        <item>Direito</item>
         <item>Administração</item>
         <item>Ciência da Computação</item>
-        <item>Engenharia Civil</item>
-        <item>Medicina</item>
+        <item>Outros</item>
     </string-array>
 
     <string-array name="idiomas_array">
         <item>Selecione o Idioma</item>
-        <item>Português</item>
+        <item>Português Brasileiro</item>
         <item>Inglês</item>
         <item>Espanhol</item>
         <item>Francês</item>
