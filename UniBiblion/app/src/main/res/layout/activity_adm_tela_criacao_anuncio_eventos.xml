@@ -99,14 +99,6 @@
                 android:layout_height="wrap_content"
                 android:text="Selecionar Imagem de Capa"
                 android:drawableLeft="@drawable/ic_image_gallery"
-                android:layout_marginBottom="8dp"/>
-
-            <Button
-                android:id="@+id/button_add_extra_photos"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Adicionar Fotos Extras (Galeria)"
-                android:drawableLeft="@drawable/ic_add_photo"
                 android:layout_marginBottom="24dp"/>
 
             <View

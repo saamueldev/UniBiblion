@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
-import android.widget.Toast // Import necessário
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,6 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.auth.FirebaseAuth // 🎯 NOVO IMPORT
 
 class NoticiasActivity : AppCompatActivity() {
 
@@ -27,8 +28,10 @@ class NoticiasActivity : AppCompatActivity() {
     private lateinit var searchBar: EditText // Referência à barra de pesquisa
 
     // VARIÁVEIS DO FIREBASE
+    private lateinit var auth: FirebaseAuth // 🎯 NOVO: Referência para a autenticação
     private lateinit var db: FirebaseFirestore
     private var noticiasListener: ListenerRegistration? = null // Listener para tempo real
+    private var isCurrentUserAdmin: Boolean = false // 🎯 NOVO: Status do ADM
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +39,7 @@ class NoticiasActivity : AppCompatActivity() {
         setContentView(R.layout.activity_noticias)
 
         // 1. INICIALIZAÇÃO DO FIREBASE
+        auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
         // 2. OBTÉM AS REFERÊNCIAS
@@ -48,20 +52,8 @@ class NoticiasActivity : AppCompatActivity() {
             insets
         }
 
-        // --- PREPARAÇÃO DO RECYCLERVIEW ---
-        val recyclerView: RecyclerView = findViewById(R.id.recycler_view_noticias)
-
-        // Inicializa a lista completa como vazia (será preenchida pelo Firebase)
-        listaNoticiasCompleta = mutableListOf()
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        // O Adapter é inicializado com a lista vazia
-        noticiasAdapter = NoticiasAdapter(listaNoticiasCompleta.toMutableList(), isAdmin = false)
-        recyclerView.adapter = noticiasAdapter
-
-        // 3. CHAMA A FUNÇÃO DE BUSCA REAL-TIME
-        carregarNoticiasDoFirebase()
+        // 🎯 3. VERIFICA O STATUS DE ADM E CHAMA A CONFIGURAÇÃO PRINCIPAL
+        checkAdminStatusAndSetup()
 
         // 4. CONFIGURAÇÃO DA BARRA DE PESQUISA
         configurarBusca()
@@ -92,6 +84,60 @@ class NoticiasActivity : AppCompatActivity() {
             }
         }
     }
+
+// ------------------------ ## 🔑 Lógica de Verificação de Administrador (ADM)----------------------------------------------
+
+
+    /**
+     * Verifica o status do usuário logado no Firestore e, em seguida,
+     * configura o RecyclerView e carrega os dados.
+     */
+    private fun checkAdminStatusAndSetup() {
+        val currentUser = auth.currentUser
+
+        // Se não há usuário logado, não é ADM.
+        if (currentUser == null) {
+            isCurrentUserAdmin = false
+            setupRecyclerView()
+            carregarNoticiasDoFirebase()
+            return
+        }
+
+        // Verifica na coleção "administradores" se o UID do usuário logado existe como documento
+        db.collection("administradores")
+            .document(currentUser.uid)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful && task.result?.exists() == true) {
+                    // O documento do ADM existe
+                    isCurrentUserAdmin = true
+                    Toast.makeText(this, "Modo Administrador Ativo", Toast.LENGTH_SHORT).show()
+                } else {
+                    isCurrentUserAdmin = false
+                }
+                // 3. INICIALIZAÇÃO DO RECYCLERVIEW
+                setupRecyclerView()
+                // CHAMA A FUNÇÃO DE BUSCA REAL-TIME
+                carregarNoticiasDoFirebase()
+            }
+    }
+
+    /**
+     * Prepara o RecyclerView e inicializa o Adapter com o status de ADM obtido.
+     */
+    private fun setupRecyclerView() {
+        val recyclerView: RecyclerView = findViewById(R.id.recycler_view_noticias)
+
+        // Inicializa a lista completa como vazia
+        listaNoticiasCompleta = mutableListOf()
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        // 🎯 O Adapter é inicializado com o status dinâmico de ADM
+        noticiasAdapter = NoticiasAdapter(listaNoticiasCompleta.toMutableList(), isAdmin = isCurrentUserAdmin)
+        recyclerView.adapter = noticiasAdapter
+    }
+// ----------------------------------------------------------------------
 
     // 6. GARANTE REMOÇÃO DO LISTENER
     override fun onDestroy() {
@@ -125,8 +171,17 @@ class NoticiasActivity : AppCompatActivity() {
                 }
 
                 if (snapshots != null) {
-                    // Mapeia os documentos para o modelo Noticia
-                    val novaLista = snapshots.toObjects(Noticia::class.java)
+                    val novaLista = mutableListOf<Noticia>()
+                    for (document in snapshots.documents) {
+                        // Tenta mapear o documento para a classe Noticia
+                        val noticia = document.toObject(Noticia::class.java)
+
+                        // Mapeia e injeta o ID do documento (necessário para edição/exclusão)
+                        if (noticia != null) {
+                            val noticiaComId = noticia.copy(id = document.id)
+                            novaLista.add(noticiaComId)
+                        }
+                    }
 
                     // Atualiza a lista completa.
                     listaNoticiasCompleta = novaLista
@@ -152,6 +207,4 @@ class NoticiasActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-
-    // REMOVA A FUNÇÃO criarDadosDeExemplo() que estava aqui antes.
 }
