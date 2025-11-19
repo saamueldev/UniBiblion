@@ -1,9 +1,15 @@
-package com.example.unibiblion
+package com.example.unibiblion // ⬅️ LINHA QUE ESTAVA FALTANDO!
+
+import com.google.firebase.Timestamp
 
 data class Review(
-    val id: String,
-    val livroTitulo: String,
-    val textoReview: String,
-    val usuario: UsuarioReview,
-    val rating: Float // Ex: 4.5 estrelas
+    var id: String? = null,
+    val livroId: String = "",
+    val userId: String = "",
+    val userName: String = "",
+    val userPhotoUrl: String? = null,
+    val livroTitulo: String = "",
+    val textoReview: String = "",
+    val rating: Float = 0.0f,
+    val timestamp: Timestamp? = null
 )

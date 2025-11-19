@@ -4,6 +4,9 @@ import com.google.firebase.firestore.PropertyName
 import java.io.Serializable
 
 data class Livro(
+
+    var id: String = "",
+
     @get:PropertyName("titulo") @set:PropertyName("titulo")
     var titulo: String = "",
 

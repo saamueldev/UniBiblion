@@ -1,48 +1,82 @@
-
-
 package com.example.unibiblion
 
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.example.unibiblion.ReviewsAdapter
+import com.example.unibiblion.CriarReviewActivity
 class ReviewsActivity : AppCompatActivity() {
+
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var recyclerView: RecyclerView
+    private var livroId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reviews)
 
-        // 1. Configurar RecyclerView
-        val recyclerView: RecyclerView = findViewById(R.id.recycler_reviews)
-        val listaReviews = criarDadosDeExemplo() // Carrega os dados de simulação
+        firestore = FirebaseFirestore.getInstance()
 
-        val adapter = ReviewsAdapter(listaReviews)
-        recyclerView.adapter = adapter
+        // 1. Receber o ID do Livro (Passado pela Tela_Livro_Desejado.kt)
+        // Usamos a constante EXTRA_LIVRO_ID definida na CriarReviewActivity.
+        livroId = intent.getStringExtra(CriarReviewActivity.EXTRA_LIVRO_ID)
 
-        // 2. Configurar o botão de Filtro (apenas a ação inicial)
-        findViewById<android.widget.ImageButton>(R.id.btn_filter).setOnClickListener {
-            Toast.makeText(this, "Abrir opções de Filtro", Toast.LENGTH_SHORT).show()
-            // Lógica futura: Abrir um BottomSheetDialog para filtros
+        if (livroId.isNullOrEmpty()) {
+            Toast.makeText(this, "Erro: ID do livro não encontrado. Não é possível carregar reviews.", Toast.LENGTH_LONG).show()
+            finish()
+            return
         }
 
-        // 3. Configurar a Bottom Navigation (se necessário, para navegação entre telas)
-        // Isso depende de como você centraliza a navegação no seu projeto
+        recyclerView = findViewById(R.id.recycler_reviews)
+        // 2. Configura LayoutManager e Adapters
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        // 3. Configurar o botão de filtro e navegação (apenas a ação inicial)
+        findViewById<android.widget.ImageButton>(R.id.btn_filter).setOnClickListener {
+            Toast.makeText(this, "Abrir opções de Filtro e Busca de Reviews", Toast.LENGTH_SHORT).show()
+        }
+
+        // 4. Iniciar a busca no Firebase
+        loadReviewsFromFirestore()
     }
 
-    // Função de simulação de dados
-    private fun criarDadosDeExemplo(): List<Review> {
-        // NOTE: Substitua R.drawable.ic_profile (ou ic_user) por um drawable de usuário real
-        // Se você não tem, use um ícone padrão: android.R.drawable.ic_menu_help (apenas para teste)
-        val user1 = UsuarioReview("Ana Lúcia", android.R.drawable.ic_menu_help)
-        val user2 = UsuarioReview("Marcos Vinicius", android.R.drawable.ic_menu_help)
-        val user3 = UsuarioReview("Gabriela Dias", android.R.drawable.ic_menu_help)
+    private fun loadReviewsFromFirestore() {
+        // 🔑 Cria a Query: Filtra pela coleção 'reviews' onde 'livroId' é igual ao ID recebido
+        val query: Query = firestore.collection("reviews")
+            .whereEqualTo("livroId", livroId) // Filtro essencial para o livro correto
+            .orderBy("timestamp", Query.Direction.DESCENDING) // Ordena pela mais recente
 
-        return listOf(
-            Review("R1", "Introdução à Robótica", "Muito didático, o livro consegue simplificar conceitos complexos. Leitura obrigatória!", user1, 4.5f),
-            Review("R2", "O Código Perdido", "Um thriller eletrizante! Não consegui largar. A reviravolta no final é genial.", user2, 5.0f),
-            Review("R3", "História da Arte Moderna", "Conteúdo excelente, mas o layout poderia ser mais visual. Mesmo assim, um bom material de estudo.", user3, 3.5f),
-            Review("R4", "O Código Perdido", "Li em 2 dias. Perfeito para quem ama suspense e mistério.", user1, 5.0f)
-        )
+        query.get()
+            .addOnSuccessListener { snapshots ->
+                val listaReviews = mutableListOf<Review>()
+
+                // Itera sobre os resultados e mapeia para o seu modelo Review.kt
+                for (doc in snapshots) {
+                    val review = doc.toObject(Review::class.java)
+
+                    // Nota: O campo 'id' do Review.kt é opcional, mas se necessário,
+                    // você pode preenchê-lo aqui: review.id = doc.id
+
+                    listaReviews.add(review)
+                }
+
+                if (listaReviews.isEmpty()) {
+                    Toast.makeText(this, "Nenhuma avaliação encontrada para este livro.", Toast.LENGTH_LONG).show()
+                    // Exibir uma view de "sem reviews" se você tiver uma no layout
+                }
+
+                // 5. Atribui a lista filtrada ao seu ReviewsAdapter existente
+                val adapter = ReviewsAdapter(listaReviews)
+                recyclerView.adapter = adapter
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Falha ao carregar avaliações: ${e.message}", Toast.LENGTH_LONG).show()
+            }
     }
+
+    // Você pode remover a função 'criarDadosDeExemplo' se ela ainda existir.
 }

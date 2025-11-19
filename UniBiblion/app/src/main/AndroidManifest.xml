@@ -162,6 +162,10 @@
         </activity>
 
         <activity
+            android:name=".CriarReviewActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".NoticiasActivity"
             android:exported="false">
         </activity>
