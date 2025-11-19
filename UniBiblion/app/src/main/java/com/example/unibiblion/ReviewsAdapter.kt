@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 // Se você for usar o Glide para fotos reais, importe-o aqui
 // import com.bumptech.glide.Glide
 
-class ReviewsAdapter(private val reviews: List<Review>) :
+class ReviewsAdapter(private val reviews: MutableList<Review>) : // 🔑 MUDANÇA AQUI: MutableList
     RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder>() {
 
     class ReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -30,22 +30,25 @@ class ReviewsAdapter(private val reviews: List<Review>) :
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val review = reviews[position]
 
-        // 🔑 1. Dados do Usuário (CORRIGIDO)
-        // Antes: review.usuario.nome
+        // 1. Dados do Usuário
         holder.userName.text = review.userName
 
-        // 🔑 2. Foto do Usuário (Usando o recurso padrão do sistema)
-        // Antes: review.usuario.fotoResourceId (que não existe mais)
-        // Usamos um drawable padrão do Android, como fizemos na tela Admin
+        // 2. Foto do Usuário
         holder.userPhoto.setImageResource(android.R.drawable.ic_menu_help)
 
-        // 3. Dados da Review (Mantido)
+        // 3. Dados da Review
         holder.ratingBar.rating = review.rating
         holder.reviewText.text = review.textoReview
 
-        // 4. Título do Livro (Mantido)
+        // 4. Título do Livro
         holder.bookTitle.text = "Livro: ${review.livroTitulo}"
     }
 
     override fun getItemCount() = reviews.size
+
+    fun updateList(newReviews: MutableList<Review>) {
+        reviews.clear() // ✅ Agora é seguro, pois reviews é MutableList
+        reviews.addAll(newReviews) // ✅
+        notifyDataSetChanged()
+    }
 }
