@@ -1,5 +1,6 @@
 package com.example.unibiblion
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,10 +8,9 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-// Se você for usar o Glide para fotos reais, importe-o aqui
-// import com.bumptech.glide.Glide
+import com.bumptech.glide.Glide
 
-class ReviewsAdapter(private val reviews: MutableList<Review>) : // 🔑 MUDANÇA AQUI: MutableList
+class ReviewsAdapter(private val reviews: MutableList<Review>) :
     RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder>() {
 
     class ReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,28 +27,39 @@ class ReviewsAdapter(private val reviews: MutableList<Review>) : // 🔑 MUDANÇ
         return ReviewViewHolder(view)
     }
 
+    // 2. O método onBindViewHolder foi completamente corrigido
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val review = reviews[position]
 
-        // 1. Dados do Usuário
+        // Dados do Usuário
         holder.userName.text = review.userName
 
-        // 2. Foto do Usuário
-        holder.userPhoto.setImageResource(android.R.drawable.ic_menu_help)
+        // --- INÍCIO DA CORREÇÃO DA IMAGEM ---
+        val userPhotoUrl = review.userPhotoUrl
+        // Adiciona um log para ajudar a depurar. Verifique o Logcat com a tag "ReviewsAdapter"
+        Log.d("ReviewsAdapter", "Carregando imagem para '${review.userName}'. URL: '$userPhotoUrl'")
 
-        // 3. Dados da Review
+        Glide.with(holder.itemView.context)
+            .load(userPhotoUrl) // Carrega a URL da imagem (do Firebase Storage)
+            .placeholder(R.drawable.ic_profile) // Imagem padrão enquanto carrega
+            .error(R.drawable.ic_profile)         // Imagem para casos de erro ou URL vazia
+            .circleCrop()                               // Deixa a imagem redonda
+            .into(holder.userPhoto)                     // Define o resultado na sua ImageView
+        // --- FIM DA CORREÇÃO DA IMAGEM ---
+
+        // Dados da Review
         holder.ratingBar.rating = review.rating
         holder.reviewText.text = review.textoReview
 
-        // 4. Título do Livro
+        // Título do Livro
         holder.bookTitle.text = "Livro: ${review.livroTitulo}"
     }
 
     override fun getItemCount() = reviews.size
 
     fun updateList(newReviews: MutableList<Review>) {
-        reviews.clear() // ✅ Agora é seguro, pois reviews é MutableList
-        reviews.addAll(newReviews) // ✅
+        reviews.clear()
+        reviews.addAll(newReviews)
         notifyDataSetChanged()
     }
 }

@@ -93,7 +93,7 @@ class CriarReviewActivity : AppCompatActivity() {
             .addOnSuccessListener { documentSnapshot ->
                 // Mapeia os campos da coleção 'usuarios'
                 val userNome = documentSnapshot.getString("nome") ?: "Usuário Desconhecido"
-                val userPhotoUrl = documentSnapshot.getString("url_foto_perfil") ?: ""
+                val userPhotoUrl = documentSnapshot.getString("profileImageUrl") ?: ""
 
                 // 2. Criar o objeto Review com dados do Firestore
                 val newReview = Review(
