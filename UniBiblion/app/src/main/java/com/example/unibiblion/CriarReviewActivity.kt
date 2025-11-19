@@ -60,52 +60,68 @@ class CriarReviewActivity : AppCompatActivity() {
         }
     }
 
+    // 🎯 FUNÇÃO ATUALIZADA: Agora busca o nome e a foto do usuário no Firestore antes de salvar a review
     private fun enviarReviewParaFirebase() {
+        // Desabilita o botão para evitar cliques duplicados enquanto processa
+        btnSubmitReview.isEnabled = false
+
         val rating = ratingInput.rating
         val reviewText = etReviewText.text.toString().trim()
         val userId = auth.currentUser?.uid
 
         if (userId == null) {
             Toast.makeText(this, "Você precisa estar logado para enviar uma review.", Toast.LENGTH_SHORT).show()
+            btnSubmitReview.isEnabled = true // Reabilita
             return
         }
 
         if (rating == 0f) {
             Toast.makeText(this, "Por favor, selecione uma nota.", Toast.LENGTH_SHORT).show()
+            btnSubmitReview.isEnabled = true
             return
         }
 
         if (reviewText.isEmpty()) {
             Toast.makeText(this, "Escreva sua avaliação para enviar.", Toast.LENGTH_SHORT).show()
+            btnSubmitReview.isEnabled = true
             return
         }
 
-        // 🚨 Assumindo que você tem um perfil de usuário para pegar o nome
-        val userName = auth.currentUser?.displayName ?: "Usuário Anônimo"
-        val userPhotoUrl = auth.currentUser?.photoUrl.toString()
+        // 1. BUSCAR DADOS DO USUÁRIO NA COLEÇÃO 'usuarios'
+        db.collection("usuarios").document(userId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                // Mapeia os campos da coleção 'usuarios'
+                val userNome = documentSnapshot.getString("nome") ?: "Usuário Desconhecido"
+                val userPhotoUrl = documentSnapshot.getString("url_foto_perfil") ?: ""
 
-        // Criar o objeto Review
-        val newReview = Review(
-            livroId = livroId!!,
-            userId = userId,
-            userName = userName,
-            userPhotoUrl = userPhotoUrl,
-            livroTitulo = livroTitulo!!,
-            textoReview = reviewText,
-            rating = rating,
-            timestamp = Timestamp.now()
-        )
+                // 2. Criar o objeto Review com dados do Firestore
+                val newReview = Review(
+                    livroId = livroId!!,
+                    userId = userId,
+                    userName = userNome, // ⬅️ DADOS CORRIGIDOS
+                    userPhotoUrl = userPhotoUrl, // ⬅️ DADOS CORRIGIDOS
+                    livroTitulo = livroTitulo!!,
+                    textoReview = reviewText,
+                    rating = rating,
+                    timestamp = Timestamp.now()
+                )
 
-        // 3. Enviar para a coleção 'reviews' no Firebase
-        db.collection("reviews")
-            .add(newReview)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Avaliação enviada com sucesso!", Toast.LENGTH_LONG).show()
-                // Fechar a tela após o sucesso
-                finish()
+                // 3. Enviar para a coleção 'reviews'
+                db.collection("reviews")
+                    .add(newReview)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Avaliação enviada com sucesso!", Toast.LENGTH_LONG).show()
+                        finish()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Erro ao salvar review: ${e.message}", Toast.LENGTH_LONG).show()
+                        btnSubmitReview.isEnabled = true
+                    }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Erro ao enviar avaliação: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Erro ao carregar seu perfil: ${e.message}", Toast.LENGTH_LONG).show()
+                btnSubmitReview.isEnabled = true
             }
     }
 }
