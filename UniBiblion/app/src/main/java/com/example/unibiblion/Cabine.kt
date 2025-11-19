@@ -7,7 +7,7 @@ data class Cabine(
     @DocumentId // Mapeia o ID do documento (se você quiser usar o ID do Firestore como identificador)
     val id: String? = null,
     val numero: String? = null,
-    val estado: String? = null // Armazenaremos a String do estado
+    var estado: String? = null // Armazenaremos a String do estado
 ) {
     // Definimos as constantes como strings que serão salvas no Firestore
     companion object {

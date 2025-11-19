@@ -2,21 +2,22 @@ package com.example.unibiblion
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log // ⬅️ IMPORTANTE: Adicionado para o debug
+import android.view.View
+import android.widget.Button
 import android.widget.GridView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import android.view.View
-import android.widget.Button
-import java.util.Calendar
-import android.content.Intent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ListenerRegistration
-import java.text.SimpleDateFormat
+import com.google.firebase.firestore.Query
+import java.util.Calendar
 import java.util.Locale
+import java.text.SimpleDateFormat
 
 class CabinesIndividuaisActivity : AppCompatActivity() {
 
@@ -32,11 +33,30 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigation: BottomNavigationView
 
+    private val dateFormatDatabase = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    private val TAG = "CabinesActivityDebug" // ⬅️ TAG para filtro do Logcat
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cabines_individuais)
 
-        dataHoraSelecionada = Calendar.getInstance()
+        Log.d(TAG, "Activity onCreate iniciado.")
+
+        dataHoraSelecionada = Calendar.getInstance().apply {
+            val currentMinute = get(Calendar.MINUTE)
+
+            // Zera minutos, segundos e milissegundos
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+
+            // Se os minutos atuais forem maiores que zero, o slot da hora atual já começou.
+            if (currentMinute > 0) {
+                // Avança para a próxima hora completa (arredonda para cima).
+                // Ex: 18:42 -> adiciona 1h -> 19:00.
+                add(Calendar.HOUR_OF_DAY, 1)
+            }
+        }
 
         db = FirebaseFirestore.getInstance()
         bottomNavigation = findViewById(R.id.bottom_navigation)
@@ -91,20 +111,31 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG, "Activity onDestroy. Removendo listener do Firebase.")
         cabinesListener?.remove()
     }
 
     override fun onResume() {
         super.onResume()
         bottomNavigation.menu.findItem(R.id.nav_livraria).isChecked = true
+        Log.d(TAG, "Activity onResume iniciado.")
+
+        // 🎯 Força a atualização do status ao retornar à tela (ponto de re-renderização)
+        if (::listaCabines.isInitialized && ::cabinesAdapter.isInitialized) {
+            carregarStatusOcupacao()
+        } else {
+            // Se ainda não inicializou, tenta carregar do Firebase novamente.
+            carregarCabinesDoFirebase()
+        }
     }
 
     // ==========================================================
-    // LÓGICA DE BUSCA EM TEMPO REAL DO FIREBASE
+    // LÓGICA DE BUSCA E ATUALIZAÇÃO DO FIREBASE (CORRIGIDA E DEBUGADA)
     // ==========================================================
 
     private fun carregarCabinesDoFirebase() {
 
+        Log.d(TAG, "Iniciando carregarCabinesDoFirebase().")
         cabinesListener?.remove()
 
         cabinesListener = db.collection("cabines")
@@ -112,6 +143,7 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
             .addSnapshotListener { snapshots, e ->
 
                 if (e != null) {
+                    Log.e(TAG, "Erro ao observar cabines: ${e.localizedMessage}")
                     Toast.makeText(this, "Erro ao observar cabines: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
                     if (!::listaCabines.isInitialized) {
                         listaCabines = mutableListOf()
@@ -121,48 +153,137 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
                 }
 
                 if (snapshots != null) {
-                    listaCabines = snapshots.toObjects(Cabine::class.java).toMutableList()
-                    configurarGridView()
+                    val novaLista = snapshots.toObjects(Cabine::class.java).toMutableList()
+                    Log.d(TAG, "Snapshot do Firebase recebido. Tamanho: ${novaLista.size}")
+
+                    if (!::cabinesAdapter.isInitialized) {
+                        listaCabines = novaLista
+                        configurarGridView()
+                        Log.d(TAG, "Adapter inicializado pela primeira vez. Tamanho da lista: ${listaCabines.size}")
+                    } else {
+                        // ➡️ CORREÇÃO DE FLUXO APLICADA
+                        // Atualiza a lista principal (listaCabines) sem zerar o Adapter
+                        listaCabines.clear()
+                        listaCabines.addAll(novaLista)
+                        Log.d(TAG, "Lista principal atualizada com ${listaCabines.size} cabines do snapshot.")
+                    }
+
+                    // 3. Chama a lógica de ocupação.
+                    carregarStatusOcupacao()
                 }
             }
     }
 
-    /**
-     * Configura o GridView e o Adapter.
-     */
+    private fun carregarStatusOcupacao() {
+        Log.d(TAG, "Iniciando carregarStatusOcupacao().")
+
+        if (!::listaCabines.isInitialized || listaCabines.isEmpty() || !::cabinesAdapter.isInitialized) {
+            Log.w(TAG, "carregarStatusOcupacao abortado: Lista (${::listaCabines.isInitialized}) ou Adapter (${::cabinesAdapter.isInitialized}) não inicializados/vazios.")
+            return
+        }
+
+        val dataReservaStr = dateFormatDatabase.format(dataHoraSelecionada.time)
+
+        // Hora que o usuário SELECIONOU no TextView (ex: 19)
+        val horaInicioSelecionada = dataHoraSelecionada.get(Calendar.HOUR_OF_DAY)
+
+        Log.d(TAG, "Checando ocupação para data/hora: $dataReservaStr às $horaInicioSelecionada:00")
+
+        // --- 🎯 NOVA LÓGICA DE HORÁRIO DE FUNCIONAMENTO ---
+        val horaLimiteInicio = 8 // 08:00
+        val horaLimiteFim = 22 // 22:00 (O slot de 22:00 a 23:00 é o último que deve ser bloqueado)
+
+        if (horaInicioSelecionada < horaLimiteInicio || horaInicioSelecionada >= horaLimiteFim) {
+            Log.w(TAG, "Horário de reserva ($horaInicioSelecionada:00) fora do funcionamento (08:00-22:00). Bloqueando todas as cabines.")
+
+            // Marca todas as cabines como OCUPADAS e notifica o adapter
+            listaCabines.forEach { it.estado = Cabine.ESTADO_OCUPADO }
+            cabinesAdapter.updateCabines(listaCabines)
+            atualizarVisibilidadeBotaoReservar()
+            return // Encerra a função, não precisa checar o Firebase
+        }
+        // --------------------------------------------------
+
+        // 1. Resetamos o estado de TODAS as cabines
+        listaCabines.forEach { it.estado = Cabine.ESTADO_LIVRE }
+        Log.d(TAG, "Status de todas as ${listaCabines.size} cabines resetado para LIVRE.")
+
+        db.collection("reservas")
+            .whereEqualTo("dataReserva", dataReservaStr)
+            .whereEqualTo("status", StatusReserva.ATIVA.name)
+            .get()
+            .addOnSuccessListener { result ->
+                val reservasDoDia = result.toObjects(Reserva::class.java)
+                Log.i(TAG, "Reservas ativas encontradas para o dia: ${reservasDoDia.size}")
+
+                var cabinesOcupadas = 0
+
+                // 2. Itera sobre as reservas e MARCA as cabines OCUPADAS
+                for (reserva in reservasDoDia) {
+                    try {
+                        val horaInicioReserva = reserva.horaInicio?.split(":")?.get(0)?.toInt() ?: continue
+                        val horaFimReserva = reserva.horaFim?.split(":")?.get(0)?.toInt() ?: continue
+
+                        Log.d(TAG, "   -> Comp: Slot Selecionado ($horaInicioSelecionada) vs Reserva (${horaInicioReserva} a ${horaFimReserva}) na cabine ${reserva.cabineNumero}")
+
+                        if (horaInicioSelecionada >= horaInicioReserva && horaInicioSelecionada < horaFimReserva) {
+
+                            val cabineOcupada = listaCabines.find { it.numero == reserva.cabineNumero }
+
+                            cabineOcupada?.estado = Cabine.ESTADO_OCUPADO
+                            if (cabineOcupada != null) {
+                                cabinesOcupadas++
+                                Log.i(TAG, "   -> Cabine ${reserva.cabineNumero} marcada como OCUPADA.")
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Erro no parse da hora da reserva: ${e.localizedMessage}. Reserva: ${reserva.horaInicio} - ${reserva.horaFim}")
+                    }
+                }
+                Log.i(TAG, "Total de cabines marcadas como OCUPADAS: $cabinesOcupadas")
+
+                // 3. ATUALIZAÇÃO DO GRIDVIEW
+                cabinesAdapter.updateCabines(listaCabines)
+                Log.d(TAG, "Adapter notificado (notifyDataSetChanged).")
+
+                atualizarVisibilidadeBotaoReservar()
+
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Falha ao carregar reservas: ${e.localizedMessage}")
+                Toast.makeText(this, "Erro ao carregar reservas: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                cabinesAdapter.updateCabines(listaCabines)
+            }
+    }
+
+
     private fun configurarGridView() {
         val gridCabines: GridView = findViewById(R.id.grid_cabines)
+        Log.d(TAG, "configurarGridView() iniciado.")
 
         if (!::cabinesAdapter.isInitialized) {
-            cabinesAdapter = CabinesAdapter(this, listaCabines)
+            cabinesAdapter = CabinesAdapter(this, listaCabines.toList())
             gridCabines.adapter = cabinesAdapter
+            Log.d(TAG, "Adapter criado e setado no GridView.")
 
-            // 🎯 CORREÇÃO: VERIFICAÇÃO DE ESTADO NO CLIQUE
             gridCabines.setOnItemClickListener { parent, view, position, id ->
 
-                val cabineClicada = listaCabines[position] // Obtém o objeto Cabine
+                val cabineClicada = listaCabines[position]
+                Log.d(TAG, "Cabine ${cabineClicada.numero} clicada. Estado: ${cabineClicada.estado}")
 
                 if (cabineClicada.estado == Cabine.ESTADO_OCUPADO) {
-
-                    // 1. Se a cabine OCUPADA for a que estava selecionada, desmarcamos.
                     if (cabinesAdapter.getSelectedPosition() == position) {
-                        cabinesAdapter.selectSingleCabine(position) // Desmarca a seleção
+                        cabinesAdapter.selectSingleCabine(position)
                     } else {
-                        // 2. Se for uma cabine ocupada e não estava selecionada, bloqueamos a seleção
-                        Toast.makeText(this, "A Cabine ${cabineClicada.numero} está ocupada e não pode ser selecionada.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "A Cabine ${cabineClicada.numero} está ocupada no horário selecionado e não pode ser reservada.", Toast.LENGTH_SHORT).show()
                     }
-
                     atualizarVisibilidadeBotaoReservar()
-                    return@setOnItemClickListener // Impede qualquer ação de seleção
+                    return@setOnItemClickListener
                 }
 
-                // Se a cabine estiver LIVRE, permite o toggle normal de seleção/deseleção
                 cabinesAdapter.selectSingleCabine(position)
                 atualizarVisibilidadeBotaoReservar()
             }
-        } else {
-            // Atualiza a lista interna do Adapter (solução para tempo real)
-            cabinesAdapter.updateCabines(listaCabines)
         }
     }
 
@@ -171,10 +292,19 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
     // ==========================================================
 
     private fun atualizarVisibilidadeBotaoReservar() {
-        if (!::listaCabines.isInitialized) return
+        if (!::listaCabines.isInitialized || !::cabinesAdapter.isInitialized) return
 
-        val algumaCabineSelecionada = cabinesAdapter.getSelectedPosition() != -1
-        if (algumaCabineSelecionada) {
+        val selectedPosition = cabinesAdapter.getSelectedPosition()
+
+        if (selectedPosition != -1) {
+            val cabineSelecionada = listaCabines[selectedPosition]
+
+            if (cabineSelecionada.estado == Cabine.ESTADO_OCUPADO) {
+                cabinesAdapter.selectSingleCabine(selectedPosition)
+                btnReservarCabine.visibility = View.GONE
+                return
+            }
+
             btnReservarCabine.visibility = View.VISIBLE
         } else {
             btnReservarCabine.visibility = View.GONE
@@ -224,6 +354,11 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
 
         val textoFinal = "$dataFormatada às $horaFormatada"
         dateSelectorTextView.text = textoFinal
+        Log.d(TAG, "Data/hora atualizada: $textoFinal. Chamando carregarStatusOcupacao.")
+
+        if (::listaCabines.isInitialized) {
+            carregarStatusOcupacao()
+        }
     }
 
     private fun reservarCabineSelecionada() {
@@ -237,10 +372,10 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
                 return
             }
 
-            // Esta verificação já existia, mas é crucial: se, por algum motivo,
-            // o clique foi permitido, o botão final ainda checa.
             if (cabineSelecionada.estado != Cabine.ESTADO_LIVRE) {
-                Toast.makeText(this, "A Cabine $numeroCabine não está disponível para reserva.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "A Cabine $numeroCabine não está disponível para reserva no horário selecionado.", Toast.LENGTH_SHORT).show()
+                cabinesAdapter.selectSingleCabine(selectedPosition)
+                atualizarVisibilidadeBotaoReservar()
                 return
             }
 

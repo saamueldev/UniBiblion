@@ -24,7 +24,21 @@ class LivroAdapter(
         super.onDataChanged()
         if (!isUsingFilter) {
             listaVisivel.clear()
-            listaVisivel.addAll(snapshots)
+
+            //Hugo para Reviews
+            for (i in 0 until snapshots.size) {
+                val snapshot = snapshots.getSnapshot(i)
+                val livro = snapshot.toObject(Livro::class.java)
+                if (livro != null) {
+                    // ANEXA O ID DO DOCUMENTO AO OBJETO LIVRO
+                    livro.id = snapshot.id
+                    listaVisivel.add(livro)
+                }
+            }
+
+            listaCompleta.clear()
+            listaCompleta.addAll(listaVisivel)
+
             notifyDataSetChanged()
         }
     }
@@ -56,6 +70,7 @@ class LivroAdapter(
     override fun onBindViewHolder(holder: LivroViewHolder, position: Int, model: Livro) {
         if (position < listaVisivel.size) {
             holder.bind(listaVisivel[position])
+
         }
     }
 

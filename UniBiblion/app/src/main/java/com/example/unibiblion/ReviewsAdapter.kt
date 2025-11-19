@@ -1,5 +1,3 @@
-
-
 package com.example.unibiblion
 
 import android.view.LayoutInflater
@@ -9,6 +7,8 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+// Se você for usar o Glide para fotos reais, importe-o aqui
+// import com.bumptech.glide.Glide
 
 class ReviewsAdapter(private val reviews: List<Review>) :
     RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder>() {
@@ -30,16 +30,20 @@ class ReviewsAdapter(private val reviews: List<Review>) :
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val review = reviews[position]
 
-        // 1. Dados do Usuário
-        holder.userName.text = review.usuario.nome
-        // Simulação de foto: usa o ID do recurso (se fosse uma imagem real, seria diferente)
-        holder.userPhoto.setImageResource(review.usuario.fotoResourceId)
+        // 🔑 1. Dados do Usuário (CORRIGIDO)
+        // Antes: review.usuario.nome
+        holder.userName.text = review.userName
 
-        // 2. Dados da Review
+        // 🔑 2. Foto do Usuário (Usando o recurso padrão do sistema)
+        // Antes: review.usuario.fotoResourceId (que não existe mais)
+        // Usamos um drawable padrão do Android, como fizemos na tela Admin
+        holder.userPhoto.setImageResource(android.R.drawable.ic_menu_help)
+
+        // 3. Dados da Review (Mantido)
         holder.ratingBar.rating = review.rating
         holder.reviewText.text = review.textoReview
 
-        // 3. Título do Livro
+        // 4. Título do Livro (Mantido)
         holder.bookTitle.text = "Livro: ${review.livroTitulo}"
     }
 
