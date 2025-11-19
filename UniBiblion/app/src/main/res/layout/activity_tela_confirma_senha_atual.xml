@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:id="@+id/main"
-    tools:context=".Tela_Email_Trocar_Senha_Via_Perfil"> <androidx.constraintlayout.widget.Guideline
-    android:id="@+id/guideline_card_start"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    app:layout_constraintGuide_percent="0.40" />
+    tools:context=".Tela_Confirma_Senha_Atual">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_card_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.40" />
 
     <LinearLayout
         android:id="@+id/logo_section"
@@ -67,7 +69,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Insira o Código de Verificação"
+                android:text="Confirmação de Segurança"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -76,23 +78,21 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="O código de 6 dígitos foi enviado para o seu e-mail."
+                android:text="Insira sua senha atual para continuar."
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:layout_marginBottom="32dp"/>
 
             <EditText
-                android:id="@+id/edit_text_code_verification"
+                android:id="@+id/edit_text_senha_atual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
-                android:autofillHints="smsOTP"
                 android:background="@drawable/rounded_edittext_background_white"
-                android:hint="Código de 6 dígitos"
-                android:textColorHint="@color/text_primary"
+                android:hint="Sua Senha Atual"
+                android:textColorHint="@color/roxo_primario"
                 android:textColor="@android:color/black"
-                android:inputType="number"
-                android:maxLength="6"
+                android:inputType="textPassword"
                 android:minHeight="56dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp" />
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/white"
                 android:minHeight="56dp"
-                android:text="Avançar"
+                android:text="Confirmar e Avançar"
                 android:textColor="@color/roxo_primario"
                 android:textSize="18sp"
                 android:textStyle="bold"

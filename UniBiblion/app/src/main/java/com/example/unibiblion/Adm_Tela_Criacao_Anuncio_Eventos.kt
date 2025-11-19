@@ -1,7 +1,9 @@
 package com.example.unibiblion
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -15,23 +17,38 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.unibiblion.Noticia.Companion.TIPO_IMAGEM_GRANDE
 import com.example.unibiblion.Noticia.Companion.TIPO_IMAGEM_LATERAL
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 class Adm_Tela_Criacao_Anuncio_Eventos : AppCompatActivity() {
+
+    // Constante para o seletor de imagens
+    companion object {
+        private const val PICK_IMAGE_REQUEST = 100
+        private const val COLECAO_NOTICIAS = "noticias"
+    }
 
     // --- DECLARAÇÕES DE CAMPOS E BOTÕES ---
     private lateinit var titleEditText: EditText
     private lateinit var subtitleEditText: EditText
     private lateinit var contentEditText: EditText
     private lateinit var publishButton: Button
-    private lateinit var deleteButton: Button // Botão de Deletar
+    private lateinit var deleteButton: Button
     private lateinit var selectCoverButton: Button
-    private lateinit var addExtraPhotosButton: Button
     private lateinit var formatDropdown: AutoCompleteTextView
+
+    // Variáveis Firebase
+    private val db = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance()
 
     // Variáveis de Controle de Estado
     private var selectedFormat: String = ""
     private var isEditMode: Boolean = false
-    private var editingItemId: String? = null // Usado como ID único (URL da Imagem)
+    private var editingItemId: String? = null // ID do Documento Firestore
+    private var currentImageUrl: String? = null // URL da imagem atual (se estiver em edição)
+    private var selectedImageUri: Uri? = null // URI da nova imagem selecionada
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +68,7 @@ class Adm_Tela_Criacao_Anuncio_Eventos : AppCompatActivity() {
         publishButton = findViewById(R.id.button_publish)
         deleteButton = findViewById(R.id.button_delete_announcement)
         selectCoverButton = findViewById(R.id.button_select_cover)
-        addExtraPhotosButton = findViewById(R.id.button_add_extra_photos)
+        // O botão 'addExtraPhotosButton' foi removido desta versão simplificada com Firebase Storage
         formatDropdown = findViewById(R.id.auto_complete_format_type)
 
         // 2. Configuração do Dropdown
@@ -60,60 +77,71 @@ class Adm_Tela_Criacao_Anuncio_Eventos : AppCompatActivity() {
         // 3. Verifica e configura o modo de edição, pré-preenchendo dados
         checkEditMode()
 
-        // 4. Ações de Imagem (Simulação)
+        // 4. Ação de Imagem (Abrir Seletor de Imagem)
         selectCoverButton.setOnClickListener {
-        }
-        addExtraPhotosButton.setOnClickListener {
-
+            openImageChooser()
         }
 
         // 5. Ação do Botão Principal (Publicar/Salvar Alterações)
         publishButton.setOnClickListener {
             if (validateFields()) {
                 if (isEditMode) {
-                    saveChanges() // RF04.03.07 - Salvar Alterações
+                    saveChanges()
                 } else {
-                    publishContent() // Criação (RF04.03.04)
+                    publishContent()
                 }
             }
         }
 
-        // 6. Ação do Botão de Exclusão (RF04.03.09/10)
+        // 6. Ação do Botão de Exclusão
         deleteButton.setOnClickListener {
-            confirmDeletion() // Chama o diálogo de confirmação
+            confirmDeletion()
         }
     }
 
-    // --- LÓGICA DE EDIÇÃO/PRÉ-PREENCHIMENTO (RF04.03.07) ---
+    // --- LÓGICA DE SELEÇÃO DE IMAGEM ---
+    private fun openImageChooser() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Selecione a Imagem de Capa"), PICK_IMAGE_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            selectedImageUri = data.data
+            Toast.makeText(this, "Imagem selecionada. Pronto para Upload.", Toast.LENGTH_SHORT).show()
+            selectCoverButton.text = "IMAGEM SELECIONADA"
+        }
+    }
+
+    // --- LÓGICA DE EDIÇÃO/PRÉ-PREENCHIMENTO ---
     private fun checkEditMode() {
-        // Verifica se a Intent veio com a flag de EDIÇÃO
         isEditMode = intent.getBooleanExtra("EXTRA_MODE_EDIT", false)
 
         if (isEditMode) {
-            // MODO EDIÇÃO
             editingItemId = intent.getStringExtra("EXTRA_ID_ITEM")
-
-            // 1. Ajustar Interface
-            publishButton.text = "SALVAR ALTERAÇÕES" // RF04.03.07
-            deleteButton.visibility = View.VISIBLE   // RF04.03.09
-
-            // 2. Pré-preencher campos com os dados da Notícia
             val titulo = intent.getStringExtra("EXTRA_TITULO_EDIT") ?: ""
             val preview = intent.getStringExtra("EXTRA_PREVIEW_EDIT") ?: ""
             val corpo = intent.getStringExtra("EXTRA_CORPO_EDIT") ?: ""
             val tipoLayout = intent.getIntExtra("EXTRA_LAYOUT_TIPO_EDIT", TIPO_IMAGEM_GRANDE)
+            currentImageUrl = intent.getStringExtra("EXTRA_URL_IMAGEM_EDIT") // Novo campo para URL
 
             titleEditText.setText(titulo)
             subtitleEditText.setText(preview)
             contentEditText.setText(corpo)
 
-            // 3. Pré-selecionar o dropdown
             val formatText = if (tipoLayout == TIPO_IMAGEM_GRANDE) "Imagem Grande (Destaque)" else "Imagem Lateral (Padrão)"
             formatDropdown.setText(formatText, false)
             selectedFormat = formatText
 
+            publishButton.text = "SALVAR ALTERAÇÕES"
+            deleteButton.visibility = View.VISIBLE
+            selectCoverButton.text = "TROCAR IMAGEM (Atual: ${currentImageUrl?.substring(0, 20)}...)"
+
         } else {
-            // MODO CRIAÇÃO
             deleteButton.visibility = View.GONE
             publishButton.text = "PUBLICAR"
         }
@@ -122,61 +150,124 @@ class Adm_Tela_Criacao_Anuncio_Eventos : AppCompatActivity() {
     // --- FUNÇÕES DE AÇÃO ---
 
     private fun publishContent() {
-        val novoAnuncio = Noticia(
-            titulo = titleEditText.text.toString().trim(),
-            preview = subtitleEditText.text.toString().trim(),
-            corpo = contentEditText.text.toString().trim(),
-            urlImagem = "url_simulada_${System.currentTimeMillis()}", // Simulação de ID
-            tipoLayout = if (selectedFormat.contains("Grande")) TIPO_IMAGEM_GRANDE else TIPO_IMAGEM_LATERAL
-        )
-        NoticiasRepositorySimulado.addNoticia(novoAnuncio)
-
-        Toast.makeText(this, "Anúncio publicado com sucesso!", Toast.LENGTH_LONG).show()
-        finish() // RF04.03.04
+        if (selectedImageUri == null) {
+            Toast.makeText(this, "Por favor, selecione uma imagem de capa.", Toast.LENGTH_LONG).show()
+            return
+        }
+        uploadImageAndSaveData()
     }
 
     private fun saveChanges() {
-        val id = editingItemId ?: return // Se não tiver ID, impede salvar
+        // 1. Se uma nova imagem foi selecionada, faça o upload e depois atualize os dados.
+        if (selectedImageUri != null) {
+            uploadImageAndSaveData(isUpdating = true)
+        } else {
+            // 2. Se a imagem não mudou, apenas atualize o texto no Firestore.
+            updateDataInFirestore(currentImageUrl)
+        }
+    }
 
-        // 1. Criar o objeto Noticia atualizado
-        val noticiaAtualizada = Noticia(
-            titulo = titleEditText.text.toString().trim(),
-            preview = subtitleEditText.text.toString().trim(),
-            corpo = contentEditText.text.toString().trim(),
-            urlImagem = id,
-            tipoLayout = if (selectedFormat.contains("Grande")) TIPO_IMAGEM_GRANDE else TIPO_IMAGEM_LATERAL
+    // --- LÓGICA DE UPLOAD PARA O FIREBASE STORAGE ---
+    private fun uploadImageAndSaveData(isUpdating: Boolean = false) {
+        val fileUri = selectedImageUri ?: return
+        val imageName = "images/${UUID.randomUUID()}.jpg" // Caminho no Storage
+        val imageRef = storage.reference.child(imageName)
+
+        publishButton.isEnabled = false // Desabilita o botão para evitar cliques múltiplos
+        publishButton.text = "UPLOAD..."
+
+        imageRef.putFile(fileUri)
+            .addOnSuccessListener { taskSnapshot ->
+                imageRef.downloadUrl.addOnSuccessListener { uri ->
+                    val downloadUrl = uri.toString()
+                    if (isUpdating) {
+                        updateDataInFirestore(downloadUrl)
+                    } else {
+                        saveDataToFirestore(downloadUrl)
+                    }
+                    // Opcional: Deletar a imagem antiga do Storage se estiver em modo de edição
+                    if (isUpdating && currentImageUrl != null) {
+                        // Implemente a lógica para deletar a imagem antiga aqui, se necessário.
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Falha no upload da imagem: ${it.message}", Toast.LENGTH_LONG).show()
+                publishButton.isEnabled = true
+                publishButton.text = if (isUpdating) "SALVAR ALTERAÇÕES" else "PUBLICAR"
+            }
+    }
+
+    // --- LÓGICA DE ARMAZENAMENTO NO FIREBASE FIRESTORE ---
+
+    // Criação (Inserir novo documento)
+    private fun saveDataToFirestore(urlImagem: String) {
+        val novoAnuncio = hashMapOf(
+            "titulo" to titleEditText.text.toString().trim(),
+            "preview" to subtitleEditText.text.toString().trim(),
+            "corpo" to contentEditText.text.toString().trim(),
+            "urlImagem" to urlImagem,
+            "tipoLayout" to if (selectedFormat.contains("Grande")) TIPO_IMAGEM_GRANDE else TIPO_IMAGEM_LATERAL,
+            "timestamp" to Timestamp.now()
         )
 
-        // 2. Chamar a função de atualização no repositório (RF04.03.08)
-        NoticiasRepositorySimulado.updateNoticia(noticiaAtualizada, id)
-
-        Toast.makeText(this, "Anúncio editado.", Toast.LENGTH_LONG).show() // RF04.03.08 Pop-up
-        finish() // RF04.03.08 Redirecionar
+        db.collection(COLECAO_NOTICIAS)
+            .add(novoAnuncio)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Anúncio publicado com sucesso!", Toast.LENGTH_LONG).show()
+                finish()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao publicar: ${e.message}", Toast.LENGTH_LONG).show()
+                publishButton.isEnabled = true
+                publishButton.text = "PUBLICAR"
+            }
     }
 
-    // --- LÓGICA DE EXCLUSÃO COM CONFIRMAÇÃO (RF04.03.10) ---
+    // Edição (Atualizar documento existente)
+    private fun updateDataInFirestore(urlImagem: String?) {
+        val id = editingItemId
+        if (id == null) {
+            Toast.makeText(this, "Erro: ID não encontrado para edição.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-    // Exibe o diálogo de confirmação antes de deletar
+        val dadosAtualizados = hashMapOf<String, Any>(
+            "titulo" to titleEditText.text.toString().trim(),
+            "preview" to subtitleEditText.text.toString().trim(),
+            "corpo" to contentEditText.text.toString().trim(),
+            "tipoLayout" to if (selectedFormat.contains("Grande")) TIPO_IMAGEM_GRANDE else TIPO_IMAGEM_LATERAL
+            // Não atualiza o timestamp na edição, a menos que você deseje.
+        )
+        // Adiciona urlImagem apenas se foi passado um novo valor (ou se for o mesmo que o atual)
+        if (urlImagem != null) {
+            dadosAtualizados["urlImagem"] = urlImagem
+        }
+
+
+        db.collection(COLECAO_NOTICIAS).document(id)
+            .update(dadosAtualizados)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Anúncio editado.", Toast.LENGTH_LONG).show()
+                finish()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao salvar alterações: ${e.message}", Toast.LENGTH_LONG).show()
+                publishButton.isEnabled = true
+                publishButton.text = "SALVAR ALTERAÇÕES"
+            }
+    }
+
+    // --- LÓGICA DE EXCLUSÃO COM CONFIRMAÇÃO ---
     private fun confirmDeletion() {
-        val builder = AlertDialog.Builder(this)
-
-        builder.setTitle("Confirmar Exclusão")
-        builder.setMessage("Tem certeza de que deseja deletar permanentemente esta publicação?")
-
-        // Botão de Confirmação (DELETAR)
-        builder.setPositiveButton("DELETAR") { dialog, which ->
-            executeDeletion()
-        }
-
-        // Botão de Cancelamento
-        builder.setNegativeButton("Cancelar") { dialog, which ->
-            dialog.dismiss()
-        }
-
-        builder.show()
+        AlertDialog.Builder(this)
+            .setTitle("Confirmar Exclusão")
+            .setMessage("Tem certeza de que deseja deletar permanentemente esta publicação?")
+            .setPositiveButton("DELETAR") { _, _ -> executeDeletion() }
+            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 
-    // Executa a exclusão APÓS a confirmação
     private fun executeDeletion() {
         val id = editingItemId
         if (id == null || !isEditMode) {
@@ -184,16 +275,28 @@ class Adm_Tela_Criacao_Anuncio_Eventos : AppCompatActivity() {
             return
         }
 
-        // 1. Excluir a publicação (RF04.03.10)
-        NoticiasRepositorySimulado.deleteNoticia(id)
+        // 1. Deletar o documento do Firestore (RF04.03.10)
+        db.collection(COLECAO_NOTICIAS).document(id)
+            .delete()
+            .addOnSuccessListener {
+                // 2. Opcional: Deletar a imagem do Storage (Boa Prática)
+                currentImageUrl?.let { url ->
+                    val imageRef = storage.getReferenceFromUrl(url)
+                    imageRef.delete().addOnSuccessListener {
+                        // Imagem deletada com sucesso.
+                    }.addOnFailureListener {
+                        // Log de erro, mas não bloqueia a exclusão do documento.
+                    }
+                }
 
-        // 2. Exibir pop-up "Anúncio deletado" (RF04.03.10)
-        Toast.makeText(this, "Anúncio deletado.", Toast.LENGTH_LONG).show()
-
-        // 3. Redirecionar para o mural (RF04.03.10)
-        finish()
+                // 3. Exibir pop-up e redirecionar (RF04.03.10)
+                Toast.makeText(this, "Anúncio deletado.", Toast.LENGTH_LONG).show()
+                finish()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao deletar: ${e.message}", Toast.LENGTH_LONG).show()
+            }
     }
-
 
     // --- FUNÇÕES AUXILIARES ---
     private fun setupFormatDropdown() {
@@ -201,17 +304,18 @@ class Adm_Tela_Criacao_Anuncio_Eventos : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, formats)
         formatDropdown.setAdapter(adapter)
 
-        formatDropdown.setOnItemClickListener { parent, view, position, id ->
+        formatDropdown.setOnItemClickListener { _, _, position, _ ->
             selectedFormat = formats[position]
         }
+        // Configuração inicial
         formatDropdown.setText(formats[0], false)
         selectedFormat = formats[0]
     }
 
     private fun validateFields(): Boolean {
+        // ... (Sua lógica de validação permanece a mesma)
         val title = titleEditText.text.toString().trim()
         val content = contentEditText.text.toString().trim()
-        // Subtitle é opcional
 
         if (title.isEmpty()) {
             titleEditText.error = "O título é obrigatório."
