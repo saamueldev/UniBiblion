@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
-    tools:context=".Tela_Alterar_Foto"> <androidx.cardview.widget.CardView
+    tools:context=".Tela_De_Perfil_Foto">
+    <androidx.cardview.widget.CardView
     android:id="@+id/profile_image_container"
     android:layout_width="140dp"
     android:layout_height="140dp"

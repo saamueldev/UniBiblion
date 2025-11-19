@@ -3,15 +3,19 @@ package com.example.unibiblion
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID // Import necessário para gerar nomes de arquivo únicos
 
 class Tela_De_Perfil_Foto : AppCompatActivity() {
 
@@ -23,6 +27,7 @@ class Tela_De_Perfil_Foto : AppCompatActivity() {
 
     private val storage = FirebaseStorage.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
 
     private val selecionarImagemLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -52,6 +57,41 @@ class Tela_De_Perfil_Foto : AppCompatActivity() {
         }
 
         setupBottomNavigation(bottomNavigation)
+
+        carregarFotoDePerfilAtual()
+    }
+
+    private fun carregarFotoDePerfilAtual() {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            imageViewPerfil.setImageResource(R.drawable.ic_profile)
+            return
+        }
+
+        firestore.collection("usuarios").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val imageUrl = document.getString("profileImageUrl")
+                    if (!imageUrl.isNullOrEmpty()) {
+                        Glide.with(this)
+                            .load(imageUrl)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .placeholder(R.drawable.ic_profile)
+                            .error(R.drawable.ic_profile)
+                            .circleCrop()
+                            .into(imageViewPerfil)
+                    } else {
+                        imageViewPerfil.setImageResource(R.drawable.ic_profile)
+                    }
+                } else {
+                    imageViewPerfil.setImageResource(R.drawable.ic_profile)
+                }
+            }
+            .addOnFailureListener {
+                imageViewPerfil.setImageResource(R.drawable.ic_profile)
+                Log.e("PerfilFoto", "Erro ao buscar foto de perfil", it)
+            }
     }
 
     private fun abrirGaleria() {
@@ -71,20 +111,60 @@ class Tela_De_Perfil_Foto : AppCompatActivity() {
             return
         }
 
-        // Desativa os botões para dar feedback ao usuário
         setLoading(true)
 
-        val storageRef = storage.reference.child("profile_images/$userId.jpg")
+        // 1. Obter a URL da imagem antiga para poder excluí-la depois
+        firestore.collection("usuarios").document(userId).get()
+            .addOnSuccessListener { document ->
+                val oldImageUrl = document.getString("profileImageUrl")
 
-        storageRef.putFile(uri)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Foto enviada com sucesso!", Toast.LENGTH_SHORT).show()
+                // 2. Criar um nome de arquivo único para a nova imagem
+                val fileName = "${UUID.randomUUID()}.jpg"
+                val newImageRef = storage.reference.child("profile_images/$fileName")
+
+                // 3. Fazer o upload da nova imagem
+                newImageRef.putFile(uri)
+                    .addOnSuccessListener {
+                        // 4. Se o upload for bem-sucedido, obter a nova URL de download
+                        newImageRef.downloadUrl.addOnSuccessListener { newDownloadUri ->
+                            // 5. Salvar a nova URL no Firestore
+                            salvarUrlNoFirestore(newDownloadUri.toString(), oldImageUrl)
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        setLoading(false)
+                        Toast.makeText(this, "Erro no upload: ${exception.message}", Toast.LENGTH_LONG).show()
+                    }
+            }
+            .addOnFailureListener {
                 setLoading(false)
+                Toast.makeText(this, "Erro ao obter dados do usuário para a troca.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun salvarUrlNoFirestore(newImageUrl: String, oldImageUrl: String?) {
+        val userId = auth.currentUser?.uid ?: return
+        val userDocRef = firestore.collection("usuarios").document(userId)
+        val data = hashMapOf<String, Any>("profileImageUrl" to newImageUrl)
+
+        userDocRef.update(data)
+            .addOnSuccessListener {
+                // 6. Se a URL foi atualizada, excluir a imagem antiga (se existir)
+                if (!oldImageUrl.isNullOrEmpty()) {
+                    val oldImageRef = storage.getReferenceFromUrl(oldImageUrl)
+                    oldImageRef.delete().addOnSuccessListener {
+                        Log.d("PerfilFoto", "Imagem antiga excluída com sucesso.")
+                    }.addOnFailureListener {
+                        Log.w("PerfilFoto", "Falha ao excluir a imagem antiga.")
+                    }
+                }
+                setLoading(false)
+                Toast.makeText(this, "Foto atualizada com sucesso!", Toast.LENGTH_SHORT).show()
                 finish()
             }
-            .addOnFailureListener { exception ->
+            .addOnFailureListener { e ->
                 setLoading(false)
-                Toast.makeText(this, "Erro no upload: ${exception.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Erro ao salvar referência da foto: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
 
