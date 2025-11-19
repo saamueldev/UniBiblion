@@ -24,7 +24,6 @@ class Tela_De_Perfil : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    // Views que serão atualizadas
     private lateinit var profileImageView: ImageView
     private lateinit var nameTextView: TextView
 
@@ -39,14 +38,10 @@ class Tela_De_Perfil : AppCompatActivity() {
         setupHeaderClicks()
         setupBottomNavigation()
 
-        // Carrega apenas os dados do usuário (nome e foto)
         loadUserProfile()
-        // Carrega as listas de livros diretamente da coleção "livros"
         loadBookSections()
     }
 
-    // Função mantida para carregar NOME e FOTO do usuário
-    // Função mantida para carregar NOME e FOTO do usuário, adaptada com o seu exemplo
 
     private fun loadUserProfile() {
         val currentUser = auth.currentUser
@@ -56,22 +51,20 @@ class Tela_De_Perfil : AppCompatActivity() {
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {
                         val name = document.getString("nome") ?: "Nome não encontrado"
-                        val profileImageUrl = document.getString("url_foto_perfil")
+                        val profileImageUrl = document.getString("profileImageUrl")
 
                         nameTextView.text = name
 
-                        // Lógica adaptada do seu exemplo
                         if (!profileImageUrl.isNullOrEmpty()) {
                             Log.d("GlideDebug", "URL encontrada: $profileImageUrl")
-                            Glide.with(this) // 'this' é o contexto da Activity
-                                .load(profileImageUrl) // URL que vem do Firebase
-                                .placeholder(R.drawable.ic_profile) // Placeholder enquanto carrega
-                                .error(R.drawable.ic_profile) // Imagem caso a URL falhe
-                                .circleCrop() // Adiciona o corte circular para a foto de perfil
-                                .into(profileImageView) // O ImageView onde a imagem será exibida
+                            Glide.with(this)
+                                .load(profileImageUrl)
+                                .placeholder(R.drawable.ic_profile)
+                                .error(R.drawable.ic_profile)
+                                .circleCrop()
+                                .into(profileImageView)
                         } else {
                             Log.w("GlideDebug", "URL da foto de perfil está vazia ou nula.")
-                            // Se não houver URL, define a imagem padrão explicitamente
                             profileImageView.setImageResource(R.drawable.ic_profile)
                         }
                     } else {
@@ -86,32 +79,26 @@ class Tela_De_Perfil : AppCompatActivity() {
         }
     }
 
-    // FUNÇÃO para carregar livros sem depender do usuário
     private fun loadBookSections() {
-        // Para "Favoritos", pegamos 4 livros ordenados pelo título
         fetchBooksWithQuery(
             db.collection("livros").orderBy("title").limit(4),
             R.id.favorites_recycler_view
         )
 
-        // Para "Histórico", pegamos 4 livros ordenados pelo autor
         fetchBooksWithQuery(
             db.collection("livros").orderBy("author").limit(4),
             R.id.history_recycler_view
         )
 
-        // Para "Alugados", pegamos 4 livros em ordem decrescente de título
         fetchBooksWithQuery(
             db.collection("livros").orderBy("title", Query.Direction.DESCENDING).limit(4),
             R.id.rented_books_recycler_view
         )
     }
 
-    // Função genérica que executa uma query e popula um RecyclerView
     private fun fetchBooksWithQuery(query: Query, recyclerViewId: Int) {
         val recyclerView = findViewById<RecyclerView>(recyclerViewId)
         recyclerView.layoutManager = GridLayoutManager(this, 4)
-        // **MELHORIA: Atribui um adaptador vazio imediatamente**
         recyclerView.adapter = BookAdapter(emptyList()) {}
 
         query.get()
@@ -122,20 +109,16 @@ class Tela_De_Perfil : AppCompatActivity() {
                         booksList.add(book)
                     }
                 }
-                // **Atualiza o adaptador existente com os novos dados**
                 recyclerView.adapter = BookAdapter(booksList) { book ->
                     Toast.makeText(this, "Livro clicado: ${book.title}", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener { exception ->
-                // AQUI ESTÁ O PROBLEMA: A busca está falhando.
-                // Esta mensagem deve aparecer no seu Logcat.
                 Log.e("Tela_De_Perfil", "FALHA AO BUSCAR LIVROS: A query precisa de um índice. Verifique o Logcat para o link de criação.", exception)
                 Toast.makeText(this, "Falha ao carregar livros. Verifique os índices do Firestore.", Toast.LENGTH_LONG).show()
             }
     }
 
-    // --- O resto do código (setupHeaderClicks, showPopupMenu, setupBottomNavigation) permanece o mesmo ---
     private fun setupHeaderClicks() {
         findViewById<ImageView>(R.id.icon_bell).setOnClickListener {
             startActivity(Intent(this, Tela_Notificacoes::class.java))

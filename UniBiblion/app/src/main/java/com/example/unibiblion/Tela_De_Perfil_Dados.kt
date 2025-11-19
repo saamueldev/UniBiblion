@@ -44,9 +44,7 @@ class Tela_De_Perfil_Dados : AppCompatActivity() {
             startActivity(Intent(this, Tela_De_Perfil_Email::class.java))
         }
 
-        // CORREÇÃO APLICADA AQUI: MUDANÇA DE NOME DA ACTIVITY
         buttonTrocarSenha.setOnClickListener {
-            // A antiga Tela_Email_Trocar_Senha_Via_Perfil agora se chama:
             startActivity(Intent(this, Tela_Confirma_Senha_Atual::class.java))
         }
 
@@ -65,9 +63,6 @@ class Tela_De_Perfil_Dados : AppCompatActivity() {
                     true
                 }
                 R.id.nav_perfil -> {
-                    // Nota: Geralmente, ao clicar no item da própria Activity, não se deve iniciar
-                    // uma nova instância, mas manter a atual. Mudei para evitar loop.
-                    // Se a intenção era ir para a Tela_De_Perfil principal, mantenha a navegação.
                     startActivity(Intent(this, Tela_De_Perfil::class.java))
                     finish()
                     true
@@ -89,7 +84,6 @@ class Tela_De_Perfil_Dados : AppCompatActivity() {
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_editar_perfil -> {
-                    // Mantido, mas geralmente não é necessário ir para a própria tela
                     startActivity(Intent(this, Tela_De_Perfil_Dados::class.java))
                     true
                 }
