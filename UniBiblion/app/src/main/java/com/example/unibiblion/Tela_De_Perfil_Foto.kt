@@ -1,55 +1,119 @@
 package com.example.unibiblion
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 
 class Tela_De_Perfil_Foto : AppCompatActivity() {
+
+    private lateinit var imageViewPerfil: ImageView
+    private lateinit var buttonEscolherFoto: Button
+    private lateinit var buttonSalvar: Button
+
+    private var imagemSelecionadaUri: Uri? = null
+
+    private val storage = FirebaseStorage.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+
+    private val selecionarImagemLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            imagemSelecionadaUri = it
+            imageViewPerfil.setImageURI(it)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tela_de_perfil_foto)
 
-        // Inicialização dos Views
-        val buttonEscolherFoto = findViewById<Button>(R.id.button_escolher_foto)
-        val buttonSalvar = findViewById<Button>(R.id.button_salvar)
+        imageViewPerfil = findViewById(R.id.profile_image)
+        buttonEscolherFoto = findViewById(R.id.button_escolher_foto)
+        buttonSalvar = findViewById(R.id.button_salvar)
+
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
         buttonEscolherFoto.setOnClickListener {
-            Toast.makeText(this, "Abrir Galeria/Câmera", Toast.LENGTH_SHORT).show()
+            abrirGaleria()
         }
 
         buttonSalvar.setOnClickListener {
-            Toast.makeText(this, "Salvando a nova foto...", Toast.LENGTH_SHORT).show()
-
-            finish()
+            uploadImagemParaFirebase()
         }
-        bottomNavigation.selectedItemId = R.id.nav_perfil
 
+        setupBottomNavigation(bottomNavigation)
+    }
+
+    private fun abrirGaleria() {
+        selecionarImagemLauncher.launch("image/*")
+    }
+
+    private fun uploadImagemParaFirebase() {
+        val uri = imagemSelecionadaUri
+        if (uri == null) {
+            Toast.makeText(this, "Por favor, escolha uma foto primeiro.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(this, "Erro: Usuário não autenticado.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Desativa os botões para dar feedback ao usuário
+        setLoading(true)
+
+        val storageRef = storage.reference.child("profile_images/$userId.jpg")
+
+        storageRef.putFile(uri)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Foto enviada com sucesso!", Toast.LENGTH_SHORT).show()
+                setLoading(false)
+                finish()
+            }
+            .addOnFailureListener { exception ->
+                setLoading(false)
+                Toast.makeText(this, "Erro no upload: ${exception.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        if (isLoading) {
+            buttonEscolherFoto.isEnabled = false
+            buttonSalvar.isEnabled = false
+        } else {
+            buttonEscolherFoto.isEnabled = true
+            buttonSalvar.isEnabled = true
+        }
+    }
+
+    private fun setupBottomNavigation(bottomNavigation: BottomNavigationView) {
+        bottomNavigation.selectedItemId = R.id.nav_perfil
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_livraria-> {
+                R.id.nav_livraria -> {
                     startActivity(Intent(this, Tela_Central_Livraria::class.java))
-                    finish()
-                    true
+                    finish(); true
                 }
                 R.id.nav_noticias -> {
                     startActivity(Intent(this, NoticiasActivity::class.java))
-                    finish()
-                    true
+                    finish(); true
                 }
-                R.id.nav_perfil -> {
-                    startActivity(Intent(this, Tela_De_Perfil::class.java))
-                    finish()
-                    true
-                }
+                R.id.nav_perfil -> true
                 R.id.nav_chatbot -> {
                     startActivity(Intent(this, Tela_Chat_Bot::class.java))
-                    finish()
-                    true
+                    finish(); true
                 }
                 else -> false
             }
