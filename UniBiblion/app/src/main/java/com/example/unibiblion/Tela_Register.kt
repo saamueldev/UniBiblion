@@ -169,7 +169,7 @@ class Tela_Register : AppCompatActivity() {
         val user = hashMapOf(
             "nome" to nome,
             "email" to email,
-            "url_foto_perfil" to defaultProfilePicUrl, // Campo com URL padrão
+            "profileImageUrl" to defaultProfilePicUrl, // Campo com URL padrão
             "admin" to false // Inicializa como usuário comum
         )
 
