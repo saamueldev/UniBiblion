@@ -20,7 +20,6 @@ class Tela_Central_Livraria : AppCompatActivity() {
 
         // Inicializa os botões do corpo da tela
         val buttonAcervo: Button = findViewById(R.id.buttonGerenciarCatalogo)
-        val buttonLivros: Button = findViewById(R.id.buttonGerenciarCabines)
         val buttonSala: Button = findViewById(R.id.buttonGerenciamentoGeral)
         val buttonRenovar: Button = findViewById(R.id.buttonRenovarLivros)
 
@@ -29,12 +28,6 @@ class Tela_Central_Livraria : AppCompatActivity() {
         // Mapeia para Catálogo/Acervo
         buttonAcervo.setOnClickListener {
             val intent = Intent(this, Tela_Acervo_Livros::class.java)
-            startActivity(intent)
-        }
-
-        // Mapeia para Alugar livros / Livros Curso
-        buttonLivros.setOnClickListener {
-            val intent = Intent(this, Tela_Livros_Curso::class.java)
             startActivity(intent)
         }
 
