@@ -69,8 +69,6 @@
                     android:id="@+id/profile_image"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:background="@android:color/darker_gray"
-                    android:src="@drawable/ic_profile"
                     android:scaleType="centerCrop"
                     android:contentDescription="Foto de Perfil" />
 
@@ -82,7 +80,6 @@
                     android:textSize="24sp"
                     android:textStyle="bold"
                     tools:text="Jonh Henrique" />
-
 
             </LinearLayout>
 
