@@ -15,7 +15,7 @@ class Tela_Sobre_sistema : AppCompatActivity() {
         val termosUsoTextView: TextView = findViewById(R.id.text_termos_uso)
 
         termosUsoTextView.setOnClickListener {
-            val url = "https://www.seusite.com.br/termosdeuso"
+            val url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1"
 
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
