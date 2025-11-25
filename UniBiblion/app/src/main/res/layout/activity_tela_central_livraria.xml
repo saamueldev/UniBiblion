@@ -7,51 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".Tela_Central_Livraria">
 
-    <!-- A BottomNavigationView foi movida para o final para clareza -->
-
-    <Button
-        android:id="@+id/buttonGerenciarCatalogo"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="300dp"
-        android:layout_height="0dp"
-        android:text="Catálogo"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonGerenciamentoGeral"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread"
-        app:layout_constraintVertical_weight="1" />
-
-    <!-- O botão "buttonGerenciarCabines" foi removido daqui -->
-
-    <Button
-        android:id="@+id/buttonGerenciamentoGeral"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="300dp"
-        android:layout_height="0dp"
-        android:text="Alugar sala individual"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonRenovarLivros"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonGerenciarCatalogo"
-        app:layout_constraintVertical_weight="1" />
-
-    <Button
-        android:id="@+id/buttonRenovarLivros"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="300dp"
-        android:layout_height="0dp"
-        android:text="Renovar livros"
-        android:textColorLink="@color/bottom_nav_background_selector"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonGerenciamentoGeral"
-        app:layout_constraintVertical_weight="1" />
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="0dp"
@@ -64,5 +19,57 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu" />
+
+    <!-- Botão Gerenciar Catálogo (Padronizado) -->
+    <Button
+        android:id="@+id/buttonGerenciarCatalogo"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="6dp"
+        android:text="Catálogo"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonRenovarLivros"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Botão Renovar Livros (Padronizado) -->
+    <!-- NOTE: Renomeei este para que o fluxo faça sentido. O original era GerenciarCabines. -->
+    <Button
+        android:id="@+id/buttonRenovarLivros"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="6dp"
+        android:text="Renovar Livro"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonGerenciamentoGeral"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonGerenciarCatalogo" />
+
+    <!-- Botão Gerenciamento Geral (Padronizado) -->
+    <Button
+        android:id="@+id/buttonGerenciamentoGeral"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="6dp"
+        android:text="Alugar Sala Individual"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonRenovarLivros" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

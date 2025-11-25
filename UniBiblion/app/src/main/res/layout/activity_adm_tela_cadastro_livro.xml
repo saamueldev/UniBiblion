@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A correção foi adicionar um espaço entre as duas declarações de namespace abaixo -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,7 +14,9 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- *** CORREÇÃO PRINCIPAL AQUI *** -->
         <TextView
+            android:id="@+id/title_cadastro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -31,7 +32,6 @@
             android:text="Título do Livro"
             android:textColor="?attr/colorOnSurface"
             android:textStyle="bold" />
-        <!-- O 'style' foi removido para evitar conflitos de tema -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
