@@ -25,7 +25,7 @@
 
     <ImageView
         android:id="@+id/CapaLivro"
-        android:layout_width="182dp"
+        android:layout_width="180dp"
         android:layout_height="245dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -58,9 +58,9 @@
         android:layout_width="200dp"
         android:layout_height="43dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginBottom="362dp"
+        android:layout_marginBottom="380dp"
         android:text="Ian Sommerville"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -164,8 +164,8 @@
 
     <Button
         android:id="@+id/buttonConfirmarInf2"
-        android:layout_width="114dp"
-        android:layout_height="51dp"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
         android:layout_marginStart="148dp"
         android:layout_marginTop="54dp"
         android:layout_marginEnd="148dp"
@@ -178,8 +178,8 @@
 
     <Button
         android:id="@+id/buttonVoltarInf2"
-        android:layout_width="91dp"
-        android:layout_height="52dp"
+        android:layout_width="90dp"
+        android:layout_height="60dp"
         android:layout_marginStart="160dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="160dp"

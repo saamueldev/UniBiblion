@@ -4,7 +4,6 @@ import com.google.firebase.firestore.PropertyName
 import java.io.Serializable
 
 data class Livro(
-
     var id: String = "",
 
     @get:PropertyName("titulo") @set:PropertyName("titulo")
@@ -16,7 +15,6 @@ data class Livro(
     @get:PropertyName("ano") @set:PropertyName("ano")
     var ano: Long = 0,
 
-    // Corrigido para corresponder à capitalização comum em Kotlin (camelCase)
     @get:PropertyName("capaURL") @set:PropertyName("capaURL")
     var capaUrl: String = "",
 
@@ -29,10 +27,10 @@ data class Livro(
     @get:PropertyName("idioma") @set:PropertyName("idioma")
     var idioma: String = "",
 
+    // *** TIPO CORRETO PARA COMPATIBILIDADE COM FIREBASE ***
     @get:PropertyName("qEstoque") @set:PropertyName("qEstoque")
-    var qEstoque: Long = 0,
+    var qEstoque: Long = 0, // Revertido para Long para corresponder ao Firestore
 
-    // --- CAMPO ADICIONADO ---
     @get:PropertyName("resumo") @set:PropertyName("resumo")
     var resumo: String = ""
 ) : Serializable

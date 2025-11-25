@@ -6,13 +6,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
 import java.io.Serializable
 
 class Tela_Livro_Desejado : AppCompatActivity() {
-    //Hugo para Reviews
     private lateinit var btnEscreverReview: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +20,13 @@ class Tela_Livro_Desejado : AppCompatActivity() {
         setContentView(R.layout.activity_tela_livro_desejado)
 
         val livro = getSerializable(intent, "LIVRO_SELECIONADO", Livro::class.java)
+
+        // Validação crucial para evitar crashes
+        if (livro == null) {
+            Toast.makeText(this, "Erro: Não foi possível carregar os dados do livro.", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
 
         val imgCapa: ImageView = findViewById(R.id.img_detalhe_capa)
         val txtTitulo: TextView = findViewById(R.id.tv_detalhe_titulo)
@@ -30,76 +37,59 @@ class Tela_Livro_Desejado : AppCompatActivity() {
         val txtResumo: TextView = findViewById(R.id.tv_detalhe_resumo)
         val btnAlugar: MaterialButton = findViewById(R.id.btn_detalhe_alugar)
         val btnReviews: MaterialButton = findViewById(R.id.btn_detalhe_reviews)
-        //Hugo para Reviews
         btnEscreverReview = findViewById(R.id.btn_detalhe_escrever_review)
 
-        if (livro != null) {
-            title = livro.titulo
-            txtTitulo.text = livro.titulo
-            txtAutor.text = "por ${livro.autor}"
-            txtEstado.text = "Estado: ${livro.estado}"
-            txtIdioma.text = "Idioma: ${livro.idioma}"
-            txtEstoque.text = "Estoque: ${livro.qEstoque}"
-            txtResumo.text = livro.resumo
+        // Preenche a UI com os dados do livro
+        title = livro.titulo
+        txtTitulo.text = livro.titulo
+        txtAutor.text = "por ${livro.autor}"
+        txtEstado.text = "Estado: ${livro.estado}"
+        txtIdioma.text = "Idioma: ${livro.idioma}"
+        txtEstoque.text = "Estoque: ${livro.qEstoque}"
+        txtResumo.text = livro.resumo
 
-            if (livro.capaUrl.isNotEmpty()) {
-                Glide.with(this)
-                    .load(livro.capaUrl)
-                    .placeholder(R.drawable.sommervile)
-                    .error(R.drawable.sommervile)
-                    .into(imgCapa)
-            } else {
-                imgCapa.setImageResource(R.drawable.sommervile)
-            }
-
-            // --- LÓGICA DE VISIBILIDADE DOS BOTÕES ---
-            if (livro.qEstoque > 0) {
-                // Se tem estoque, mostra os dois botões
-                btnAlugar.visibility = View.VISIBLE
-                btnReviews.visibility = View.VISIBLE
-                //Hugo para Reviews
-                btnEscreverReview.visibility = View.VISIBLE
-            } else {
-                // Se NÃO tem estoque, esconde o botão de alugar e mostra SÓ o de reviews
-                btnAlugar.visibility = View.GONE
-                btnReviews.visibility = View.VISIBLE
-                //Hugo para Reviews
-                btnEscreverReview.visibility = View.VISIBLE
-            }
-
-            // AÇÃO DO BOTÃO DE ALUGAR
-            btnAlugar.setOnClickListener {
-                val intentAlugar = Intent(this, Tela_Informacoes1::class.java)
-                // Opcional: passe informações do livro para a próxima tela
-                // intentAlugar.putExtra("LIVRO_SELECIONADO", livro)
-                startActivity(intentAlugar)
-            }
-
-            // AÇÃO DO BOTÃO DE REVIEWS
-            btnReviews.setOnClickListener {
-                val intentReviews = Intent(this, ReviewsActivity::class.java)
-                // Opcional: passe o ID ou título do livro para a tela de reviews
-                //Hugo para Reviews
-                intentReviews.putExtra(CriarReviewActivity.EXTRA_LIVRO_ID, livro.id)
-                // intentReviews.putExtra("LIVRO_TITULO", livro.titulo)
-                startActivity(intentReviews)
-            }
-
-            //Hugo para Reviews
-            btnEscreverReview.setOnClickListener {
-                val intentCriarReview = Intent(this, CriarReviewActivity::class.java)
-
-                // 🔑 Passa o ID e o Título do Livro para o formulário
-                intentCriarReview.putExtra(CriarReviewActivity.EXTRA_LIVRO_ID, livro.id)
-                intentCriarReview.putExtra(CriarReviewActivity.EXTRA_LIVRO_TITULO, livro.titulo)
-                startActivity(intentCriarReview)
-            }
-
+        if (livro.capaUrl.isNotEmpty()) {
+            Glide.with(this)
+                .load(livro.capaUrl)
+                .placeholder(R.drawable.sommervile)
+                .error(R.drawable.sommervile)
+                .into(imgCapa)
         } else {
-            // Caso de erro: o livro não foi passado corretamente.
-            title = "Erro"
-            txtTitulo.text = "Livro não encontrado."
-            finish()
+            imgCapa.setImageResource(R.drawable.sommervile)
+        }
+
+        if (livro.qEstoque > 0) {
+            btnAlugar.visibility = View.VISIBLE
+            btnReviews.visibility = View.VISIBLE
+            btnEscreverReview.visibility = View.VISIBLE
+        } else {
+            btnAlugar.visibility = View.GONE
+            btnReviews.visibility = View.VISIBLE
+            btnEscreverReview.visibility = View.VISIBLE
+        }
+
+        // AÇÃO DO BOTÃO DE ALUGAR
+        btnAlugar.setOnClickListener {
+            val intentAlugar = Intent(this, Tela_Informacoes1::class.java).apply {
+                // Envia o objeto LIVRO INTEIRO para a próxima tela
+                putExtra("LIVRO_SELECIONADO", livro)
+            }
+            startActivity(intentAlugar)
+        }
+
+        // AÇÃO DO BOTÃO DE REVIEWS
+        btnReviews.setOnClickListener {
+            val intentReviews = Intent(this, ReviewsActivity::class.java)
+            intentReviews.putExtra(CriarReviewActivity.EXTRA_LIVRO_ID, livro.id)
+            startActivity(intentReviews)
+        }
+
+        // AÇÃO DO BOTÃO DE ESCREVER REVIEW
+        btnEscreverReview.setOnClickListener {
+            val intentCriarReview = Intent(this, CriarReviewActivity::class.java)
+            intentCriarReview.putExtra(CriarReviewActivity.EXTRA_LIVRO_ID, livro.id)
+            intentCriarReview.putExtra(CriarReviewActivity.EXTRA_LIVRO_TITULO, livro.titulo)
+            startActivity(intentCriarReview)
         }
     }
 
