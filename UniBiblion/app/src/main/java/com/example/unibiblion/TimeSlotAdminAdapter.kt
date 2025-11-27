@@ -4,71 +4,94 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.unibiblion.R // Assumindo que R está disponível
 
-// O listener notifica a Activity ou Fragment sobre a mudança de estado
+// Definição da função de clique que será passada para a Activity
+typealias TimeSlotClickListener = (slot: TimeSlotAdmin, position: Int) -> Unit
+
 class TimeSlotAdminAdapter(
-    private val slots: MutableList<TimeSlotAdmin>,
-    private val onSlotStatusChanged: (TimeSlotAdmin, Int) -> Unit
-) : RecyclerView.Adapter<TimeSlotAdminAdapter.SlotViewHolder>() {
+    initialSlots: MutableList<TimeSlotAdmin>,
+    private val listener: TimeSlotClickListener
+) : RecyclerView.Adapter<TimeSlotAdminAdapter.TimeSlotViewHolder>() {
 
-    // CORREÇÃO: Usamos o LinearLayout do item_time_slot.xml como o container principal
-    // E os IDs que corrigimos na resposta anterior: tv_slot_time e view_slot_block
-    class SlotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val slotBlockView: View = itemView.findViewById(R.id.view_slot_block) // O bloco colorido
-        val timeText: TextView = itemView.findViewById(R.id.tv_slot_time) // O texto do horário
-    }
+    // Propriedade que a Activity precisa acessar
+    var slots: MutableList<TimeSlotAdmin> = initialSlots
+        private set
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SlotViewHolder {
-        // CORREÇÃO: Usamos o nome de arquivo correto (item_time_slot)
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_time_slot, parent, false)
-        return SlotViewHolder(view)
-    }
+    // ----------------------------------------------------
+    // 1. ViewHolder
+    // ----------------------------------------------------
+    inner class TimeSlotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvTime: TextView = itemView.findViewById(R.id.tv_slot_time) // Ajuste o ID conforme seu layout
+        val container: View = itemView // Ou o ID do layout principal se for um container
 
-    override fun onBindViewHolder(holder: SlotViewHolder, position: Int) {
-        val slot = slots[position]
-        holder.timeText.text = "${slot.horarioInicio} - ${slot.horarioFim}"
+        fun bind(slot: TimeSlotAdmin) {
+            tvTime.text = "${slot.startHour}\n${slot.endHour}"
 
-        // Define o estilo baseado no status (Indisponível = Vermelho, Disponível = Verde/Padrão)
-        updateSlotStyle(holder, slot.isIndisponivel)
+            // 🎯 LÓGICA DE CORREÇÃO: Três estados visuais
+            val context = itemView.context
 
-        // LÓGICA DE CLIQUE (APLICADA A UMA FUNÇÃO PRIVADA REUTILIZÁVEL)
-        val clickAction = View.OnClickListener {
-            // Alterna o status
-            slot.isIndisponivel = !slot.isIndisponivel
-            // Atualiza o estilo visual
-            updateSlotStyle(holder, slot.isIndisponivel)
-            // Notifica a Activity da mudança
-            onSlotStatusChanged(slot, position)
+            if (slot.isReservadoPeloUsuario) {
+                // 1. ESTADO RESERVADO (CINZA): Não pode ser alterado pelo Admin
+
+                // 💡 Nota: Você precisará criar este drawable, por exemplo, slot_reservado_user_bg.
+                // Pode ser cinza escuro ou apenas cinza claro com borda sólida.
+                container.background = ContextCompat.getDrawable(context, R.drawable.slot_reservado_user_bg)
+
+                // Desativa o clique
+                container.setOnClickListener(null)
+                container.isClickable = false
+                container.alpha = 0.5f // Diminui a opacidade para reforçar que está bloqueado (Opcional)
+
+            } else {
+                // 2. ESTADO LIVRE/RESTRITO (VERDE/VERMELHO): Pode ser alternado pelo Admin
+
+                val backgroundResId = if (slot.isIndisponivel) {
+                    R.drawable.slot_indisponivel_admin_bg // Restrito pelo Admin (ex: Vermelho)
+                } else {
+                    R.drawable.slot_disponivel_admin_bg // Disponível (ex: Verde)
+                }
+                container.background = ContextCompat.getDrawable(context, backgroundResId)
+
+                container.isClickable = true
+                container.alpha = 1.0f
+
+                // Lógica de Clique: Alterna o estado (isIndisponivel) e notifica a Activity
+                container.setOnClickListener {
+                    slot.isIndisponivel = !slot.isIndisponivel
+                    notifyItemChanged(adapterPosition)
+                    listener.invoke(slot, adapterPosition)
+                }
+            }
         }
-
-        // APLICAÇÃO DA CORREÇÃO: Atachamos o listener no bloco de cor E no texto.
-        // Isso garante que o clique em qualquer área visível dispare a ação.
-        holder.slotBlockView.setOnClickListener(clickAction) // Clicar no quadrado verde/vermelho
-        holder.timeText.setOnClickListener(clickAction)     // Clicar no texto do horário
-
-        // Opcional: Se houver padding ou margem ao redor, manter o listener no itemView
-        // holder.itemView.setOnClickListener(clickAction)
     }
 
-    private fun updateSlotStyle(holder: SlotViewHolder, isIndisponivel: Boolean) {
-        val context = holder.itemView.context
+    // ----------------------------------------------------
+    // 2. Implementações do Adapter
+    // ----------------------------------------------------
 
-        val backgroundResId = if (isIndisponivel) {
-            // Cor para Indisponível (ex: vermelho, slot_ocupado_bg)
-            R.drawable.slot_ocupado_bg
-        } else {
-            // Cor para Disponível (ex: verde, slot_livre_bg)
-            R.drawable.slot_livre_bg
-        }
-
-        // Aplica o drawable de cor no bloco (view_slot_block)
-        holder.slotBlockView.setBackgroundResource(backgroundResId)
-
-        // Opcional: Ajustar a cor do texto para melhor contraste
-        holder.timeText.setTextColor(context.getColor(android.R.color.black))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeSlotViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_time_slot, parent, false)
+        return TimeSlotViewHolder(view)
     }
 
-    override fun getItemCount() = slots.size
+    override fun onBindViewHolder(holder: TimeSlotViewHolder, position: Int) {
+        holder.bind(slots[position])
+    }
+
+    override fun getItemCount(): Int = slots.size
+
+    // ----------------------------------------------------
+    // 3. Método updateSlots
+    // ----------------------------------------------------
+
+    fun updateSlots(newSlots: List<TimeSlotAdmin>) {
+        this.slots.clear()
+        // Adiciona a lista recebida, que agora contém as marcações isReservadoPeloUsuario
+        this.slots.addAll(newSlots)
+        notifyDataSetChanged()
+    }
 }

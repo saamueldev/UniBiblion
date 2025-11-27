@@ -38,7 +38,7 @@ class Adm_Tela_Central_Livraria : AppCompatActivity() {
         // Mapeia: Gerenciar Cabines -> CabinesAdminActivity (Conforme solicitado)
         val buttonGerenciarCabines: Button = findViewById(R.id.buttonGerenciarCabines)
         buttonGerenciarCabines.setOnClickListener {
-            val intent = Intent(this, CabinesAdminActivity::class.java)
+            val intent = Intent(this, CabinesAdminListActivity::class.java)
             startActivity(intent)
         }
 
