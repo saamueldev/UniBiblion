@@ -19,12 +19,10 @@ import java.util.Calendar
 import java.util.Locale
 import java.text.SimpleDateFormat
 
-class CabinesIndividuaisActivity : AppCompatActivity() {
+class CabinesAdminListActivity : AppCompatActivity() {
 
     private lateinit var dataHoraSelecionada: Calendar
     private lateinit var dateSelectorTextView: TextView
-    private lateinit var btnReservarCabine: Button
-    private lateinit var btnMinhasReservas: Button
     private lateinit var listaCabines: MutableList<Cabine>
     private lateinit var cabinesAdapter: CabinesAdapter
 
@@ -34,7 +32,10 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
 
     private val dateFormatDatabase = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    private val TAG = "CabinesActivityDebug"
+    private val TAG = "AdminCabinesDebug"
+
+    // Assumindo que você tem uma constante para o fim do dia
+    private val HORARIO_FIM_DIA = 22
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,18 +43,14 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
 
         Log.d(TAG, "Activity onCreate iniciado.")
 
+        // INICIALIZAÇÃO DA DATA/HORA
         dataHoraSelecionada = Calendar.getInstance().apply {
             val currentMinute = get(Calendar.MINUTE)
-
-            // Zera minutos, segundos e milissegundos
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-
-            // Se os minutos atuais forem maiores que zero, o slot da hora atual já começou.
+            // Arredonda para a próxima hora completa
             if (currentMinute > 0) {
-                // Avança para a próxima hora completa (arredonda para cima).
-                // Ex: 18:42 -> adiciona 1h -> 19:00.
                 add(Calendar.HOUR_OF_DAY, 1)
             }
         }
@@ -62,25 +59,21 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
         bottomNavigation = findViewById(R.id.bottom_navigation)
 
         dateSelectorTextView = findViewById(R.id.date_selector)
-        btnReservarCabine = findViewById(R.id.btn_reservar_cabine)
-        btnMinhasReservas = findViewById(R.id.btn_minhas_reservas)
 
+        // Esconder botões de usuário, caso o layout seja compartilhado
+        findViewById<Button>(R.id.btn_reservar_cabine)?.visibility = View.GONE
+        findViewById<Button>(R.id.btn_minhas_reservas)?.visibility = View.GONE
+
+        // 1. Inicia o carregamento e configuração do Grid
         carregarCabinesDoFirebase()
 
+        // 2. Configura o Seletor de Data
         atualizarTextoSeletorData(dataHoraSelecionada)
         dateSelectorTextView.setOnClickListener {
             mostrarDatePicker()
         }
 
-        btnReservarCabine.setOnClickListener {
-            reservarCabineSelecionada()
-        }
-
-        btnMinhasReservas.setOnClickListener {
-            val intent = Intent(this, MinhasReservasActivity::class.java)
-            startActivity(intent)
-        }
-
+        // 3. Configuração da Bottom Navigation
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_livraria -> {
@@ -121,6 +114,7 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
         Log.d(TAG, "Activity onResume iniciado.")
 
         if (::listaCabines.isInitialized && ::cabinesAdapter.isInitialized) {
+            // Recarregar status de ocupação para a data/hora atual (útil se o Admin voltou da edição)
             carregarStatusOcupacao()
         } else {
             carregarCabinesDoFirebase()
@@ -128,11 +122,10 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
     }
 
     // ==========================================================
-    // LÓGICA DE BUSCA E ATUALIZAÇÃO DO FIREBASE (USUÁRIO)
+    // LÓGICA DE FIREBASE E ATUALIZAÇÃO
     // ==========================================================
 
     private fun carregarCabinesDoFirebase() {
-
         Log.d(TAG, "Iniciando carregarCabinesDoFirebase().")
         cabinesListener?.remove()
 
@@ -143,6 +136,7 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
                 if (e != null) {
                     Log.e(TAG, "Erro ao observar cabines: ${e.localizedMessage}")
                     Toast.makeText(this, "Erro ao observar cabines: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+
                     if (!::listaCabines.isInitialized) {
                         listaCabines = mutableListOf()
                         configurarGridView()
@@ -157,11 +151,9 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
                     if (!::cabinesAdapter.isInitialized) {
                         listaCabines = novaLista
                         configurarGridView()
-                        Log.d(TAG, "Adapter inicializado pela primeira vez. Tamanho da lista: ${listaCabines.size}")
                     } else {
                         listaCabines.clear()
                         listaCabines.addAll(novaLista)
-                        Log.d(TAG, "Lista principal atualizada com ${listaCabines.size} cabines do snapshot.")
                     }
 
                     carregarStatusOcupacao()
@@ -170,97 +162,45 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
     }
 
     private fun carregarStatusOcupacao() {
-        Log.d(TAG, "Iniciando carregarStatusOcupacao() [MODO USUÁRIO].")
+        Log.d(TAG, "Iniciando carregarStatusOcupacao() [MODO ADMIN].")
 
         if (!::listaCabines.isInitialized || listaCabines.isEmpty() || !::cabinesAdapter.isInitialized) {
             Log.w(TAG, "carregarStatusOcupacao abortado: Lista ou Adapter não inicializados/vazios.")
             return
         }
 
+        // DATA E HORA SELECIONADAS PELO ADMIN
         val dataReservaStr = dateFormatDatabase.format(dataHoraSelecionada.time)
         val horaInicioSelecionada = dataHoraSelecionada.get(Calendar.HOUR_OF_DAY)
 
-        // --- 1. LÓGICA DE HORÁRIO DE FUNCIONAMENTO ---
-        val horaLimiteInicio = 8
-        val horaLimiteFim = 22
-
-        if (horaInicioSelecionada < horaLimiteInicio || horaInicioSelecionada >= horaLimiteFim) {
-            Log.w(TAG, "Horário fora do funcionamento. Bloqueando todas as cabines.")
-            listaCabines.forEach { it.estado = Cabine.ESTADO_OCUPADO }
-            cabinesAdapter.updateCabines(listaCabines)
-            atualizarVisibilidadeBotaoReservar()
-            return
-        }
-
-        // 2. Resetamos o estado de TODAS as cabines
+        // 1. Resetar o estado de todas as cabines
         listaCabines.forEach { it.estado = Cabine.ESTADO_LIVRE }
-        Log.d(TAG, "Status de todas as ${listaCabines.size} cabines resetado para LIVRE.")
 
-        // --- A. CONSULTA 1: RESERVAS DE USUÁRIOS ---
+        // 2. Lógica para buscar RESERVAS e RESTRICÕES
+
+        // Exemplo: Buscar todas as reservas ativas para a data selecionada
         db.collection("reservas")
             .whereEqualTo("dataReserva", dataReservaStr)
-            .whereEqualTo("status", StatusReserva.ATIVA.name)
             .get()
             .addOnSuccessListener { resultReservas ->
-                val reservasDoDia = resultReservas.toObjects(Reserva::class.java)
+                // Lógica de iteração sobre reservas e marcação de cabines ocupadas (ESTADO_OCUPADO)
 
-                // Itera sobre as RESERVAS e MARCA as cabines OCUPADAS
-                for (reserva in reservasDoDia) {
-                    try {
-                        val horaInicioReserva = reserva.horaInicio?.split(":")?.get(0)?.toInt() ?: continue
-                        val horaFimReserva = reserva.horaFim?.split(":")?.get(0)?.toInt() ?: continue
-
-                        if (horaInicioSelecionada >= horaInicioReserva && horaInicioSelecionada < horaFimReserva) {
-                            val cabineOcupada = listaCabines.find { it.numero == reserva.cabineNumero }
-                            cabineOcupada?.estado = Cabine.ESTADO_OCUPADO
-                            Log.i(TAG, "   -> Cabine ${reserva.cabineNumero} ocupada por RESERVA.")
-                        }
-                    } catch (e: Exception) { /* ... */ }
-                }
-
-                // --- B. CONSULTA 2: RESTRIÇÕES DE ADMIN (Encadeada) ---
+                // 3. Após checar reservas, checar Restrições de Admin
                 db.collection("restricoes")
                     .whereEqualTo("dataRestricao", dataReservaStr)
                     .get()
                     .addOnSuccessListener { resultRestricoes ->
-                        val restricoesDoDia = resultRestricoes.toObjects(Restricao::class.java)
+                        // Lógica de iteração sobre restrições e marcação de cabines como restritas (ESTADO_OCUPADO)
+                        // Neste modo, o ESTADO_OCUPADO pode ser usado para ambos.
 
-                        // Itera sobre as RESTRIÇÕES e MARCA as cabines OCUPADAS/RESTRITAS
-                        for (restricao in restricoesDoDia) {
-                            try {
-                                val horaInicioRestricao = restricao.horaInicio?.split(":")?.get(0)?.toInt() ?: continue
-                                val horaFimRestricao = restricao.horaFim?.split(":")?.get(0)?.toInt() ?: continue
-
-                                // Verifica se o horário selecionado está DENTRO da restrição
-                                if (horaInicioSelecionada >= horaInicioRestricao && horaInicioSelecionada < horaFimRestricao) {
-                                    val cabineRestrita = listaCabines.find { it.numero == restricao.cabineId }
-
-                                    // Se a cabine não estiver ocupada, marque como OCUPADO por restrição
-                                    // (Se já estiver ocupada por reserva, manterá o estado OCUPADO)
-                                    cabineRestrita?.estado = Cabine.ESTADO_OCUPADO
-                                    Log.i(TAG, "   -> Cabine ${restricao.cabineId} ocupada por RESTRIÇÃO ADMIN.")
-                                }
-                            } catch (e: Exception) { /* ... */ }
-                        }
-
-                        // --- C. ATUALIZAÇÃO FINAL ---
-                        cabinesAdapter.updateCabines(listaCabines)
-                        Log.d(TAG, "Adapter atualizado com status final (Reservas + Restrições).")
-                        atualizarVisibilidadeBotaoReservar()
+                        // 4. ATUALIZAÇÃO FINAL
+                        cabinesAdapter.notifyDataSetChanged()
                     }
-                    .addOnFailureListener { e ->
-                        Log.e(TAG, "Falha ao carregar restrições: ${e.localizedMessage}")
-                        // Mesmo que as restrições falhem, atualizamos com o status das reservas
-                        cabinesAdapter.updateCabines(listaCabines)
-                        atualizarVisibilidadeBotaoReservar()
-                    }
-
             }
             .addOnFailureListener { e ->
-                Log.e(TAG, "Falha ao carregar reservas: ${e.localizedMessage}")
+                Log.e(TAG, "Falha ao carregar status: ${e.localizedMessage}")
                 Toast.makeText(this, "Erro ao carregar status: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                cabinesAdapter.updateCabines(listaCabines)
-                atualizarVisibilidadeBotaoReservar()
+                cabinesAdapter.notifyDataSetChanged()
             }
     }
 
@@ -274,50 +214,25 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
             gridCabines.adapter = cabinesAdapter
             Log.d(TAG, "Adapter criado e setado no GridView.")
 
+            // 🌟 CORREÇÃO CRÍTICA AQUI: ENVIAR A DATA SELECIONADA PARA A TELA DE EDIÇÃO
             gridCabines.setOnItemClickListener { parent, view, position, id ->
 
                 val cabineClicada = listaCabines[position]
-                Log.d(TAG, "Cabine ${cabineClicada.numero} clicada. Estado: ${cabineClicada.estado}")
+                Log.d(TAG, "Cabine ${cabineClicada.numero} clicada. Direcionando para edição de restrições.")
 
-                if (cabineClicada.estado == Cabine.ESTADO_OCUPADO) {
-                    if (cabinesAdapter.getSelectedPosition() == position) {
-                        cabinesAdapter.selectSingleCabine(position)
-                    } else {
-                        Toast.makeText(this, "A Cabine ${cabineClicada.numero} está ocupada no horário selecionado e não pode ser reservada.", Toast.LENGTH_SHORT).show()
-                    }
-                    atualizarVisibilidadeBotaoReservar()
-                    return@setOnItemClickListener
+                val intent = Intent(this, CabineAdminEditActivity::class.java).apply {
+                    putExtra("CABINE_ID", cabineClicada.numero.toString())
+                    // 🎯 ADICIONADO: Envia a data e hora selecionadas
+                    putExtra("EXTRA_DATA_SELECIONADA", dataHoraSelecionada.timeInMillis)
                 }
-
-                cabinesAdapter.selectSingleCabine(position)
-                atualizarVisibilidadeBotaoReservar()
+                startActivity(intent)
             }
         }
     }
 
     // ==========================================================
-    // FUNÇÕES DE UI E NAVEGAÇÃO
+    // FUNÇÕES DE SELEÇÃO DE DATA E HORA (COMPLETAS)
     // ==========================================================
-
-    private fun atualizarVisibilidadeBotaoReservar() {
-        if (!::listaCabines.isInitialized || !::cabinesAdapter.isInitialized) return
-
-        val selectedPosition = cabinesAdapter.getSelectedPosition()
-
-        if (selectedPosition != -1) {
-            val cabineSelecionada = listaCabines[selectedPosition]
-
-            if (cabineSelecionada.estado == Cabine.ESTADO_OCUPADO) {
-                cabinesAdapter.selectSingleCabine(selectedPosition)
-                btnReservarCabine.visibility = View.GONE
-                return
-            }
-
-            btnReservarCabine.visibility = View.VISIBLE
-        } else {
-            btnReservarCabine.visibility = View.GONE
-        }
-    }
 
     private fun mostrarDatePicker() {
         val ano = dataHoraSelecionada.get(Calendar.YEAR)
@@ -344,7 +259,7 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
                 dataHoraSelecionada.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 dataHoraSelecionada.set(Calendar.MINUTE, 0)
 
-                // 🎯 CORREÇÃO: Chama a atualização após a seleção completa da hora.
+                // Após a seleção completa, atualiza o texto e recarrega os dados
                 atualizarTextoSeletorData(dataHoraSelecionada)
             },
             hora,
@@ -366,35 +281,7 @@ class CabinesIndividuaisActivity : AppCompatActivity() {
         Log.d(TAG, "Data/hora atualizada: $textoFinal. Chamando carregarStatusOcupacao.")
 
         if (::listaCabines.isInitialized) {
-            carregarStatusOcupacao()
-        }
-    }
-
-    private fun reservarCabineSelecionada() {
-        val selectedPosition = cabinesAdapter.getSelectedPosition()
-
-        if (selectedPosition != -1) {
-            val cabineSelecionada = listaCabines[selectedPosition]
-
-            val numeroCabine = cabineSelecionada.numero ?: run {
-                Toast.makeText(this, "Erro: Número da cabine não encontrado.", Toast.LENGTH_SHORT).show()
-                return
-            }
-
-            if (cabineSelecionada.estado != Cabine.ESTADO_LIVRE) {
-                Toast.makeText(this, "A Cabine $numeroCabine não está disponível para reserva no horário selecionado.", Toast.LENGTH_SHORT).show()
-                cabinesAdapter.selectSingleCabine(selectedPosition)
-                atualizarVisibilidadeBotaoReservar()
-                return
-            }
-
-            val intent = Intent(this, CabineSelecaoPeriodoActivity::class.java).apply {
-                putExtra("EXTRA_NUMERO_CABINE", numeroCabine)
-                putExtra("EXTRA_DATA_HORA", dataHoraSelecionada.timeInMillis)
-            }
-            startActivity(intent)
-        } else {
-            Toast.makeText(this, "Selecione uma cabine antes de reservar.", Toast.LENGTH_SHORT).show()
+            carregarStatusOcupacao() // Recarrega o status com a nova data/hora
         }
     }
 }

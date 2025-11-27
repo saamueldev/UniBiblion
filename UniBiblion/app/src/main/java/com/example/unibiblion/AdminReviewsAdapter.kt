@@ -7,8 +7,7 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-// Se você for usar o Glide, importe-o aqui
-// import com.bumptech.glide.Glide
+import com.bumptech.glide.Glide // 🎯 NOVO IMPORT
 
 // Interface para notificar a Activity sobre o clique (Mantida)
 interface OnReviewAdminClickListener {
@@ -16,7 +15,7 @@ interface OnReviewAdminClickListener {
 }
 
 class AdminReviewsAdapter(
-    private val reviews: MutableList<Review>,
+    private var reviews: MutableList<Review>,
     private val listener: OnReviewAdminClickListener
 ) :
     RecyclerView.Adapter<AdminReviewsAdapter.ReviewViewHolder>() {
@@ -38,21 +37,35 @@ class AdminReviewsAdapter(
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val review = reviews[position]
 
-        // 🔑 1. Dados do Usuário (CORRIGIDO)
+        // 1. Dados do Usuário
         holder.userName.text = review.userName
 
-        // 🔑 2. Foto do Usuário (Usando Placeholder/Padrão)
-        // Se review.userPhotoUrl fosse uma URL real, o Glide seria necessário.
-        holder.userPhoto.setImageResource(android.R.drawable.ic_menu_help)
+        // 🎯 CORREÇÃO: Carregar a imagem via URL usando GLIDE
+        val userPhotoUrl = review.userPhotoUrl
 
-        // 3. Dados da Review (Mantido)
+        Glide.with(holder.itemView.context)
+            .load(userPhotoUrl) // Carrega a URL da imagem (deve vir do objeto Review)
+            .placeholder(R.drawable.ic_profile) // Use seu placeholder padrão (R.drawable.ic_profile ou similar)
+            .error(R.drawable.ic_profile)         // Use o mesmo para erro ou URL vazia
+            .circleCrop()                               // Deixa a imagem redonda
+            .into(holder.userPhoto)                     // Define o resultado na sua ImageView
+
+        // 3. Dados da Review
         holder.ratingBar.rating = review.rating
-        holder.reviewText.text = review.textoReview
 
-        // 4. Título do Livro (Mantido)
+        // Exibição truncada (mantida)
+        val maxLines = 3
+        val reviewText = if (review.textoReview.lines().size > maxLines) {
+            review.textoReview.substringBefore('\n') + "..."
+        } else {
+            review.textoReview
+        }
+        holder.reviewText.text = reviewText
+
+        // 4. Título do Livro
         holder.bookTitle.text = "Livro: ${review.livroTitulo}"
 
-        // 5. LÓGICA DE CLIQUE (Mantida)
+        // 5. LÓGICA DE CLIQUE
         holder.itemView.setOnClickListener {
             listener.onReviewClicked(review)
         }
@@ -60,11 +73,22 @@ class AdminReviewsAdapter(
 
     override fun getItemCount() = reviews.size
 
+    /**
+     * Remove uma review da lista e notifica o RecyclerView.
+     */
     fun removeReview(review: Review) {
         val position = reviews.indexOfFirst { it.id == review.id }
         if (position != -1) {
             reviews.removeAt(position)
             notifyItemRemoved(position)
         }
+    }
+
+    /**
+     * Atualiza a lista completa de reviews.
+     */
+    fun updateReviews(newReviews: List<Review>) {
+        reviews = newReviews.toMutableList()
+        notifyDataSetChanged()
     }
 }

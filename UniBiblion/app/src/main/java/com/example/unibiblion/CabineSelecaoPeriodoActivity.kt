@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
 
-// Assumindo que TimeSlot, Reserva e StatusReserva estão definidos em outros arquivos/classes
+// Assumindo que TimeSlot, Reserva, Restricao e StatusReserva estão definidos em outros arquivos/classes
 
 class CabineSelecaoPeriodoActivity : AppCompatActivity() {
 
@@ -96,31 +96,103 @@ class CabineSelecaoPeriodoActivity : AppCompatActivity() {
 
 
     /**
-     * Consulta o Firebase para obter todas as reservas ATIVAS para a cabine e data.
+     * Consulta o Firebase para obter todas as reservas ATIVAS e restrições de Admin.
      */
     private fun buscarReservasExistentes(cabineNumero: String, dataReservaStr: String) {
+
+        // 1. Gera a lista completa de slots (todos disponíveis, aplicando checagem de tempo)
+        val todosSlots = gerarTodosSlotsDeTempo(dataHoraInicial)
+
+        // 2. Consulta 1: Reservas de Usuários
         db.collection("reservas")
             .whereEqualTo("cabineNumero", cabineNumero)
             .whereEqualTo("dataReserva", dataReservaStr)
             .whereEqualTo("status", StatusReserva.ATIVA.name)
             .get()
-            .addOnSuccessListener { result ->
-                val reservasOcupadas = result.toObjects(Reserva::class.java)
+            .addOnSuccessListener { resultReservas ->
+                val reservasOcupadas = resultReservas.toObjects(Reserva::class.java)
 
-                // 1. Gera a lista completa de slots (todos disponíveis, aplicando a checagem de tempo)
-                val todosSlots = gerarTodosSlotsDeTempo(dataHoraInicial)
-
-                // 2. Marca os slots que estão ocupados pelas reservas do Firebase
+                // Marca os slots ocupados por reservas
                 marcarSlotsOcupados(todosSlots, reservasOcupadas)
 
-                // 3. Configura o RecyclerView com a lista final de disponibilidade
-                configurarSlotsUI(todosSlots)
+                // 3. Consulta 2: Restrições de Admin (Encadeada com a consulta de reservas)
+                db.collection("restricoes")
+                    // Nota: Usamos 'cabineId' conforme o modelo da classe Restricao
+                    .whereEqualTo("cabineId", cabineNumero)
+                    .whereEqualTo("dataRestricao", dataReservaStr)
+                    .get()
+                    .addOnSuccessListener { resultRestricoes ->
+                        val restricoesBloqueadas = resultRestricoes.toObjects(Restricao::class.java)
+
+                        // Marca os slots ocupados por restrições de Admin
+                        marcarSlotsBloqueadosPorRestricao(todosSlots, restricoesBloqueadas)
+
+                        // 4. Configura o RecyclerView com a lista FINAL de disponibilidade
+                        configurarSlotsUI(todosSlots)
+                    }
+                    .addOnFailureListener { e ->
+                        // Se a busca de restrições falhar, ainda mostramos o status das reservas
+                        Toast.makeText(this, "Erro ao carregar restrições. ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                        configurarSlotsUI(todosSlots)
+                    }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Erro ao carregar disponibilidade. ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                // Se falhar, exibe a lista como se estivesse toda disponível (mas com a checagem de tempo)
+                Toast.makeText(this, "Erro ao carregar reservas. ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                // Se falhar a reserva, voltamos para a lista básica (checada apenas pelo horário atual)
                 configurarSlotsUI(gerarTodosSlotsDeTempo(dataHoraInicial))
             }
+    }
+
+    private fun marcarSlotsBloqueadosPorRestricao(todosSlots: MutableList<TimeSlot>, restricoesBloqueadas: List<Restricao>) {
+
+        val baseCalendar = dataHoraInicial.clone() as Calendar
+
+        for (restricao in restricoesBloqueadas) {
+            try {
+                val horaInicio = restricao.horaInicio ?: continue
+                val horaFim = restricao.horaFim ?: continue
+
+                val inicioParts = horaInicio.split(":")
+                val fimParts = horaFim.split(":")
+
+                if (inicioParts.size != 2 || fimParts.size != 2) continue
+
+                // Converte hora início da restrição para Milissegundos com a data correta
+                val inicioBloqueadoCalendar = baseCalendar.clone() as Calendar
+                inicioBloqueadoCalendar.set(Calendar.HOUR_OF_DAY, inicioParts[0].toInt())
+                inicioBloqueadoCalendar.set(Calendar.MINUTE, inicioParts[1].toInt())
+                // 🎯 CORREÇÃO CRÍTICA: ZERAR SEGUNDOS E MILISSEGUNDOS para comparação precisa
+                inicioBloqueadoCalendar.set(Calendar.SECOND, 0)
+                inicioBloqueadoCalendar.set(Calendar.MILLISECOND, 0)
+                val inicioBloqueadoMillis = inicioBloqueadoCalendar.timeInMillis
+
+                // Converte hora fim da restrição para Milissegundos com a data correta
+                val fimBloqueadoCalendar = baseCalendar.clone() as Calendar
+                fimBloqueadoCalendar.set(Calendar.HOUR_OF_DAY, fimParts[0].toInt())
+                fimBloqueadoCalendar.set(Calendar.MINUTE, fimParts[1].toInt())
+                // 🎯 CORREÇÃO CRÍTICA: ZERAR SEGUNDOS E MILISSEGUNDOS para comparação precisa
+                fimBloqueadoCalendar.set(Calendar.SECOND, 0)
+                fimBloqueadoCalendar.set(Calendar.MILLISECOND, 0)
+                val fimBloqueadoMillis = fimBloqueadoCalendar.timeInMillis
+
+                // Compara com cada slot de 1 hora
+                for (index in todosSlots.indices) {
+                    val slot = todosSlots[index]
+                    // Se o slot já estiver ocupado por reserva, não precisamos checar (mas a checagem é idempotente)
+                    if (!slot.isAvailable) continue
+
+                    val slotStartTimeMillis = slot.startTime.timeInMillis
+
+                    // Lógica de Bloqueio:
+                    if (slotStartTimeMillis >= inicioBloqueadoMillis && slotStartTimeMillis < fimBloqueadoMillis) {
+                        todosSlots[index] = slot.copy(isAvailable = false)
+                    }
+                }
+            } catch (e: Exception) {
+                // Ignora restrições com formato de hora inválido
+                continue
+            }
+        }
     }
 
     /**
@@ -312,11 +384,8 @@ class CabineSelecaoPeriodoActivity : AppCompatActivity() {
         val horaInicioStr = timeFormat.format(selectedStartTime!!.time)
         val horaFimStr = timeFormat.format(selectedEndTime!!.time)
 
-        // REMOVIDO: Limpeza de aspas não é mais necessária
-        // val cabineNumeroLimpo = cabineNumero?.replace("\"", "")
-
         val novaReserva = Reserva(
-            cabineNumero = cabineNumero, // REVERTIDO: Usando cabineNumero diretamente
+            cabineNumero = cabineNumero,
             usuarioId = userId,
             dataReserva = dataReservaStr,
             horaInicio = horaInicioStr,
@@ -329,11 +398,11 @@ class CabineSelecaoPeriodoActivity : AppCompatActivity() {
         db.collection("reservas")
             .add(novaReserva)
             .addOnSuccessListener {
-                Toast.makeText(this, "Reserva da Cabine $cabineNumero confirmada com sucesso!", Toast.LENGTH_LONG).show() // REVERTIDO: cabineNumero direto
+                Toast.makeText(this, "Reserva da Cabine $cabineNumero confirmada com sucesso!", Toast.LENGTH_LONG).show()
 
                 // Navegação para a tela de Sucesso
                 val intentSucesso = Intent(this, ReservaSucessoActivity::class.java).apply {
-                    putExtra("EXTRA_NUMERO_CABINE", cabineNumero) // REVERTIDO: cabineNumero direto
+                    putExtra("EXTRA_NUMERO_CABINE", cabineNumero)
                     putExtra("EXTRA_DATA", dataHoraInicial.timeInMillis)
                     putExtra("EXTRA_INICIO_HORA", selectedStartTime!!.timeInMillis)
                     putExtra("EXTRA_FIM_HORA", selectedEndTime!!.timeInMillis)
