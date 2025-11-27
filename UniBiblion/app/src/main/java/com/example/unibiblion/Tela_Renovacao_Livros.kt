@@ -1,20 +1,112 @@
 package com.example.unibiblion
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.Timestamp // Importa a classe Timestamp
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
-class Tela_Renovacao_Livros : AppCompatActivity() {
+class Tela_Renovacao_Livros : AppCompatActivity(), LivroAlugadoAdapter.OnItemClickListener {
+
+    private lateinit var recyclerView: RecyclerView
+    private var adapter: LivroAlugadoAdapter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_renovacao_livros)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        recyclerView = findViewById(R.id.recyclerViewLivroParaRenovacao)
+        setupRecyclerView()
+    }
+
+    private fun setupRecyclerView() {
+        // A consulta agora ordena um campo do tipo Timestamp, o que funciona corretamente.
+        val query: Query = Firebase.firestore.collection("livrosalugados")
+            .orderBy("dataDevolucao", Query.Direction.ASCENDING)
+
+        val options = FirestoreRecyclerOptions.Builder<LivroAlugado>()
+            .setQuery(query, LivroAlugado::class.java)
+            .build()
+
+        adapter = LivroAlugadoAdapter(options, this)
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+    }
+
+    override fun onItemClick(documentId: String, livro: LivroAlugado) {
+        if (livro.renovado) {
+            Toast.makeText(this, "Este livro já foi renovado uma vez.", Toast.LENGTH_LONG).show()
+        } else {
+            // Garante que a data não é nula antes de tentar renovar
+            livro.dataDevolucao?.let { dataTimestamp ->
+                mostrarDialogoDeRenovacao(documentId, dataTimestamp)
+            } ?: Toast.makeText(this, "Data de devolução inválida.", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun mostrarDialogoDeRenovacao(documentId: String, dataDevolucaoTimestamp: Timestamp) {
+        val formatoData = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        // Converte o Timestamp para um objeto Calendar
+        val dataInicial = Calendar.getInstance()
+        dataInicial.time = dataDevolucaoTimestamp.toDate()
+
+        // Calcula a nova data (data original + 1 mês)
+        val novaData = dataInicial.clone() as Calendar
+        novaData.add(Calendar.MONTH, 1)
+
+        // Prepara as strings para exibição no diálogo
+        val dataInicialStr = formatoData.format(dataInicial.time)
+        val novaDataStr = formatoData.format(novaData.time)
+
+        // *** CORREÇÃO AQUI: Ajusta o texto da mensagem para o formato solicitado ***
+        val mensagem = "Data de Entrega Inicial: $dataInicialStr\n\n" +
+                "Só poderá postergar até $novaDataStr"
+
+        AlertDialog.Builder(this)
+            .setTitle("Renovar Empréstimo?")
+            .setMessage(mensagem)
+            .setPositiveButton("Confirmar") { _, _ ->
+                // Passa o objeto Timestamp da nova data para a função de atualização
+                renovarDataDeEntrega(documentId, Timestamp(novaData.time))
+            }
+            .setNegativeButton("Voltar", null)
+            .show()
+    }
+
+    private fun renovarDataDeEntrega(documentId: String, novaDataTimestamp: Timestamp) {
+        val updates = mapOf(
+            "dataDevolucao" to novaDataTimestamp, // Atualiza com um objeto Timestamp
+            "renovado" to true
+        )
+
+        Firebase.firestore.collection("livrosalugados").document(documentId)
+            .update(updates)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Renovação confirmada!", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao renovar: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        adapter?.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        adapter?.stopListening()
     }
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <!-- Usando LinearLayout para empilhar os itens verticalmente -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 1. Capa do Livro -->
+        <ImageView
+            android:id="@+id/imgCapaRenovacao"
+            android:layout_width="120dp"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/sommervile" />
+
+        <!-- 2. Título do Livro -->
+        <TextView
+            android:id="@+id/txtTituloRenovacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="Engenharia de Software - 9ª Edição" />
+
+        <!-- 3. Data de Devolução (Seção Corrigida) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <!-- Label com texto e tamanho corrigidos -->
+            <TextView
+                android:id="@+id/txtDataDevolucaoLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Data de Entrega:"
+                android:textSize="16sp"
+                android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+            <!-- Data com tamanho igual ao da label e cor preta -->
+            <TextView
+                android:id="@+id/txtDataDevolucao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="25/12/2025" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
