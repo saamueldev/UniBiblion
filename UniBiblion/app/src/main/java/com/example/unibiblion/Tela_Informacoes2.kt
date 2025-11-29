@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Timestamp // IMPORTANTE: Importar a classe Timestamp
+import com.google.firebase.auth.FirebaseAuth // Para obter o usuário logado
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -178,7 +179,10 @@ class Tela_Informacoes2 : AppCompatActivity() {
             "dataRetirada" to dataRetiradaTextView.text.toString(),
             "horarioRetirada" to horarioRetiradaTextView.text.toString(),
             "dataDevolucao" to dataDevolucaoTimestamp, // Salva no formato Timestamp
-            "renovado" to false // Adiciona a flag de renovação
+            "renovado" to false, // Adiciona a flag de renovação
+            "usuarioId" to (FirebaseAuth.getInstance().currentUser?.uid ?: ""), // ID do usuário
+            "livroId" to (livroSelecionado?.id ?: ""), // ID do livro
+            "timestampCriacao" to com.google.firebase.Timestamp.now() // Timestamp da criação do aluguel
         )
 
         Firebase.firestore.collection("livrosalugados")

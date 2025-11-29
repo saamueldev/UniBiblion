@@ -131,7 +131,7 @@ class ReservasListFragment : Fragment() {
 
     /**
      * Checa se as reservas ATIVAS já deveriam ter terminado e, em caso positivo,
-     * as move para o status CONCLUIDA no Firebase e as remove da lista UI ATIVA.
+     * as move para o status FINALIZADA no Firebase e as remove da lista UI ATIVA.
      */
     private fun checarEAtualizarReservasVencidas(listaReservasAtivas: MutableList<Reserva>) {
 
@@ -169,10 +169,10 @@ class ReservasListFragment : Fragment() {
                     // 1. Marca para remover da lista ATIVA no UI
                     reservasParaRemoverDaUI.add(reserva)
 
-                    // 2. ATUALIZA O STATUS no Firestore (ATIVA -> CONCLUIDA)
+                    // 2. ATUALIZA O STATUS no Firestore (ATIVA -> FINALIZADA)
                     db.collection("reservas")
                         .document(reservaId)
-                        .update("status", StatusReserva.CONCLUIDA.name)
+                        .update("status", StatusReserva.FINALIZADA.name)
                 }
             } catch (e: Exception) {
                 Log.e("ReservasVencidas", "Erro ao processar reserva ID $reservaId: ${e.localizedMessage}")
@@ -180,7 +180,7 @@ class ReservasListFragment : Fragment() {
             }
         }
 
-        // 3. ATUALIZAÇÃO DO UI: Remove as concluídas da lista ATIVA
+        // 3. ATUALIZAÇÃO DO UI: Remove as finalizadas da lista ATIVA
         listaReservasAtivas.removeAll(reservasParaRemoverDaUI)
     }
 

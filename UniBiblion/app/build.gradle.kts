@@ -57,6 +57,10 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.ai.client.generativeai:generativeai:0.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    
+    // Biblioteca de gráficos para relatórios
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

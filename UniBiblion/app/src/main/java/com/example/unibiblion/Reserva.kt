@@ -17,6 +17,6 @@ data class Reserva(
 
 enum class StatusReserva {
     ATIVA,
-    CONCLUIDA,
-    CANCELADA
+    CANCELADA,
+    FINALIZADA
 }

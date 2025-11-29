@@ -76,8 +76,8 @@ class ReservasAdapter(
                         onActionClick(reserva)
                     }
                 }
-                StatusReserva.CONCLUIDA -> {
-                    val color = ContextCompat.getColor(itemView.context, android.R.color.darker_gray)
+                StatusReserva.FINALIZADA -> {
+                    val color = ContextCompat.getColor(itemView.context, R.color.blue_500)
                     imgStatusIndicator.setColorFilter(color)
                     tvCabineData.setTextColor(ContextCompat.getColor(itemView.context, android.R.color.darker_gray))
                     btnAcaoReserva.visibility = View.GONE
