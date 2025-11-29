@@ -41,8 +41,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="16dp"
+                    android:textColor="?attr/colorOnBackground" android:layout_marginBottom="16dp"
                     tools:text="Título completo da notícia que pode ter duas ou mais linhas." />
 
                 <TextView
@@ -51,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:lineSpacingExtra="4dp"
-                    tools:text="Aqui vai o corpo completo do artigo, que é muito mais longo que o preview. Ele precisa do ScrollView para caber na tela. Este é o conteúdo detalhado, com todos os parágrafos e informações adicionais." />
+                    android:textColor="?attr/colorOnBackground" tools:text="Aqui vai o corpo completo do artigo, que é muito mais longo que o preview. Ele precisa do ScrollView para caber na tela. Este é o conteúdo detalhado, com todos os parágrafos e informações adicionais." />
 
             </LinearLayout>
 

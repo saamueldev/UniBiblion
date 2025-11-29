@@ -18,7 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import java.text.Normalizer // 🎯 NOVO IMPORT
+import java.text.Normalizer
+import com.bumptech.glide.Glide // 💡 NOVO IMPORT para carregar a imagem do Firebase no modal!
 
 class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener, ReviewFilterListener {
 
@@ -180,6 +181,9 @@ class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener, Re
         showReviewDetailModal(review)
     }
 
+    /**
+     * 🎯 FUNÇÃO CORRIGIDA: Implementa o carregamento da imagem do usuário usando Glide.
+     */
     private fun showReviewDetailModal(review: Review) {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_admin_review_detail, null)
 
@@ -188,7 +192,19 @@ class AdminReviewsActivity : AppCompatActivity(), OnReviewAdminClickListener, Re
         view.findViewById<TextView>(R.id.tv_detail_review_text).text = review.textoReview
         view.findViewById<RatingBar>(R.id.rb_detail_rating).rating = review.rating
 
-        view.findViewById<ImageView>(R.id.img_detail_user_photo).setImageResource(android.R.drawable.ic_menu_help)
+        // OBTÉM A IMAGEM E A URL DA REVIEW
+        val userPhotoImageView = view.findViewById<ImageView>(R.id.img_detail_user_photo)
+        val userPhotoUrl = review.userPhotoUrl // Assumindo que a classe Review tem a propriedade userPhotoUrl
+
+        // 🎯 CARREGA A IMAGEM COM GLIDE NO MODAL
+        Glide.with(this)
+            .load(userPhotoUrl)
+            .placeholder(R.drawable.ic_profile) // Troque por seu placeholder
+            .error(R.drawable.ic_profile)       // Troque por seu drawable de erro
+            .circleCrop()
+            .into(userPhotoImageView)
+        // A linha original abaixo foi removida/substituída:
+        // view.findViewById<ImageView>(R.id.img_detail_user_photo).setImageResource(android.R.drawable.ic_menu_help)
 
         val dialog = AlertDialog.Builder(this)
             .setView(view)
