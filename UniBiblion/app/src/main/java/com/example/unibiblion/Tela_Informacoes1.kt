@@ -47,7 +47,41 @@ class Tela_Informacoes1 : AppCompatActivity() {
             validarEContinuar()
         }
 
-        bottomNavigationView.setOnItemSelectedListener { true }
+        setupBottomNavigation()
+    }
+
+    private fun setupBottomNavigation() {
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_livraria -> {
+                    val intent = Intent(this, Tela_Central_Livraria::class.java)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
+                R.id.nav_noticias -> {
+                    val intent = Intent(this, NoticiasActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_chatbot -> {
+                    val intent = Intent(this, Tela_Chat_Bot::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_perfil -> {
+                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigationView.menu.findItem(R.id.nav_livraria).isChecked = true
     }
 
     private fun validarEContinuar() {

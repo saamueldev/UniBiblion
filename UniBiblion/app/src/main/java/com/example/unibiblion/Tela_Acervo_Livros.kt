@@ -41,6 +41,7 @@ class Tela_Acervo_Livros : AppCompatActivity(), LivroAdapter.OnItemClickListener
         setupRecyclerView()
         setupSearchListener()
         setupFilterButton()
+        setupBottomNavigation()
     }
 
     private fun setupRecyclerView() {
@@ -141,5 +142,40 @@ class Tela_Acervo_Livros : AppCompatActivity(), LivroAdapter.OnItemClickListener
 
     private fun aplicarFiltros() {
         livroAdapter?.aplicarFiltrosCombinados(filtroTexto, filtroEstado, filtroCurso)
+    }
+
+    private fun setupBottomNavigation() {
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_livraria -> {
+                    val intent = Intent(this, Tela_Central_Livraria::class.java)
+                    startActivity(intent)
+                    finish() // Finaliza esta activity para voltar à home
+                    true
+                }
+                R.id.nav_noticias -> {
+                    val intent = Intent(this, NoticiasActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_chatbot -> {
+                    val intent = Intent(this, Tela_Chat_Bot::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_perfil -> {
+                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Mantém o item "Livraria" selecionado quando voltar a esta tela
+        bottomNav.menu.findItem(R.id.nav_livraria).isChecked = true
     }
 }
