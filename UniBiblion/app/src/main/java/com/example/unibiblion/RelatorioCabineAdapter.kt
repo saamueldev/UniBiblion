@@ -35,7 +35,7 @@ class RelatorioCabineAdapter(
         // Define os textos
         holder.tvNumeroCabine.text = "🏢 Cabine: ${relatorio.cabineNumero}"
         holder.tvNomeUsuario.text = "👤 Reservado por: ${relatorio.nomeUsuario}"
-        
+
         // Formata a data
         try {
             val data = sdfInput.parse(relatorio.dataReserva)
@@ -80,4 +80,9 @@ class RelatorioCabineAdapter(
         listaRelatorios = novaLista
         notifyDataSetChanged()
     }
+
+    /**
+     * Retorna a lista atual de cabines
+     */
+    fun getListaCabines(): List<RelatorioCabine> = listaRelatorios
 }

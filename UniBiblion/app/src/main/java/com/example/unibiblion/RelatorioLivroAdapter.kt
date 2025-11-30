@@ -48,7 +48,7 @@ class RelatorioLivroAdapter(
         holder.tvTitulo.text = relatorio.tituloLivro
         holder.tvNomeUsuario.text = "👤 Alugado por: ${relatorio.nomeUsuario}"
         holder.tvDataRetirada.text = "📅 Retirada: ${relatorio.dataRetirada} às ${relatorio.horarioRetirada}"
-        
+
         // Formata a data de devolução
         relatorio.dataDevolucao?.let { timestamp ->
             holder.tvDataDevolucao.text = "📅 Devolução: ${sdf.format(timestamp.toDate())}"
@@ -73,7 +73,7 @@ class RelatorioLivroAdapter(
     private fun calcularEExibirStatus(holder: ViewHolder, relatorio: RelatorioLivro) {
         val agora = System.currentTimeMillis()
         val dataDevolucaoPrevista = relatorio.dataDevolucao?.toDate()?.time
-        
+
         when {
             // CONCLUÍDO: Livro já foi devolvido
             relatorio.devolvido -> {
@@ -106,4 +106,9 @@ class RelatorioLivroAdapter(
         listaRelatorios = novaLista
         notifyDataSetChanged()
     }
+
+    /**
+     * Retorna a lista atual de livros
+     */
+    fun getListaLivros(): List<RelatorioLivro> = listaRelatorios
 }

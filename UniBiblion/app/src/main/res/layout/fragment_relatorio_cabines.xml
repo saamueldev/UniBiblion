@@ -7,151 +7,170 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp">
-
-    <!-- Filtros de Período -->
-    <LinearLayout
-        android:id="@+id/filter_layout"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:padding="16dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_filter_week"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="Semana"
-            android:textSize="12sp"
-            app:strokeColor="@color/roxo_institucional"
-            app:strokeWidth="2dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_filter_month"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="Mês"
-            android:textSize="12sp"
-            app:strokeColor="@color/roxo_institucional"
-            app:strokeWidth="2dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_filter_custom"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Personalizar"
-            android:textSize="12sp"
-            app:strokeColor="@color/roxo_institucional"
-            app:strokeWidth="2dp" />
-    </LinearLayout>
-
-    <!-- Texto do Período Selecionado -->
-    <TextView
-        android:id="@+id/tv_periodo_selecionado"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Período: Últimos 7 dias"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintTop_toBottomOf="@id/filter_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Card para o Gráfico -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_grafico"
-        android:layout_width="0dp"
-        android:layout_height="250dp"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_periodo_selecionado"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
+        <!-- Filtros de Período -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="12dp">
+            android:id="@+id/filter_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_filter_week"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Semana"
+                android:textSize="12sp"
+                app:strokeColor="@color/roxo_institucional"
+                app:strokeWidth="2dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_filter_month"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Mês"
+                android:textSize="12sp"
+                app:strokeColor="@color/roxo_institucional"
+                app:strokeWidth="2dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_filter_custom"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Personalizar"
+                android:textSize="12sp"
+                app:strokeColor="@color/roxo_institucional"
+                app:strokeWidth="2dp" />
+        </LinearLayout>
+
+        <!-- Texto do Período Selecionado -->
+        <TextView
+            android:id="@+id/tv_periodo_selecionado"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Período: Últimos 7 dias"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintTop_toBottomOf="@id/filter_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Card para o Gráfico -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_grafico"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_periodo_selecionado"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📊 Reservas por Dia"
+                    android:textColor="@color/roxo_institucional"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/bar_chart_cabines"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Título da Lista e Botão de Exportar -->
+        <LinearLayout
+            android:id="@+id/layout_titulo_botao"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintTop_toBottomOf="@id/card_grafico"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_titulo_lista"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="📊 Reservas por Dia"
+                android:layout_weight="1"
+                android:text="📋 Detalhes das Reservas"
                 android:textColor="@color/roxo_institucional"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:textStyle="bold" />
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/bar_chart_cabines"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_exportar_pdf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📄 PDF"
+                android:textSize="12sp"
+                app:cornerRadius="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
-    <!-- Título da Lista -->
-    <TextView
-        android:id="@+id/tv_titulo_lista"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="📋 Detalhes das Reservas"
-        android:textColor="@color/roxo_institucional"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@id/card_grafico"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- RecyclerView para Lista Detalhada -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_cabines"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_titulo_botao"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:listitem="@layout/item_relatorio_cabine" />
 
-    <!-- RecyclerView para Lista Detalhada -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_cabines"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_titulo_lista"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_relatorio_cabine" />
+        <!-- Mensagem quando não houver dados -->
+        <TextView
+            android:id="@+id/tv_empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nenhuma reserva encontrada\nno período selecionado"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginTop="32dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/layout_titulo_botao"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Mensagem quando não houver dados -->
-    <TextView
-        android:id="@+id/tv_empty_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nenhuma reserva encontrada\nno período selecionado"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:layout_marginTop="32dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/tv_titulo_lista"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
