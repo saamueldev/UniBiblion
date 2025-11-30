@@ -1,75 +1,103 @@
 package com.example.unibiblion
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.PopupMenu
-import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class Adm_Tela_Perfil_Usuario : AppCompatActivity() {
 
+    // 1. Declarar a instância do Firestore e uma variável para o ID do usuário
+    private val db = FirebaseFirestore.getInstance()
+    private var userId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // O layout usado parece ser 'activity_tela_de_perfil', mantive ele.
         setContentView(R.layout.activity_tela_de_perfil)
 
-        populateProfileData()
-        setupHeaderClicks()
-        setupBottomNavigation()
-    }
+        // 2. Captura o ID do usuário passado pela Intent da tela anterior
+        userId = intent.getStringExtra("USER_ID")
 
-    private fun populateProfileData() {
-        val nomeMock = "Jonh Henrique"
-        val bioMock = "O que um leitor quer, um leitor tem."
-
-        findViewById<TextView>(R.id.text_name)?.let {
-            it.text = nomeMock
+        if (userId == null) {
+            Toast.makeText(this, "Erro: ID do usuário não encontrado.", Toast.LENGTH_LONG).show()
+            finish() // Fecha a activity se não houver ID
+            return
         }
 
+        fetchAndDisplayUserData()
+        setupHeaderClicks() // Mantém a mesma navegação superior
+        setupBottomNavigation() // Mantém a mesma navegação inferior
     }
+
+    private fun fetchAndDisplayUserData() {
+        db.collection("usuarios").document(userId!!)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val usuario = document.toObject(Usuario::class.java)
+
+                    findViewById<TextView>(R.id.text_name)?.text = usuario?.nome
+
+                    val profileImageView = findViewById<ImageView>(R.id.profile_image)
+                    Glide.with(this)
+                        .load(usuario?.fotoUrl) // 'fotoUrl' é o nome do campo na sua classe Usuario.kt
+                        .placeholder(R.drawable.ic_profile) // Imagem padrão
+                        .error(R.drawable.ic_profile) // Imagem em caso de erro
+                        .circleCrop() // Deixa a imagem redonda
+                        .into(profileImageView)
+
+                } else {
+                    Toast.makeText(this, "Usuário não encontrado.", Toast.LENGTH_SHORT).show()
+                    Log.d("Firestore", "Nenhum documento encontrado com o ID: $userId")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "Falha ao buscar dados do usuário.", Toast.LENGTH_SHORT).show()
+                Log.e("Firestore", "Erro ao buscar usuário", exception)
+            }
+    }
+
 
     private fun setupHeaderClicks() {
         findViewById<ImageView>(R.id.icon_bell).setOnClickListener {
-            startActivity(Intent(this, Tela_Notificacoes::class.java))
+            startActivity(Intent(this, Adm_Tela_Notificacoes::class.java))
         }
         val menuIcon = findViewById<ImageView>(R.id.icon_menu)
         menuIcon.setOnClickListener { view ->
             showPopupMenu(view)
         }
         findViewById<ImageView>(R.id.profile_image).setOnClickListener {
-            startActivity(Intent(this, Tela_De_Perfil_Dados::class.java))
         }
     }
 
     private fun showPopupMenu(view: View) {
         val popup = PopupMenu(this, view)
+        // Verifica se o menu a ser inflado é o correto para esta tela
         popup.menuInflater.inflate(R.menu.adm_menu_perfil, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_editar_perfil -> {
-                    startActivity(Intent(this, Tela_De_Perfil_Dados::class.java))
+                    val intent = Intent(this, Tela_De_Perfil_Dados::class.java).apply {
+                        putExtra("USER_ID", userId)
+                    }
+                    startActivity(intent)
                     true
                 }
                 R.id.action_acessar_perfil -> {
-                    Toast.makeText(this, "Abrindo visualização do Perfil", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Você já está na tela de perfil do usuário.", Toast.LENGTH_SHORT).show()
                     true
                 }
-                R.id.action_gerenciar_notificacoes -> {
-                    startActivity(Intent(this, Tela_Notificacoes::class.java))
-                    true
-                }
-                R.id.action_acessibilidade -> {
-                    startActivity(Intent(this, Tela_Acessibilidade::class.java))
-                    true
-                }
-                R.id.action_configuracoes_gerais -> {
-                    startActivity(Intent(this, Tela_Config_geral::class.java))
-                    true
-                }
+                // ... outros itens do menu
                 else -> false
             }
         }
@@ -78,7 +106,8 @@ class Adm_Tela_Perfil_Usuario : AppCompatActivity() {
 
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_bar)
-        bottomNavigationView.selectedItemId = R.id.nav_perfil
+        // É uma boa prática não ter um item selecionado se esta tela é acessada de fora do fluxo principal
+        // bottomNavigationView.selectedItemId = R.id.nav_perfil
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -87,11 +116,11 @@ class Adm_Tela_Perfil_Usuario : AppCompatActivity() {
                     true
                 }
                 R.id.nav_noticias -> {
-                    startActivity(Intent(this, NoticiasActivity::class.java))
+                    startActivity(Intent(this, Adm_Tela_Mural_Noticias_Eventos::class.java))
                     true
                 }
                 R.id.nav_chatbot -> {
-                    startActivity(Intent(this, Tela_Chat_Bot::class.java))
+                    startActivity(Intent(this, Tela_Adm_Chat_Bot::class.java))
                     true
                 }
                 R.id.nav_perfil -> {

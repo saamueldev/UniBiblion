@@ -42,4 +42,5 @@
     <color name="hc_text">@color/black</color>
     <color name="hc_primary">@color/black</color>
     <color name="hc_accent">@color/red_700</color>
+
 </resources>

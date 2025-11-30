@@ -201,7 +201,24 @@
             android:name=".MinhasReservasActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".Adm_Tela_Notificacoes"
+            android:exported="false" />
+
+        <activity
+            android:name=".Adm_Tela_Procurar_Usuario"
+            android:exported="false" />
+        <activity
+            android:name=".Adm_Tela_Perfil_Usuario"
+            android:exported="false" />
+        <activity
+            android:name=".Adm_Criar_Notificacao"
+            android:exported="false" />
+        <activity
+            android:name=".Tela_Adm_Chat_Bot"
+            android:exported="false"/>
 
     </application>
+
 
 </manifest>

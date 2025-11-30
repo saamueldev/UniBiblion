@@ -5,16 +5,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".Adm_Tela_De_Perfil">
+    tools:context=".Adm_Tela_De_Perfil"
+    android:background="?attr/colorSurface">
 
+    <!-- NOVA BARRA DE NAVEGAÇÃO COLADA AQUI -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@android:color/white"
+        app:itemIconTint="?attr/colorOnPrimary"
+        app:itemTextColor="?attr/colorOnPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +47,7 @@
                     android:layout_alignParentStart="true"
                     android:src="@drawable/ic_notifications"
                     android:contentDescription="Ícone de Notificações"
-                    app:tint="@color/black" />
+                    app:tint="?attr/colorOnSurface" />
 
                 <ImageView
                     android:id="@+id/icon_menu"
@@ -55,7 +56,7 @@
                     android:layout_alignParentEnd="true"
                     android:src="@drawable/ic_hamburguer"
                     android:contentDescription="Ícone de Menu"
-                    app:tint="@color/black" />
+                    app:tint="?attr/colorOnSurface" />
             </RelativeLayout>
 
             <LinearLayout
@@ -79,10 +80,9 @@
                     android:layout_marginTop="8dp"
                     android:textSize="24sp"
                     android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
                     tools:text="Jonh Henrique" />
-
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

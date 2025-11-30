@@ -5,8 +5,12 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 class Adm_Criar_Notificacao : AppCompatActivity() {
+
+    private val db = FirebaseFirestore.getInstance()
 
     private lateinit var editTextTitulo: EditText
     private lateinit var editTextConteudo: EditText
@@ -21,11 +25,11 @@ class Adm_Criar_Notificacao : AppCompatActivity() {
         buttonEnviarNotificacao = findViewById(R.id.buttonEnviarNotificacao)
 
         buttonEnviarNotificacao.setOnClickListener {
-            enviarNotificacao()
+            saveNotificationToFirestore()
         }
     }
 
-    private fun enviarNotificacao() {
+    private fun saveNotificationToFirestore() {
         val titulo = editTextTitulo.text.toString().trim()
         val conteudo = editTextConteudo.text.toString().trim()
 
@@ -34,15 +38,25 @@ class Adm_Criar_Notificacao : AppCompatActivity() {
             return
         }
 
-        if (conteudo.isEmpty()) {
-            editTextConteudo.error = "O conteúdo não pode estar vazio"
-            return
-        }
+        val notification = hashMapOf(
+            "title" to titulo,
+            "body" to conteudo,
+            "userId" to null,
+            "isRead" to false,
+            "timestamp" to FieldValue.serverTimestamp()
+        )
 
-        val mensagem = "Notificação enviada:\nTítulo: \"$titulo\"\nConteúdo: \"$conteudo\""
-        Toast.makeText(this, mensagem, Toast.LENGTH_LONG).show()
-
-        editTextTitulo.text.clear()
-        editTextConteudo.text.clear()
+        db.collection("notifications")
+            .add(notification)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Notificação enviada com sucesso!", Toast.LENGTH_LONG).show()
+                editTextTitulo.text.clear()
+                editTextConteudo.text.clear()
+                finish()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao enviar notificação: ${e.message}", Toast.LENGTH_LONG).show()
+            }
     }
 }
+

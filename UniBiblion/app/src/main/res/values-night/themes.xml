@@ -1,8 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Tema base para o modo noturno com as cores definidas -->
     <style name="Theme.Unibiblion" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Cores primárias (pode ajustar para melhor contraste no escuro) -->
+        <item name="colorPrimary">#BB86FC</item> <!-- Um roxo mais claro -->
+        <item name="colorPrimaryVariant">#3700B3</item>
+        <item name="colorOnPrimary">#000000</item> <!-- Preto, para texto sobre a cor primária -->
+
+        <!-- Cores secundárias -->
+        <item name="colorSecondary">#03DAC6</item> <!-- Teal -->
+        <item name="colorSecondaryVariant">#018786</item>
+        <item name="colorOnSecondary">#000000</item> <!-- Preto, para texto sobre a cor secundária -->
+
+        <!--
+            Cores de superfície e fundo são CRUCIAIS para o tema escuro.
+            'colorSurface' é usado para componentes como Cards, Menus, etc.
+            'colorOnSurface' é a cor do texto/ícones sobre esses componentes.
+        -->
+        <item name="colorSurface">#121212</item> <!-- Fundo padrão escuro do Material Design -->
+        <item name="colorOnSurface">#FFFFFF</item> <!-- Texto/ícones brancos -->
+
+        <!-- Cor da barra de status -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorSurface</item>
     </style>
 
+    <!-- Seu tema de Alto Contraste já está bem configurado para o modo noturno -->
     <style name="Theme.Unibiblion.AltoContraste" parent="Theme.Unibiblion">
         <item name="colorSurface">#000000</item>
         <item name="colorOnSurface">#FFFFFF</item>
@@ -13,6 +35,9 @@
         <item name="colorSecondary">#FFFF00</item>
         <item name="colorOnSecondary">#000000</item>
     </style>
+
+    <!-- Seus outros estilos (ShapeAppearanceOverlay, OptionItemStyle, etc.) estão corretos,
+         pois já usam atributos de tema como '?attr/colorOnSurface', o que é uma ótima prática! -->
 
     <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
         <item name="cornerFamily">rounded</item>
@@ -34,7 +59,8 @@
     <style name="DividerStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
-        <item name="android:background">#22000000</item>
+        <!-- Sugestão: Use uma cor com alfa baseada em 'colorOnSurface' para o divisor -->
+        <item name="android:background">#22FFFFFF</item> <!-- Ex: Branco com ~13% de opacidade -->
     </style>
 
     <style name="SectionTitleStyle">

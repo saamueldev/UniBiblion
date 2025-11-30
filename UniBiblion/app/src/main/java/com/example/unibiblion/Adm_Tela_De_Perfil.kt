@@ -29,16 +29,16 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
 
         setupUI()
         setupListeners()
-
         loadAdminProfile()
     }
-
 
     private fun loadAdminProfile() {
         val currentUser = auth.currentUser
         if (currentUser == null) {
             Log.w("AdmAuth", "Nenhum administrador logado.")
             Toast.makeText(this, "Administrador não autenticado.", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, Tela_Login::class.java))
+            finish()
             return
         }
 
@@ -77,7 +77,6 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
             }
     }
 
-
     private fun setupUI() {
         profileImage = findViewById(R.id.profile_image)
         textName = findViewById(R.id.text_name)
@@ -91,7 +90,7 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
 
     private fun setupHeaderAndMenu() {
         findViewById<ImageView>(R.id.icon_bell).setOnClickListener {
-            startActivity(Intent(this, Tela_Notificacoes::class.java))
+            startActivity(Intent(this, Adm_Tela_Notificacoes::class.java))
         }
 
         findViewById<ImageView>(R.id.icon_menu).setOnClickListener { view ->
@@ -105,6 +104,7 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
 
     private fun showPopupMenu(view: View) {
         PopupMenu(this, view).apply {
+            // Garante que o menu correto (adm_menu_perfil.xml) está sendo inflado
             menuInflater.inflate(R.menu.adm_menu_perfil, menu)
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
@@ -114,6 +114,20 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
                     }
                     R.id.action_acessar_perfil -> {
                         startActivity(Intent(this@Adm_Tela_De_Perfil, Adm_Tela_Procurar_Usuario::class.java))
+                        true
+                    }
+                    R.id.action_gerenciar_notificacoes -> { // Mantido o nome que você usou
+                        startActivity(Intent(this@Adm_Tela_De_Perfil, Adm_Criar_Notificacao::class.java))
+                        true
+                    }
+                    // CORREÇÃO 1: Adicionada a ligação para Configurações Gerais
+                    R.id.action_configuracoes_gerais -> {
+                        startActivity(Intent(this@Adm_Tela_De_Perfil, Tela_Config_geral::class.java))
+                        true
+                    }
+                    // CORREÇÃO 2: Adicionada a ligação para Acessibilidade
+                    R.id.action_acessibilidade -> {
+                        startActivity(Intent(this@Adm_Tela_De_Perfil, Tela_Acessibilidade::class.java))
                         true
                     }
                     else -> false
@@ -127,20 +141,25 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
         bottomNavigationView.selectedItemId = R.id.nav_perfil
 
         bottomNavigationView.setOnItemSelectedListener { item ->
+            if (item.itemId == bottomNavigationView.selectedItemId) {
+                return@setOnItemSelectedListener true
+            }
+
             val intent = when (item.itemId) {
                 R.id.nav_livraria -> Intent(this, Adm_Tela_Central_Livraria::class.java)
-                R.id.nav_noticias -> Intent(this, NoticiasActivity::class.java)
-                R.id.nav_chatbot -> Intent(this, Tela_Chat_Bot::class.java)
-                R.id.nav_perfil -> null
+                R.id.nav_noticias -> Intent(this, Adm_Tela_Notificacoes::class.java)
+                R.id.nav_chatbot -> Intent(this, Tela_Adm_Chat_Bot::class.java)
+                R.id.nav_perfil -> null // Já estamos aqui, não faz nada
                 else -> null
             }
 
             if (intent != null) {
                 startActivity(intent)
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 finish()
             }
 
-            return@setOnItemSelectedListener intent != null || item.itemId == R.id.nav_perfil
+            return@setOnItemSelectedListener true
         }
     }
 }

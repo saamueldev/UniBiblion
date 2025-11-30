@@ -1,24 +1,49 @@
 package com.example.unibiblion
 
 import android.graphics.Color
-import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class NotificationAdapter(
-    private val notifications: MutableList<Notification>,
+    private val notifications: List<Notification>,
     private val onMarkAsRead: (Notification) -> Unit,
     private val onDelete: (Notification) -> Unit
 ) : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
-    class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val title: TextView = itemView.findViewById(R.id.notification_title)
-        val markAsReadLink: TextView = itemView.findViewById(R.id.mark_as_read_text)
-        val deleteIcon: ImageButton = itemView.findViewById(R.id.delete_button)
+    inner class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val layout: ConstraintLayout = itemView.findViewById(R.id.notification_item_layout)
+        private val titleTextView: TextView = itemView.findViewById(R.id.notification_title)
+        private val markAsReadTextView: TextView = itemView.findViewById(R.id.mark_as_read_text)
+        private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
+
+        fun bind(notification: Notification) {
+            titleTextView.text = notification.title
+
+            if (notification.isRead) {
+                layout.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.cinza_fundo_edittext))
+                titleTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.cinza_borda_edittext))
+                markAsReadTextView.visibility = View.GONE
+            } else {
+                layout.setBackgroundColor(Color.WHITE)
+                titleTextView.setTextColor(Color.BLACK)
+                markAsReadTextView.visibility = View.VISIBLE
+            }
+
+            markAsReadTextView.setOnClickListener {
+                onMarkAsRead(notification)
+            }
+
+            deleteButton.setOnClickListener {
+                onDelete(notification)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
@@ -28,38 +53,8 @@ class NotificationAdapter(
     }
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
-        val notif = notifications[position]
-
-        holder.title.text = notif.title
-
-        if (notif.isRead) {
-            holder.title.setTextColor(Color.DKGRAY)
-            holder.title.setTypeface(null, Typeface.NORMAL)
-            holder.markAsReadLink.visibility = View.GONE
-        } else {
-            holder.title.setTextColor(Color.BLACK)
-            holder.title.setTypeface(null, Typeface.BOLD)
-            holder.markAsReadLink.visibility = View.VISIBLE
-        }
-
-        holder.markAsReadLink.setOnClickListener {
-            onMarkAsRead(notif)
-        }
-
-        holder.deleteIcon.setOnClickListener {
-            onDelete(notif)
-        }
-
-        holder.itemView.setOnClickListener {
-            if (!notif.isRead) {
-                onMarkAsRead(notif)
-            }
-        }
+        holder.bind(notifications[position])
     }
 
-    override fun getItemCount() = notifications.size
-
-    fun updateData() {
-        notifyDataSetChanged()
-    }
+    override fun getItemCount(): Int = notifications.size
 }
