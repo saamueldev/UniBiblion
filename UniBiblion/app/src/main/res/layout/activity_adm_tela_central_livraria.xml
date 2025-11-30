@@ -27,7 +27,7 @@
         android:id="@+id/buttonGerenciarCatalogo"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="300dp"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
         android:layout_marginStart="55dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="55dp"
@@ -43,23 +43,39 @@
         android:id="@+id/buttonGerenciarCabines"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="300dp"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
         android:layout_marginStart="55dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="55dp"
         android:layout_marginBottom="6dp"
         android:text="Gerenciar Cabines"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonGerenciamentoGeral"
+        app:layout_constraintBottom_toTopOf="@+id/buttonRelatorios"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonGerenciarCatalogo" />
 
     <Button
+        android:id="@+id/buttonRelatorios"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="300dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="6dp"
+        android:text="Relatórios"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonGerenciamentoGeral"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonGerenciarCabines" />
+
+    <Button
         android:id="@+id/buttonGerenciamentoGeral"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="300dp"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
         android:layout_marginStart="55dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="55dp"
@@ -69,6 +85,6 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonGerenciarCabines" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonRelatorios" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

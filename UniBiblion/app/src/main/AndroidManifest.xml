@@ -53,6 +53,9 @@
         <activity
             android:name=".Adm_Tela_De_Perfil"
             android:exported="false" />
+        <activity
+            android:name=".Adm_Tela_Relatorios"
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"

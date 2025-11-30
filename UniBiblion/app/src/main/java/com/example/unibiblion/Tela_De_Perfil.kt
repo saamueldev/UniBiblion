@@ -153,7 +153,7 @@ class Tela_De_Perfil : AppCompatActivity() {
         popup.show()
     }
     private fun setupBottomNavigation() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_bar)
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.nav_perfil
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {

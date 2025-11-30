@@ -10,7 +10,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Timestamp // IMPORTANTE: Importar a classe Timestamp
+import com.google.firebase.auth.FirebaseAuth // Para obter o usuário logado
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -25,6 +27,7 @@ class Tela_Informacoes2 : AppCompatActivity() {
     private lateinit var dataRetiradaTextView: TextView
     private lateinit var horarioRetiradaTextView: TextView
     private lateinit var dataDevolucaoTextView: TextView
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +42,7 @@ class Tela_Informacoes2 : AppCompatActivity() {
         dataDevolucaoTextView = findViewById(R.id.textView7)
         val buttonConfirmar: Button = findViewById(R.id.buttonConfirmarInf2)
         val buttonVoltar: Button = findViewById(R.id.buttonVoltarInf2)
+        bottomNavigation = findViewById(R.id.bottom_navigation)
 
         // 2. Receba todos os dados da Intent
         val dataAgendamento = intent.getStringExtra("DATA_AGENDAMENTO")
@@ -89,6 +93,42 @@ class Tela_Informacoes2 : AppCompatActivity() {
         buttonVoltar.setOnClickListener {
             voltarParaTelaDesejado()
         }
+
+        setupBottomNavigation()
+    }
+
+    private fun setupBottomNavigation() {
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_livraria -> {
+                    val intent = Intent(this, Tela_Central_Livraria::class.java)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
+                R.id.nav_noticias -> {
+                    val intent = Intent(this, NoticiasActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_chatbot -> {
+                    val intent = Intent(this, Tela_Chat_Bot::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_perfil -> {
+                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigation.menu.findItem(R.id.nav_livraria).isChecked = true
     }
 
     private fun decrementarEstoque() {
@@ -139,7 +179,10 @@ class Tela_Informacoes2 : AppCompatActivity() {
             "dataRetirada" to dataRetiradaTextView.text.toString(),
             "horarioRetirada" to horarioRetiradaTextView.text.toString(),
             "dataDevolucao" to dataDevolucaoTimestamp, // Salva no formato Timestamp
-            "renovado" to false // Adiciona a flag de renovação
+            "renovado" to false, // Adiciona a flag de renovação
+            "usuarioId" to (FirebaseAuth.getInstance().currentUser?.uid ?: ""), // ID do usuário
+            "livroId" to (livroSelecionado?.id ?: ""), // ID do livro
+            "timestampCriacao" to com.google.firebase.Timestamp.now() // Timestamp da criação do aluguel
         )
 
         Firebase.firestore.collection("livrosalugados")

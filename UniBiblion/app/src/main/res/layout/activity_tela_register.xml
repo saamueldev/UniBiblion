@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/android:colorBackground"
-    android:id="@+id/main"
-    tools:context=".Tela_Register">
+    android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:id="@+id/main"
+        tools:context=".Tela_Register">    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_card_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -159,3 +162,5 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

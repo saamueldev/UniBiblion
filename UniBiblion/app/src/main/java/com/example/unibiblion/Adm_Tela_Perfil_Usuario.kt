@@ -77,7 +77,7 @@ class Adm_Tela_Perfil_Usuario : AppCompatActivity() {
     }
 
     private fun setupBottomNavigation() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_bar)
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.nav_perfil
 
         bottomNavigationView.setOnItemSelectedListener { item ->

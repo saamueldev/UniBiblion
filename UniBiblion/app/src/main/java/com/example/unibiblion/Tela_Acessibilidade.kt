@@ -73,7 +73,7 @@ class Tela_Acessibilidade : AppCompatActivity(), AdapterView.OnItemSelectedListe
 
         setupSpinner()
 
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_bar)
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.nav_chatbot
 
         bottomNavigationView.setOnItemSelectedListener { item ->

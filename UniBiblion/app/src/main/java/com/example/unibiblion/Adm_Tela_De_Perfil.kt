@@ -81,7 +81,7 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
     private fun setupUI() {
         profileImage = findViewById(R.id.profile_image)
         textName = findViewById(R.id.text_name)
-        bottomNavigationView = findViewById(R.id.bottom_navigation_bar)
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
     }
 
     private fun setupListeners() {

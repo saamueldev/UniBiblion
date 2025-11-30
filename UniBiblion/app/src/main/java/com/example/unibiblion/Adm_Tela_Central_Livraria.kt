@@ -42,6 +42,13 @@ class Adm_Tela_Central_Livraria : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Mapeia: Relatórios -> Adm_Tela_Relatorios
+        val buttonRelatorios: Button = findViewById(R.id.buttonRelatorios)
+        buttonRelatorios.setOnClickListener {
+            val intent = Intent(this, Adm_Tela_Relatorios::class.java)
+            startActivity(intent)
+        }
+
         // Mapeia: Gerenciamento Geral -> AdminDashboardActivity
         val buttonGerenciamentoGeral: Button = findViewById(R.id.buttonGerenciamentoGeral)
         buttonGerenciamentoGeral.setOnClickListener {

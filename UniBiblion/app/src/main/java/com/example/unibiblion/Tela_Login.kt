@@ -127,6 +127,9 @@ class Tela_Login : AppCompatActivity() {
                 if (document.exists()) {
                     val isAdmin = document.getBoolean("admin") == true
 
+                    // Inicializa a sessão do usuário
+                    UserSessionManager.setUserType(isAdmin)
+
                     Toast.makeText(this, "Login efetuado com sucesso!", Toast.LENGTH_SHORT).show()
                     Log.d(TAG, "Resultado da verificação isAdmin: $isAdmin")
 

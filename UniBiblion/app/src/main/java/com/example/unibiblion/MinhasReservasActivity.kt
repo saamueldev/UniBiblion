@@ -73,8 +73,8 @@ class MinhasReservasActivity : AppCompatActivity() {
             return when (position) {
                 // Posição 0: Reservas ATIVAS (Futuras e Canceláveis)
                 0 -> ReservasListFragment.newInstance(StatusReserva.ATIVA)
-                // Posição 1: Histórico (Reservas CONCLUIDAS)
-                1 -> ReservasListFragment.newInstance(StatusReserva.CONCLUIDA)
+                // Posição 1: Histórico (Reservas FINALIZADAS)
+                1 -> ReservasListFragment.newInstance(StatusReserva.FINALIZADA)
                 else -> throw IllegalStateException("Posição de fragmento inválida")
             }
         }

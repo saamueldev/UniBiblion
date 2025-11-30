@@ -1,5 +1,6 @@
 package com.example.unibiblion
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Timestamp // Importa a classe Timestamp
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -18,6 +20,7 @@ import java.util.Locale
 class Tela_Renovacao_Livros : AppCompatActivity(), LivroAlugadoAdapter.OnItemClickListener {
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var bottomNavigation: BottomNavigationView
     private var adapter: LivroAlugadoAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +28,10 @@ class Tela_Renovacao_Livros : AppCompatActivity(), LivroAlugadoAdapter.OnItemCli
         setContentView(R.layout.activity_renovacao_livros)
 
         recyclerView = findViewById(R.id.recyclerViewLivroParaRenovacao)
+        bottomNavigation = findViewById(R.id.bottom_navigation)
+        
         setupRecyclerView()
+        setupBottomNavigation()
     }
 
     private fun setupRecyclerView() {
@@ -108,5 +114,39 @@ class Tela_Renovacao_Livros : AppCompatActivity(), LivroAlugadoAdapter.OnItemCli
     override fun onStop() {
         super.onStop()
         adapter?.stopListening()
+    }
+
+    private fun setupBottomNavigation() {
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_livraria -> {
+                    val intent = Intent(this, Tela_Central_Livraria::class.java)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
+                R.id.nav_noticias -> {
+                    val intent = Intent(this, NoticiasActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_chatbot -> {
+                    val intent = Intent(this, Tela_Chat_Bot::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_perfil -> {
+                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNavigation.menu.findItem(R.id.nav_livraria).isChecked = true
     }
 }

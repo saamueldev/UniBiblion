@@ -22,7 +22,7 @@ class Tela_Config_geral : AppCompatActivity() {
         switchNotificacoes = findViewById(R.id.switch_notificacoes)
         btnSobreOApp = findViewById(R.id.btn_sobre_o_app)
         btnSairDaConta = findViewById(R.id.btn_sair_da_conta)
-        bottomNavigation = findViewById(R.id.bottom_navigation_bar)
+        bottomNavigation = findViewById(R.id.bottom_navigation)
 
         switchNotificacoes.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
