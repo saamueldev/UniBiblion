@@ -77,23 +77,23 @@ class CabinesAdminListActivity : AppCompatActivity() {
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_livraria -> {
-                    val intent = Intent(this, Tela_Central_Livraria::class.java)
+                    val intent = Intent(this, Adm_Tela_Central_Livraria::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
                     true
                 }
                 R.id.nav_noticias -> {
-                    val intent = Intent(this, NoticiasActivity::class.java)
+                    val intent = Intent(this, Adm_Tela_Mural_Noticias_Eventos::class.java)
                     startActivity(intent)
                     true
                 }
                 R.id.nav_chatbot -> {
-                    val intent = Intent(this, Tela_Chat_Bot::class.java)
+                    val intent = Intent(this, Tela_Adm_Chat_Bot::class.java)
                     startActivity(intent)
                     true
                 }
                 R.id.nav_perfil -> {
-                    val intent = Intent(this, Tela_De_Perfil::class.java)
+                    val intent = Intent(this, Adm_Tela_De_Perfil::class.java)
                     startActivity(intent)
                     true
                 }
