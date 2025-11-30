@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="?attr/android:colorBackground"
     android:id="@+id/main"
     tools:context=".Tela_Trocar_Senha_Via_Perfil">
 
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Definir Nova Senha"
-            android:textColor="@color/roxo_primario"
+            android:textColor="?attr/colorOnBackground"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp"/>
@@ -105,11 +105,11 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_save_changes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/white"
+                app:backgroundTint="@android:color/white"
                 android:minHeight="56dp"
                 android:text="Salvar Alteração"
                 android:textColor="@color/roxo_primario"

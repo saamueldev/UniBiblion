@@ -21,13 +21,13 @@ class Adm_Tela_Mural_Noticias_Eventos : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var noticiasAdapter: NoticiasAdapter
+    private lateinit var bottomNav: BottomNavigationView // Adicionada declaração lateinit
 
     // Variáveis do Firebase
     private val db = FirebaseFirestore.getInstance()
     private var firestoreListener: ListenerRegistration? = null
 
     // Flag que indica que esta Activity é de Administração
-    // Como esta tela é EXCLUSIVA do ADM, podemos deixar true fixo.
     private val isAdminUser = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +50,8 @@ class Adm_Tela_Mural_Noticias_Eventos : AppCompatActivity() {
         noticiasAdapter = NoticiasAdapter(mutableListOf(), isAdminUser)
         recyclerView.adapter = noticiasAdapter
 
-        val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        // Inicializa o BottomNav
+        bottomNav = findViewById(R.id.bottom_navigation)
         bottomNav.selectedItemId = R.id.nav_noticias
 
         // Configuração do Botão Flutuante (FAB) para Criar Anúncio
@@ -62,6 +63,34 @@ class Adm_Tela_Mural_Noticias_Eventos : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // --- CONFIGURAÇÃO DA NAVEGAÇÃO INFERIOR ---
+        bottomNav.setOnItemSelectedListener { item ->
+            val activityClass = when (item.itemId) {
+                R.id.nav_livraria -> Adm_Tela_Central_Livraria::class.java // Home do Admin
+                R.id.nav_noticias -> null // Já estamos aqui
+                R.id.nav_chatbot -> Tela_Chat_Bot::class.java
+                R.id.nav_perfil -> Adm_Tela_De_Perfil::class.java
+                else -> null
+            }
+
+            if (activityClass != null) {
+                val intent = Intent(this, activityClass).apply {
+                    // Evita empilhamento e garante que a Activity de destino seja a raiz
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                startActivity(intent)
+                // Se a navegação não for para a Livraria (Home), esta Activity é encerrada
+                // Se for para Livraria, a FLAG_ACTIVITY_CLEAR_TOP cuida disso
+                if (item.itemId != R.id.nav_livraria) {
+                    finish()
+                }
+                return@setOnItemSelectedListener true
+            }
+            // Retorna true se for o item atual (nav_noticias), ou false se for inválido
+            return@setOnItemSelectedListener item.itemId == R.id.nav_noticias
+        }
+        // --- FIM DA CONFIGURAÇÃO DA NAVEGAÇÃO INFERIOR ---
+
         // Iniciar busca de dados
         carregarNoticiasFirestore()
     }
@@ -71,6 +100,10 @@ class Adm_Tela_Mural_Noticias_Eventos : AppCompatActivity() {
         super.onResume()
         if (firestoreListener == null) {
             carregarNoticiasFirestore()
+        }
+        // Garante que o item 'nav_noticias' esteja selecionado ao retornar
+        if (::bottomNav.isInitialized) {
+            bottomNav.selectedItemId = R.id.nav_noticias
         }
     }
 
@@ -89,6 +122,7 @@ class Adm_Tela_Mural_Noticias_Eventos : AppCompatActivity() {
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     Toast.makeText(this, "Erro ao carregar notícias.", Toast.LENGTH_SHORT).show()
+                    firestoreListener = null // Indica que o listener falhou
                     return@addSnapshotListener
                 }
 
