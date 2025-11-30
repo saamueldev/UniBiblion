@@ -62,6 +62,9 @@ class Fragment_Relatorio_Cabines : Fragment() {
         // Configura os botões de filtro
         setupFilterButtons(view)
         
+        // Configura botão de exportar PDF
+        setupExportPdfButton(view)
+        
         // Carrega dados da última semana por padrão
         filtrarPorSemana()
         
@@ -338,6 +341,33 @@ class Fragment_Relatorio_Cabines : Fragment() {
             Log.e("RelatorioCabines", "Erro ao calcular status real: ${e.message}")
             // Em caso de erro no parse, mantém o status original
             return statusOriginal
+        }
+    }
+
+    private fun setupExportPdfButton(view: View) {
+        view.findViewById<MaterialButton>(R.id.btn_exportar_pdf).setOnClickListener {
+            exportarPdfCabines()
+        }
+    }
+
+    private fun exportarPdfCabines() {
+        val listaAtual = adapter.getListaCabines()
+        
+        if (listaAtual.isEmpty()) {
+            Toast.makeText(requireContext(), "Nenhuma reserva para exportar", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        val arquivo = PdfExporter.gerarPdfCabines(requireContext(), listaAtual)
+        
+        if (arquivo != null) {
+            Toast.makeText(
+                requireContext(),
+                "PDF gerado com sucesso!\n${arquivo.absolutePath}",
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+            Toast.makeText(requireContext(), "Erro ao gerar PDF", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -62,6 +62,9 @@ class Fragment_Relatorio_Livros : Fragment() {
         // Configura os botões de filtro
         setupFilterButtons(view)
         
+        // Configura botão de exportar PDF
+        setupExportPdfButton(view)
+        
         // Carrega dados da última semana por padrão
         filtrarPorSemana()
         
@@ -363,6 +366,33 @@ class Fragment_Relatorio_Livros : Fragment() {
         } else {
             tvEmptyState.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
+        }
+    }
+
+    private fun setupExportPdfButton(view: View) {
+        view.findViewById<MaterialButton>(R.id.btn_exportar_pdf).setOnClickListener {
+            exportarPdfLivros()
+        }
+    }
+
+    private fun exportarPdfLivros() {
+        val listaAtual = adapter.getListaLivros()
+        
+        if (listaAtual.isEmpty()) {
+            Toast.makeText(requireContext(), "Nenhum aluguel para exportar", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        val arquivo = PdfExporter.gerarPdfLivros(requireContext(), listaAtual)
+        
+        if (arquivo != null) {
+            Toast.makeText(
+                requireContext(),
+                "PDF gerado com sucesso!\n${arquivo.absolutePath}",
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+            Toast.makeText(requireContext(), "Erro ao gerar PDF", Toast.LENGTH_SHORT).show()
         }
     }
 }

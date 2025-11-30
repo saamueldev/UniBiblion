@@ -80,4 +80,9 @@ class RelatorioCabineAdapter(
         listaRelatorios = novaLista
         notifyDataSetChanged()
     }
+
+    /**
+     * Retorna a lista atual de cabines
+     */
+    fun getListaCabines(): List<RelatorioCabine> = listaRelatorios
 }

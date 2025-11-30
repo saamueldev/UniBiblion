@@ -106,4 +106,9 @@ class RelatorioLivroAdapter(
         listaRelatorios = novaLista
         notifyDataSetChanged()
     }
+
+    /**
+     * Retorna a lista atual de livros
+     */
+    fun getListaLivros(): List<RelatorioLivro> = listaRelatorios
 }

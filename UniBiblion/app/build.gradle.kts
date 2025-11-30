@@ -61,6 +61,9 @@ dependencies {
     // Biblioteca de gráficos para relatórios
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     
+    // Biblioteca para gerar PDFs
+    implementation("com.itextpdf:itextg:5.5.10")
+    
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
