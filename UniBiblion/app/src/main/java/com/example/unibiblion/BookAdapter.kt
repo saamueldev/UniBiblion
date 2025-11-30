@@ -5,13 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.unibiblion.R
+import com.bumptech.glide.Glide
 
 class BookAdapter(
-    private val books: List<Book>,
-    private val onBookClick: (Book) -> Unit
+    private val books: List<Livro>,
+    private val onBookClick: (Livro) -> Unit
 ) : RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
 
     class BookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -28,13 +27,23 @@ class BookAdapter(
     override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
         val book = books[position]
 
-        holder.bookTitle.text = book.title
-        holder.bookAuthor.text = "Autor Desconhecido"
-        holder.bookCoverImage.setImageResource(R.drawable.ic_book2)
+        holder.bookTitle.text = book.titulo
+
+        if (book.autor.isNotBlank()) {
+            holder.bookAuthor.text = book.autor
+            holder.bookAuthor.visibility = View.VISIBLE
+        } else {
+            holder.bookAuthor.visibility = View.GONE
+        }
+
+        Glide.with(holder.itemView.context)
+            .load(book.capaUrl)
+            .placeholder(R.drawable.ic_book2)
+            .error(R.drawable.ic_book2)
+            .into(holder.bookCoverImage)
 
         holder.itemView.setOnClickListener {
             onBookClick(book)
-            Toast.makeText(holder.itemView.context, "Livro: ${book.title}", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -147,7 +147,7 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
 
             val intent = when (item.itemId) {
                 R.id.nav_livraria -> Intent(this, Adm_Tela_Central_Livraria::class.java)
-                R.id.nav_noticias -> Intent(this, Adm_Tela_Notificacoes::class.java)
+                R.id.nav_noticias -> Intent(this, Adm_Tela_Mural_Noticias_Eventos::class.java)
                 R.id.nav_chatbot -> Intent(this, Tela_Adm_Chat_Bot::class.java)
                 R.id.nav_perfil -> null // Já estamos aqui, não faz nada
                 else -> null
