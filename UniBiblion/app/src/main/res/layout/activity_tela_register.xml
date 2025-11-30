@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="?attr/android:colorBackground"
     android:id="@+id/main"
     tools:context=".Tela_Register">
 
@@ -60,8 +60,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_height="wrap_content" android:layout_marginBottom="24dp"
                 android:text="Cadastro"
                 android:textColor="@android:color/white"
                 android:textSize="36sp"
@@ -111,36 +110,45 @@
                 android:minHeight="56dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:maxLength="16" /> <EditText
-            android:id="@+id/edit_text_confirm_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="password"
-            android:background="@drawable/rounded_edittext_background_white"
-            android:hint="Confirmar Senha"
-            android:textColorHint="@color/text_primary"
-            android:textColor="@android:color/black"
-            android:inputType="textPassword"
-            android:minHeight="56dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:maxLength="16" /> <TextView
-            android:id="@+id/text_view_confirm_password_error"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="28dp"
-            android:text="*Senhas diferentes"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="12sp"
-            android:visibility="gone" />
+                android:maxLength="16" />
 
-            <Button
+            <EditText
+                android:id="@+id/edit_text_confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:autofillHints="password"
+                android:background="@drawable/rounded_edittext_background_white"
+                android:hint="Confirmar Senha"
+                android:textColorHint="@color/text_primary"
+                android:textColor="@android:color/black"
+                android:inputType="textPassword"
+                android:minHeight="56dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:maxLength="16" />
+
+            <TextView
+                android:id="@+id/text_view_confirm_password_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp" android:text="*Senhas diferentes"
+                android:textColor="@color/red_400"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_avancar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/white"
+                app:backgroundTint="@android:color/white"
                 android:minHeight="56dp"
                 android:text="Avançar"
                 android:textColor="@color/roxo_primario"
