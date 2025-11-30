@@ -30,8 +30,18 @@ class TimeSlotAdminAdapter(
         fun bind(slot: TimeSlotAdmin) {
             tvTime.text = "${slot.startHour}\n${slot.endHour}"
 
-            // 🎯 LÓGICA DE CORREÇÃO: Três estados visuais
+
+            // 🎯 INSERÇÃO DA CORREÇÃO AQUI!
             val context = itemView.context
+
+            // FORÇA O TEXTO A SER PRETO (android.R.color.black)
+            // Isso anula a tentativa do tema DayNight de forçar o texto a ser branco.
+            tvTime.setTextColor(ContextCompat.getColor(context, android.R.color.black))
+
+
+            // ----------------------------------------------------
+            // LÓGICA DE VISUALIZAÇÃO ORIGINAL
+            // ----------------------------------------------------
 
             if (slot.isReservadoPeloUsuario) {
                 // 1. ESTADO RESERVADO (CINZA): Não pode ser alterado pelo Admin

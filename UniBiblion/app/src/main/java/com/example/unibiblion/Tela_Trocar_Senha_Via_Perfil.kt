@@ -10,23 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-// 🔑 Importações corretas do Firebase
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 
 class Tela_Trocar_Senha_Via_Perfil : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var newPasswordEditText: EditText
     private lateinit var confirmPasswordEditText: EditText
-    private var senhaAtual: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_tela_trocar_senha_via_perfil)
+        setContentView(R.layout.activity_tela_trocar_senha_via_perfil) // Certifique-se que este layout só tem NOVA e CONFIRMA
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -36,14 +32,7 @@ class Tela_Trocar_Senha_Via_Perfil : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // Recebendo senha atual
-        senhaAtual = intent.getStringExtra("EXTRA_SENHA_ATUAL")
-
-        if (senhaAtual == null) {
-            Toast.makeText(this, "Erro de sessão. Senha atual não disponível.", Toast.LENGTH_LONG).show()
-            finish()
-            return
-        }
+        // NÃO HÁ MAIS LÓGICA PARA RECEBER A SENHA ATUAL AQUI
 
         newPasswordEditText = findViewById(R.id.edit_text_new_password)
         confirmPasswordEditText = findViewById(R.id.edit_text_confirm_password)
@@ -75,52 +64,36 @@ class Tela_Trocar_Senha_Via_Perfil : AppCompatActivity() {
             return
         }
 
-        if (senhaAtual != null) {
-            atualizarSenhaNoFirebase(senhaAtual!!, novaSenha)
-        } else {
-            Toast.makeText(this, "Erro de sessão. Tente refazer o processo.", Toast.LENGTH_LONG).show()
-        }
+        // Chama a função para atualizar a senha
+        atualizarSenhaNoFirebase(novaSenha)
     }
 
-    private fun atualizarSenhaNoFirebase(senhaAtual: String, novaSenha: String) {
+    // Função agora chama updatePassword diretamente, pois o usuário já foi reautenticado na tela anterior.
+    private fun atualizarSenhaNoFirebase(novaSenha: String) {
         val usuario = auth.currentUser
 
-        if (usuario == null || usuario.email == null) {
+        if (usuario == null) {
             Toast.makeText(this, "Sessão expirada. Faça login novamente.", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        val credential = EmailAuthProvider.getCredential(usuario.email!!, senhaAtual)
-
-        usuario.reauthenticate(credential)
+        usuario.updatePassword(novaSenha)
             .addOnSuccessListener {
+                Toast.makeText(this, "✅ Senha alterada com sucesso!", Toast.LENGTH_LONG).show()
 
-                usuario.updatePassword(novaSenha)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "✅ Senha alterada com sucesso!", Toast.LENGTH_LONG).show()
-
-                        val intent = Intent(this, Tela_De_Perfil_Dados::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        startActivity(intent)
-                        finish()
-                    }
-                    .addOnFailureListener { e ->
-                        when (e) {
-                            is FirebaseAuthWeakPasswordException ->
-                                newPasswordEditText.error = "Senha muito fraca. Tente uma combinação mais forte."
-
-                            else ->
-                                Toast.makeText(this, "Erro ao salvar: ${e.message}", Toast.LENGTH_LONG).show()
-                        }
-                    }
+                val intent = Intent(this, Tela_De_Perfil_Dados::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+                finish()
             }
-            .addOnFailureListener {
-                Toast.makeText(
-                    this,
-                    "Erro de segurança. A senha atual está incorreta. Tente refazer a verificação.",
-                    Toast.LENGTH_LONG
-                ).show()
+            .addOnFailureListener { e ->
+                // O principal erro aqui será o FirebaseAuthWeakPasswordException
+                if (e is FirebaseAuthWeakPasswordException) {
+                    newPasswordEditText.error = "Senha muito fraca. Tente uma combinação mais forte."
+                } else {
+                    Toast.makeText(this, "Erro ao salvar a nova senha: ${e.message}", Toast.LENGTH_LONG).show()
+                }
             }
     }
 }

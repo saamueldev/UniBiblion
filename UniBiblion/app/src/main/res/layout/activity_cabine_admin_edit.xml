@@ -82,7 +82,7 @@
         app:layout_constraintBottom_toTopOf="@id/btn_save_changes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_time_slot" />
+        tools:listitem="@layout/item_time_slot_admin" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_save_changes"

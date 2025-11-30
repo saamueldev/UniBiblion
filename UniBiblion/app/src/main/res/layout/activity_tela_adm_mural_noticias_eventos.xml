@@ -6,21 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main"
-    tools:context=".Adm_Tela_Mural_Noticias_Eventos"> <EditText
-    android:id="@+id/search_bar"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:hint="Buscar Notícias ou Eventos"
-    android:padding="12dp"
-    android:drawableStart="@drawable/ic_search"
-    android:drawablePadding="8dp"
-    android:background="@android:color/transparent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    android:layout_margin="8dp"
-    android:inputType="text"
-    tools:ignore="Autofill,LabelFor" />
+    tools:context=".Adm_Tela_Mural_Noticias_Eventos">
+
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Buscar Notícias ou Eventos"
+        android:padding="12dp"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="8dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        tools:ignore="Autofill,LabelFor" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_noticias"
@@ -47,14 +49,12 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"  android:layout_marginTop="6dp"        android:background="@color/roxo_institucional"
+        app:itemIconTint="@color/bottom_nav_icon_color" app:itemTextColor="@color/black"
         app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
-        android:background="@color/roxo_institucional" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"     app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
