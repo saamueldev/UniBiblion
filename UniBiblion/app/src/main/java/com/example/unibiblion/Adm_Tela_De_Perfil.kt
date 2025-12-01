@@ -80,7 +80,6 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
     private fun setupUI() {
         profileImage = findViewById(R.id.profile_image)
         textName = findViewById(R.id.text_name)
-        // CORREÇÃO 2: Padronizando o ID para consistência com o resto do projeto
         bottomNavigationView = findViewById(R.id.bottom_navigation)
     }
 
@@ -121,11 +120,11 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
                         true
                     }
                     R.id.action_configuracoes_gerais -> {
-                        startActivity(Intent(this@Adm_Tela_De_Perfil, Tela_Config_geral::class.java))
+                        startActivity(Intent(this@Adm_Tela_De_Perfil, Adm_Config_Geral::class.java))
                         true
                     }
                     R.id.action_acessibilidade -> {
-                        startActivity(Intent(this@Adm_Tela_De_Perfil, Tela_Acessibilidade::class.java))
+                        startActivity(Intent(this@Adm_Tela_De_Perfil, Adm_Acessibilidade::class.java))
                         true
                     }
                     else -> false

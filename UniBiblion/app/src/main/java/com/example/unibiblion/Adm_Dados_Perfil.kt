@@ -123,11 +123,11 @@ class Adm_Dados_Perfil : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.action_editar_perfil -> { true }
                 R.id.action_acessibilidade -> {
-                    startActivity(Intent(this, Tela_Acessibilidade::class.java))
+                    startActivity(Intent(this, Adm_Acessibilidade::class.java))
                     true
                 }
                 R.id.action_configuracoes_gerais -> {
-                    startActivity(Intent(this, Tela_Config_geral::class.java))
+                    startActivity(Intent(this, Adm_Config_Geral::class.java))
                     true
                 }
                 else -> false

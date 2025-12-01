@@ -26,7 +26,7 @@ class Tela_De_Perfil_Email : AppCompatActivity() {
 
         editNovoEmail = findViewById(R.id.edit_novo_email)
         buttonSalvar = findViewById(R.id.button_salvar_email)
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation_bar)
 
         carregarEmailAtual()
 

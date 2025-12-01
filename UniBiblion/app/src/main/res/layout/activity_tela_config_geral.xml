@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="?attr/colorSurface"
     tools:context=".Tela_Config_geral">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Notificações"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +34,6 @@
             android:id="@+id/switch_notificacoes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="200dp"
             android:checked="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -44,13 +43,12 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_sobre_o_app"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="32dp"
         android:text="Sobre o app"
-        android:textColor="@android:color/white"
-        android:textAllCaps="false"
         android:padding="12dp"
         android:textSize="18sp"
         app:cornerRadius="8dp"
@@ -60,13 +58,14 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_sair_da_conta"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="24dp"
         android:text="Sair da conta"
-        android:textColor="@android:color/white"
-        android:textAllCaps="false"
+        app:strokeColor="?attr/colorError"
+        android:textColor="?attr/colorError"
         android:padding="12dp"
         android:textSize="18sp"
         app:cornerRadius="8dp"
@@ -74,13 +73,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- CÓDIGO SUBSTITUÍDO ABAIXO -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@android:color/white"
+        android:layout_marginTop="6dp"
+        android:background="@color/roxo_institucional"
+        app:itemIconTint="@color/bottom_nav_icon_color"
+        app:itemTextColor="@color/black"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

@@ -182,7 +182,8 @@ class Tela_De_Perfil : AppCompatActivity() {
 
 
     private fun setupBottomNavigation() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_bar)
+        // A única mudança é aqui, no ID
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.nav_perfil
 
         bottomNavigationView.setOnItemSelectedListener { item ->

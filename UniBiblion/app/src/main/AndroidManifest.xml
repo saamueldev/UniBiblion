@@ -222,7 +222,14 @@
         <activity
             android:name=".Tela_Adm_Chat_Bot"
             android:exported="false"/>
+
         <activity android:name=".Adm_Tela_Dados"
+            android:exported="false"/>
+
+        <activity android:name=".Adm_Acessibilidade"
+            android:exported="false"/>
+
+        <activity android:name=".Adm_Config_Geral"
             android:exported="false"/>
 
     </application>

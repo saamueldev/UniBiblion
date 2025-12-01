@@ -1,8 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
     tools:context=".Tela_Acessibilidade">
 
     <ScrollView
@@ -25,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:text="Configurações de Acessibilidade"
+                android:textColor="?attr/colorOnSurface"
                 android:textAppearance="?attr/textAppearanceHeadline5" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
@@ -33,14 +36,16 @@
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:text="Modo Escuro"
+                android:textColor="?attr/colorOnSurface"
                 android:textAppearance="?attr/textAppearanceSubtitle1" />
 
+            <!-- LINHA CORRIGIDA -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="?attr/colorSurface" />
+                android:background="#CCCCCC" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switch_alto_contraste"
@@ -48,20 +53,22 @@
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:text="Alto Contraste"
+                android:textColor="?attr/colorOnSurface"
                 android:textAppearance="?attr/textAppearanceSubtitle1" />
 
+            <!-- LINHA CORRIGIDA -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
-                android:background="?attr/colorSurface" />
+                android:background="#CCCCCC" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp">
 
@@ -70,12 +77,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Tamanho da Fonte"
+                    android:textColor="?attr/colorOnSurface"
                     android:textAppearance="?attr/textAppearanceSubtitle1" />
 
                 <Spinner
                     android:id="@+id/spinner_font_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:spinnerMode="dropdown" />
             </LinearLayout>
 
@@ -83,13 +92,16 @@
 
     </ScrollView>
 
+    <!-- Barra de Navegação Padronizada -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        app:itemIconTint="?attr/colorOnPrimary"
-        app:itemTextColor="?attr/colorOnPrimary"
+        android:layout_marginTop="6dp"
+        android:background="@color/roxo_institucional"
+        app:itemIconTint="@color/bottom_nav_icon_color"
+        app:itemTextColor="@color/black"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
