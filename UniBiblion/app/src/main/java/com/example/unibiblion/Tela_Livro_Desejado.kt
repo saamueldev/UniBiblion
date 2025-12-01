@@ -9,25 +9,31 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomnavigation.BottomNavigationView // Importação necessária
 import com.google.android.material.button.MaterialButton
 import java.io.Serializable
 
 class Tela_Livro_Desejado : AppCompatActivity() {
     private lateinit var btnEscreverReview: MaterialButton
+    private lateinit var bottomNav: BottomNavigationView // Variável para a barra de navegação
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tela_livro_desejado)
 
+        // Encontra a barra de navegação e configura seus cliques
+        bottomNav = findViewById(R.id.bottom_navigation)
+        setupBottomNavigation()
+
         val livro = getSerializable(intent, "LIVRO_SELECIONADO", Livro::class.java)
 
-        // Validação crucial para evitar crashes
         if (livro == null) {
             Toast.makeText(this, "Erro: Não foi possível carregar os dados do livro.", Toast.LENGTH_LONG).show()
             finish()
             return
         }
 
+        // --- Restante das inicializações de Views ---
         val imgCapa: ImageView = findViewById(R.id.img_detalhe_capa)
         val txtTitulo: TextView = findViewById(R.id.tv_detalhe_titulo)
         val txtAutor: TextView = findViewById(R.id.tv_detalhe_autor)
@@ -39,7 +45,7 @@ class Tela_Livro_Desejado : AppCompatActivity() {
         val btnReviews: MaterialButton = findViewById(R.id.btn_detalhe_reviews)
         btnEscreverReview = findViewById(R.id.btn_detalhe_escrever_review)
 
-        // Preenche a UI com os dados do livro
+        // --- Preenchimento da UI com os dados do livro ---
         title = livro.titulo
         txtTitulo.text = livro.titulo
         txtAutor.text = "por ${livro.autor}"
@@ -49,29 +55,22 @@ class Tela_Livro_Desejado : AppCompatActivity() {
         txtResumo.text = livro.resumo
 
         if (livro.capaUrl.isNotEmpty()) {
-            Glide.with(this)
-                .load(livro.capaUrl)
-                .placeholder(R.drawable.sommervile)
-                .error(R.drawable.sommervile)
-                .into(imgCapa)
+            Glide.with(this).load(livro.capaUrl).placeholder(R.drawable.sommervile).error(R.drawable.sommervile).into(imgCapa)
         } else {
             imgCapa.setImageResource(R.drawable.sommervile)
         }
 
         if (livro.qEstoque > 0) {
             btnAlugar.visibility = View.VISIBLE
-            btnReviews.visibility = View.VISIBLE
-            btnEscreverReview.visibility = View.VISIBLE
         } else {
             btnAlugar.visibility = View.GONE
-            btnReviews.visibility = View.VISIBLE
-            btnEscreverReview.visibility = View.VISIBLE
         }
+        btnReviews.visibility = View.VISIBLE
+        btnEscreverReview.visibility = View.VISIBLE
 
         // AÇÃO DO BOTÃO DE ALUGAR
         btnAlugar.setOnClickListener {
             val intentAlugar = Intent(this, Tela_Informacoes1::class.java).apply {
-                // Envia o objeto LIVRO INTEIRO para a próxima tela
                 putExtra("LIVRO_SELECIONADO", livro)
             }
             startActivity(intentAlugar)
@@ -90,6 +89,45 @@ class Tela_Livro_Desejado : AppCompatActivity() {
             intentCriarReview.putExtra(CriarReviewActivity.EXTRA_LIVRO_ID, livro.id)
             intentCriarReview.putExtra(CriarReviewActivity.EXTRA_LIVRO_TITULO, livro.titulo)
             startActivity(intentCriarReview)
+        }
+    }
+
+    /**
+     * Configura o listener da BottomNavigationView para tratar os cliques nos itens do menu.
+     */
+    private fun setupBottomNavigation() {
+        // Define o item "Livraria" como selecionado para feedback visual
+        bottomNav.selectedItemId = R.id.nav_livraria
+
+        bottomNav.setOnItemSelectedListener { item ->
+            var targetActivity: Class<*>? = null
+
+            when (item.itemId) {
+                // CORREÇÃO: Direciona para a tela central da livraria
+                R.id.nav_livraria -> {
+                    targetActivity = Tela_Central_Livraria::class.java
+                }
+                R.id.nav_noticias -> {
+                    targetActivity = NoticiasActivity::class.java
+                }
+                R.id.nav_chatbot -> {
+                    targetActivity = Tela_Chat_Bot::class.java
+                }
+                R.id.nav_perfil -> {
+                    targetActivity = Tela_De_Perfil::class.java
+                }
+            }
+
+            if (targetActivity != null) {
+                val intent = Intent(this, targetActivity).apply {
+                    // Limpa a pilha para que o usuário não retorne para "detalhes" ou "acervo"
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+                startActivity(intent)
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            }
+
+            true // Indica que o evento foi tratado
         }
     }
 
