@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".Adm_Tela_Detalhes_Livro">
 
-    <!-- Seção Superior: Capa, Título, Autor, Idioma -->
     <ImageView
         android:id="@+id/capaLivro"
         android:layout_width="150dp"
@@ -65,124 +64,131 @@
         app:layout_constraintEnd_toEndOf="@+id/nomeAutorLabel"
         app:layout_constraintStart_toEndOf="@+id/idiomaLivroLabel"
         tools:text="Português Brasileiro" />
-
-
-    <!-- Seção do Meio: Resumo -->
-    <TextView
-        android:id="@+id/resumoLivroLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Resumo:"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/capaLivro" />
-
-    <TextView
-        android:id="@+id/resumoLivro"
+    <ScrollView
+        android:id="@+id/scrollview_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:scrollbars="vertical"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/estadoLivroLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resumoLivroLabel"
-        tools:text="Descrição longa do livro que pode ocupar várias linhas e precisa ser rolada para ser lida completamente." />
+        app:layout_constraintTop_toBottomOf="@+id/capaLivro"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation" app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"> <TextView
+            android:id="@+id/resumoLivroLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Resumo:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Seção Inferior: Detalhes e Botões -->
-    <TextView
-        android:id="@+id/estadoLivroLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Estado do Livro:"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/estoqueLivroLabel"
-        app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/resumoLivro"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/resumoLivroLabel"
+                tools:text="Descrição longa do livro que pode ocupar várias linhas e agora rolará junto com o restante do conteúdo. Garantindo que todo o texto, por mais extenso que seja, fique visível para o usuário." />
 
-    <TextView
-        android:id="@+id/estadoLivro"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@id/estadoLivroLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/estadoLivroLabel"
-        tools:text="Novo" />
+            <TextView
+                android:id="@+id/estadoLivroLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Estado do Livro:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/resumoLivro" />
 
-    <TextView
-        android:id="@+id/estoqueLivroLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="24dp"
-        android:text="Estoque:"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/buttonEditar"
-        app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/estadoLivro"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="16sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/estadoLivroLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/estadoLivroLabel"
+                tools:text="Novo" />
 
-    <TextView
-        android:id="@+id/estoqueLivro"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@id/estoqueLivroLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/estoqueLivroLabel"
-        tools:text="10" />
+            <TextView
+                android:id="@+id/estoqueLivroLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Estoque:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/estadoLivroLabel" />
 
-    <Button
-        android:id="@+id/buttonEditar"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="Editar Livro"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-        app:layout_constraintEnd_toStartOf="@+id/buttonRemover"
-        app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/estoqueLivro"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="16sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/estoqueLivroLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/estoqueLivroLabel"
+                tools:text="10" />
 
-    <Button
-        android:id="@+id/buttonRemover"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Remover Livro"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonEditar" />
+            <Button
+                android:id="@+id/buttonEditar"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:text="Editar Livro"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@+id/estoqueLivroLabel"
+                app:layout_constraintEnd_toStartOf="@+id/buttonRemover"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
+            <Button
+                android:id="@+id/buttonRemover"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:text="Remover Livro"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@+id/estoqueLivroLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/buttonEditar"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/roxo_unibiblion"
-        app:itemIconTint="@color/black"
+        android:layout_height="64dp"
+        android:background="@color/roxo_institucional"
+        app:itemIconTint="@color/bottom_nav_icon_color"
         app:itemTextColor="@color/black"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"

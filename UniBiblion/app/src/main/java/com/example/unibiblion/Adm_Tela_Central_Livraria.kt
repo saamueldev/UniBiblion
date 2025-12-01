@@ -62,7 +62,7 @@ class Adm_Tela_Central_Livraria : AppCompatActivity() {
             val activityClass = when (item.itemId) {
                 R.id.nav_livraria -> null // Já estamos na Home Admin
                 R.id.nav_noticias -> Adm_Tela_Mural_Noticias_Eventos::class.java
-                R.id.nav_chatbot -> Tela_Chat_Bot::class.java
+                R.id.nav_chatbot -> Tela_Adm_Chat_Bot::class.java
                 R.id.nav_perfil -> Adm_Tela_De_Perfil::class.java
                 else -> null
             }

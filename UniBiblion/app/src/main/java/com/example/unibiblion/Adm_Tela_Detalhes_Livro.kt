@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.io.Serializable
@@ -17,22 +18,23 @@ import java.io.Serializable
 class Adm_Tela_Detalhes_Livro : AppCompatActivity() {
 
     private var livroSelecionado: Livro? = null
+    private var bottomNavigationView: BottomNavigationView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_adm_tela_detalhes_livro)
 
-        // Recebe o objeto Livro da tela de acervo
         livroSelecionado = getSerializable(intent, "LIVRO_SELECIONADO", Livro::class.java)
 
-        // Validação de segurança para evitar crash se o livro não for recebido
         if (livroSelecionado == null) {
             Toast.makeText(this, "Erro ao carregar os detalhes do livro.", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        // 1. Encontrando os componentes pelos IDs corretos do XML
+        // 1. Encontrando os componentes
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
+
         val imgCapa: ImageView = findViewById(R.id.capaLivro)
         val txtTitulo: TextView = findViewById(R.id.nomeLivroLabel)
         val txtAutor: TextView = findViewById(R.id.nomeAutorLabel)
@@ -55,34 +57,75 @@ class Adm_Tela_Detalhes_Livro : AppCompatActivity() {
             if (livro.capaUrl.isNotEmpty()) {
                 Glide.with(this)
                     .load(livro.capaUrl)
-                    .placeholder(R.drawable.sommervile) // Imagem enquanto carrega
-                    .error(R.drawable.sommervile)       // Imagem em caso de erro
+                    .placeholder(R.drawable.sommervile)
+                    .error(R.drawable.sommervile)
                     .into(imgCapa)
             } else {
-                imgCapa.setImageResource(R.drawable.sommervile) // Imagem padrão
+                imgCapa.setImageResource(R.drawable.sommervile)
             }
 
-            // 3. *** AÇÃO DO BOTÃO EDITAR IMPLEMENTADA ***
+            // 3. AÇÃO DO BOTÃO EDITAR
             btnEditar.setOnClickListener {
-                // Cria a intenção de ir para a tela de cadastro
                 val intent = Intent(this, Adm_Tela_Cadastro_Livro::class.java).apply {
-                    // Envia o objeto 'Livro' completo para ser editado
                     putExtra("LIVRO_PARA_EDITAR", livro)
                 }
-                // Inicia a tela de edição
                 startActivity(intent)
-                // Fecha a tela de detalhes para que, ao salvar, o app volte para o acervo
                 finish()
             }
 
-            // 4. AÇÃO DO BOTÃO REMOVER (Sem alterações)
+            // 4. AÇÃO DO BOTÃO REMOVER
             btnRemover.setOnClickListener {
                 mostrarDialogoDeConfirmacao(livro)
             }
         }
+
+        // 5. CHAMADA DA FUNÇÃO DE NAVEGAÇÃO
+        setupBottomNavigation()
     }
 
-    // --- (Funções mostrarDialogoDeConfirmacao, removerLivroDoFirestore e getSerializable sem alterações) ---
+    // -----------------------------------------------------
+    // FUNÇÃO DA BARRA DE NAVEGAÇÃO INFERIOR (CORRIGIDA)
+    // -----------------------------------------------------
+    private fun setupBottomNavigation() {
+        bottomNavigationView?.let { bottomNav ->
+
+            // Marca o item de Livraria como selecionado (onde esta tela pertence)
+            bottomNav.selectedItemId = R.id.nav_livraria
+
+            bottomNav.setOnItemSelectedListener { item ->
+
+                // Ignora o clique se o item já estiver selecionado para evitar recarregar
+                if (item.itemId == bottomNav.selectedItemId) {
+                    return@setOnItemSelectedListener true
+                }
+
+                val activityClass = when (item.itemId) {
+                    R.id.nav_livraria -> Adm_Tela_Central_Livraria::class.java
+                    R.id.nav_noticias -> Adm_Tela_Mural_Noticias_Eventos::class.java
+                    R.id.nav_chatbot -> Tela_Adm_Chat_Bot::class.java
+                    R.id.nav_perfil -> Adm_Tela_De_Perfil::class.java
+                    else -> null
+                }
+
+                if (activityClass != null) {
+                    val intent = Intent(this, activityClass).apply {
+                        // Flags para limpar a pilha de atividades e iniciar a nova no topo
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    startActivity(intent)
+                    finish() // Fecha esta Activity (Adm_Tela_Detalhes_Livro)
+                    return@setOnItemSelectedListener true
+                }
+
+                return@setOnItemSelectedListener false
+            }
+        }
+    }
+
+
+    // -----------------------------------------------------
+    // FUNÇÕES AUXILIARES
+    // -----------------------------------------------------
     private fun mostrarDialogoDeConfirmacao(livro: Livro) {
         AlertDialog.Builder(this)
             .setTitle("Remover Livro")
@@ -105,6 +148,11 @@ class Adm_Tela_Detalhes_Livro : AppCompatActivity() {
             .delete()
             .addOnSuccessListener {
                 Toast.makeText(this, "Livro removido com sucesso.", Toast.LENGTH_LONG).show()
+                // Redireciona o usuário para a lista principal da livraria após remover
+                val intent = Intent(this, Adm_Tela_Central_Livraria::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                startActivity(intent)
                 finish()
             }
             .addOnFailureListener { e ->
