@@ -108,7 +108,6 @@ class Tela_De_Perfil : AppCompatActivity() {
             }
             .addOnFailureListener { exception ->
                 Log.e("Tela_De_Perfil", "Erro ao buscar livros alugados: ", exception)
-                Toast.makeText(this, "Erro ao carregar livros alugados.", Toast.LENGTH_SHORT).show()
             }
 
         fetchBooksWithQuery(
@@ -155,17 +154,22 @@ class Tela_De_Perfil : AppCompatActivity() {
     }
 
     private fun showPopupMenu(view: View) {
-        val popup = PopupMenu(this, view)
+        val context = this
+        val popup = PopupMenu(context, view)
         popup.menuInflater.inflate(R.menu.menu_perfil_opcoes, popup.menu)
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.action_editar_perfil -> {
-                    startActivity(Intent(this, Tela_De_Perfil_Dados::class.java))
+                R.id.action_acessibilidade -> {
+                    startActivity(Intent(context, Tela_Acessibilidade::class.java))
                     true
                 }
-                R.id.btn_sair_da_conta -> {
+                R.id.action_editar_perfil -> {
+                    startActivity(Intent(context, Tela_De_Perfil_Dados::class.java))
+                    true
+                }
+                R.id.action_configuracoes_gerais -> {
                     auth.signOut()
-                    val intent = Intent(this, Tela_Login::class.java)
+                    val intent = Intent(context, Tela_Config_geral::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                     true
@@ -175,6 +179,7 @@ class Tela_De_Perfil : AppCompatActivity() {
         }
         popup.show()
     }
+
 
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_bar)

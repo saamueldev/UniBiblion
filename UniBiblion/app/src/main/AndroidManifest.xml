@@ -222,6 +222,8 @@
         <activity
             android:name=".Tela_Adm_Chat_Bot"
             android:exported="false"/>
+        <activity android:name=".Adm_Tela_Dados"
+            android:exported="false"/>
 
     </application>
 

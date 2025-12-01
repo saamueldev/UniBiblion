@@ -16,7 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class Adm_Dados_Perfil : AppCompatActivity() {
+class Adm_Tela_Dados : AppCompatActivity() {
 
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
@@ -24,7 +24,7 @@ class Adm_Dados_Perfil : AppCompatActivity() {
     private lateinit var profileImage: ImageView
     private lateinit var textUserName: TextView
     private lateinit var labelEmail: TextView
-    private lateinit var labelNomeCompleto: TextView
+    private lateinit var labelNomeCompleto: TextView // << 1. DECLARAR O NOVO TEXTVIEW
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +33,7 @@ class Adm_Dados_Perfil : AppCompatActivity() {
         profileImage = findViewById(R.id.profile_image)
         textUserName = findViewById(R.id.text_user_name)
         labelEmail = findViewById(R.id.label_email)
-        labelNomeCompleto = findViewById(R.id.label_nome_completo)
+        labelNomeCompleto = findViewById(R.id.label_nome_completo) // << 2. INICIALIZAR O TEXTVIEW
 
         val iconNotification = findViewById<ImageView>(R.id.icon_notification)
         val iconMenu = findViewById<ImageView>(R.id.icon_menu)
@@ -43,7 +43,7 @@ class Adm_Dados_Perfil : AppCompatActivity() {
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
         iconNotification.setOnClickListener {
-            startActivity(Intent(this, Adm_Criar_Notificacao::class.java))
+            startActivity(Intent(this, Adm_Tela_Notificacoes::class.java))
         }
         iconMenu.setOnClickListener { showPopupMenu(it) }
 
@@ -58,7 +58,7 @@ class Adm_Dados_Perfil : AppCompatActivity() {
             startActivity(Intent(this, Tela_De_Perfil_Email::class.java))
         }
         buttonTrocarSenha.setOnClickListener {
-            startActivity(Intent(this, Tela_Trocar_Senha_Via_Perfil::class.java))
+            startActivity(Intent(this, Tela_Confirma_Senha_Atual::class.java))
         }
 
         setupBottomNavigation(bottomNavigation)
@@ -86,9 +86,10 @@ class Adm_Dados_Perfil : AppCompatActivity() {
                     val email = document.getString("email") ?: user.email
                     val imageUrl = document.getString("profileImageUrl")
 
+                    // --- ATUALIZAÇÃO DOS CAMPOS DE TEXTO ---
                     textUserName.text = nome
                     labelEmail.text = email
-                    labelNomeCompleto.text = nome
+                    labelNomeCompleto.text = nome // << 3. CORREÇÃO APLICADA AQUI
 
                     if (!imageUrl.isNullOrEmpty()) {
                         Glide.with(this)
@@ -117,23 +118,35 @@ class Adm_Dados_Perfil : AppCompatActivity() {
     }
 
     private fun showPopupMenu(view: View) {
-        val popup = PopupMenu(this, view)
-        popup.menuInflater.inflate(R.menu.menu_perfil_opcoes, popup.menu)
-        popup.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.action_editar_perfil -> { true }
-                R.id.action_acessibilidade -> {
-                    startActivity(Intent(this, Tela_Acessibilidade::class.java))
-                    true
+        PopupMenu(this, view).apply {
+            menuInflater.inflate(R.menu.adm_menu_perfil, menu)
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.action_editar_perfil -> {
+                        startActivity(Intent(this@Adm_Tela_Dados, Tela_De_Perfil_Dados::class.java))
+                        true
+                    }
+                    R.id.action_acessar_perfil -> {
+                        startActivity(Intent(this@Adm_Tela_Dados, Adm_Tela_Procurar_Usuario::class.java))
+                        true
+                    }
+                    R.id.action_gerenciar_notificacoes -> {
+                        startActivity(Intent(this@Adm_Tela_Dados, Adm_Criar_Notificacao::class.java))
+                        true
+                    }
+                    R.id.action_configuracoes_gerais -> {
+                        startActivity(Intent(this@Adm_Tela_Dados, Tela_Config_geral::class.java))
+                        true
+                    }
+                    R.id.action_acessibilidade -> {
+                        startActivity(Intent(this@Adm_Tela_Dados, Tela_Acessibilidade::class.java))
+                        true
+                    }
+                    else -> false
                 }
-                R.id.action_configuracoes_gerais -> {
-                    startActivity(Intent(this, Tela_Config_geral::class.java))
-                    true
-                }
-                else -> false
             }
+            show()
         }
-        popup.show()
     }
 
     private fun setupBottomNavigation(bottomNavigation: BottomNavigationView) {
@@ -150,11 +163,7 @@ class Adm_Dados_Perfil : AppCompatActivity() {
                     finish()
                     true
                 }
-                R.id.nav_perfil -> {
-                    startActivity(Intent(this, Adm_Tela_De_Perfil::class.java))
-                    finish()
-                    true
-                }
+                R.id.nav_perfil -> true
                 R.id.nav_chatbot -> {
                     startActivity(Intent(this, Tela_Adm_Chat_Bot::class.java))
                     finish()

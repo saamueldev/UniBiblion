@@ -80,7 +80,8 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
     private fun setupUI() {
         profileImage = findViewById(R.id.profile_image)
         textName = findViewById(R.id.text_name)
-        bottomNavigationView = findViewById(R.id.bottom_navigation_bar)
+        // CORREÇÃO 2: Padronizando o ID para consistência com o resto do projeto
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
     }
 
     private fun setupListeners() {
@@ -98,34 +99,31 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
         }
 
         findViewById<ImageView>(R.id.profile_image).setOnClickListener {
-            startActivity(Intent(this, Tela_De_Perfil_Dados::class.java))
+            startActivity(Intent(this, Adm_Tela_Notificacoes::class.java))
         }
     }
 
     private fun showPopupMenu(view: View) {
         PopupMenu(this, view).apply {
-            // Garante que o menu correto (adm_menu_perfil.xml) está sendo inflado
             menuInflater.inflate(R.menu.adm_menu_perfil, menu)
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.action_editar_perfil -> {
-                        startActivity(Intent(this@Adm_Tela_De_Perfil, Tela_De_Perfil_Dados::class.java))
+                        startActivity(Intent(this@Adm_Tela_De_Perfil, Adm_Tela_Dados::class.java))
                         true
                     }
                     R.id.action_acessar_perfil -> {
                         startActivity(Intent(this@Adm_Tela_De_Perfil, Adm_Tela_Procurar_Usuario::class.java))
                         true
                     }
-                    R.id.action_gerenciar_notificacoes -> { // Mantido o nome que você usou
+                    R.id.action_gerenciar_notificacoes -> {
                         startActivity(Intent(this@Adm_Tela_De_Perfil, Adm_Criar_Notificacao::class.java))
                         true
                     }
-                    // CORREÇÃO 1: Adicionada a ligação para Configurações Gerais
                     R.id.action_configuracoes_gerais -> {
                         startActivity(Intent(this@Adm_Tela_De_Perfil, Tela_Config_geral::class.java))
                         true
                     }
-                    // CORREÇÃO 2: Adicionada a ligação para Acessibilidade
                     R.id.action_acessibilidade -> {
                         startActivity(Intent(this@Adm_Tela_De_Perfil, Tela_Acessibilidade::class.java))
                         true
@@ -149,14 +147,13 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
                 R.id.nav_livraria -> Intent(this, Adm_Tela_Central_Livraria::class.java)
                 R.id.nav_noticias -> Intent(this, Adm_Tela_Mural_Noticias_Eventos::class.java)
                 R.id.nav_chatbot -> Intent(this, Tela_Adm_Chat_Bot::class.java)
-                R.id.nav_perfil -> null // Já estamos aqui, não faz nada
                 else -> null
             }
 
             if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 startActivity(intent)
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                finish()
             }
 
             return@setOnItemSelectedListener true
