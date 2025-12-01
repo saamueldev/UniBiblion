@@ -53,8 +53,6 @@ class Tela_Confirma_Senha_Atual : AppCompatActivity() {
         val usuario = auth.currentUser
 
         if (usuario == null || usuario.email == null) {
-            Toast.makeText(this, "Sessão expirada. Faça login novamente.", Toast.LENGTH_SHORT).show()
-            // Opcional: Redirecionar para a tela de login aqui
             finish()
             return
         }
@@ -63,8 +61,6 @@ class Tela_Confirma_Senha_Atual : AppCompatActivity() {
 
         usuario.reauthenticate(credential)
             .addOnSuccessListener {
-                // ✅ SUCESSO: A senha atual está correta e a sessão foi revalidada.
-                Toast.makeText(this, "Senha verificada. Avançando para a troca.", Toast.LENGTH_SHORT).show()
 
                 // NAVEGAÇÃO: Avança sem a necessidade de passar a senha (segurança!)
                 val intent = Intent(this, Tela_Trocar_Senha_Via_Perfil::class.java)
