@@ -6,7 +6,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -19,10 +18,8 @@ class Tela_Notificacoes : AppCompatActivity() {
 
     private lateinit var adapter: NotificationAdapter
     private var notificationsList: MutableList<Notification> = mutableListOf()
-
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
-
     private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +70,8 @@ class Tela_Notificacoes : AppCompatActivity() {
                     true
                 }
                 R.id.nav_chatbot -> {
+                    startActivity(Intent(this, Tela_Chat_Bot::class.java))
+                    finish()
                     true
                 }
                 else -> false
@@ -80,17 +79,8 @@ class Tela_Notificacoes : AppCompatActivity() {
         }
     }
 
-
     private fun fetchUserNotifications() {
-        val currentUser = auth.currentUser
-        if (currentUser == null) {
-            Toast.makeText(this, "Usuário não autenticado.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val userId = currentUser.uid
-
         db.collection("notifications")
-            .whereEqualTo("userId", userId)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, error ->
                 if (error != null) {
@@ -115,8 +105,6 @@ class Tela_Notificacoes : AppCompatActivity() {
         if (!notif.isRead && notif.id.isNotEmpty()) {
             db.collection("notifications").document(notif.id)
                 .update("isRead", true)
-                .addOnSuccessListener {
-                }
                 .addOnFailureListener {
                     Toast.makeText(this, "Falha ao marcar como lida.", Toast.LENGTH_SHORT).show()
                 }
@@ -127,8 +115,6 @@ class Tela_Notificacoes : AppCompatActivity() {
         if (notif.id.isNotEmpty()) {
             db.collection("notifications").document(notif.id)
                 .delete()
-                .addOnSuccessListener {
-                }
                 .addOnFailureListener {
                     Toast.makeText(this, "Falha ao excluir notificação.", Toast.LENGTH_SHORT).show()
                 }
@@ -137,11 +123,16 @@ class Tela_Notificacoes : AppCompatActivity() {
 
     private fun markAllAsRead() {
         val batch = db.batch()
-        notificationsList.forEach { notif ->
-            if (!notif.isRead && notif.id.isNotEmpty()) {
-                val docRef = db.collection("notifications").document(notif.id)
-                batch.update(docRef, "isRead", true)
-            }
+        val unreadNotifications = notificationsList.filter { !it.isRead && it.id.isNotEmpty() }
+
+        if (unreadNotifications.isEmpty()) {
+            Toast.makeText(this, "Nenhuma notificação nova para marcar.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        unreadNotifications.forEach { notif ->
+            val docRef = db.collection("notifications").document(notif.id)
+            batch.update(docRef, "isRead", true)
         }
 
         batch.commit()
