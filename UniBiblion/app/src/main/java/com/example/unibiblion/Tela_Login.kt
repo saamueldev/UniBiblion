@@ -127,7 +127,6 @@ class Tela_Login : AppCompatActivity() {
                 if (document.exists()) {
                     val isAdmin = document.getBoolean("admin") == true
 
-                    Toast.makeText(this, "Login efetuado com sucesso!", Toast.LENGTH_SHORT).show()
                     Log.d(TAG, "Resultado da verificação isAdmin: $isAdmin")
 
                     val targetActivity = if (isAdmin) Adm_Tela_Central_Livraria::class.java else Tela_Central_Livraria::class.java
