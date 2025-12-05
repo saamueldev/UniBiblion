@@ -98,7 +98,7 @@ class Adm_Tela_De_Perfil : AppCompatActivity() {
         }
 
         findViewById<ImageView>(R.id.profile_image).setOnClickListener {
-            startActivity(Intent(this, Adm_Tela_Notificacoes::class.java))
+            startActivity(Intent(this, Adm_Editar_Foto::class.java))
         }
     }
 

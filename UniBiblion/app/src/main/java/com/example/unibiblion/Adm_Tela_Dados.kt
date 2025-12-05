@@ -48,14 +48,14 @@ class Adm_Tela_Dados : AppCompatActivity() {
         iconMenu.setOnClickListener { showPopupMenu(it) }
 
         profileImage.setOnClickListener {
-            startActivity(Intent(this, Tela_De_Perfil_Foto::class.java))
+            startActivity(Intent(this, Adm_Editar_Foto::class.java))
         }
 
         buttonEditarNome.setOnClickListener {
-            startActivity(Intent(this, Tela_De_Perfil_Nome::class.java))
+            startActivity(Intent(this, Adm_Tela_Nome::class.java))
         }
         buttonEditarEmail.setOnClickListener {
-            startActivity(Intent(this, Tela_De_Perfil_Email::class.java))
+            startActivity(Intent(this, Adm_Tela_Email::class.java))
         }
         buttonTrocarSenha.setOnClickListener {
             startActivity(Intent(this, Tela_Confirma_Senha_Atual::class.java))
@@ -123,7 +123,7 @@ class Adm_Tela_Dados : AppCompatActivity() {
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.action_editar_perfil -> {
-                        startActivity(Intent(this@Adm_Tela_Dados, Tela_De_Perfil_Dados::class.java))
+                        startActivity(Intent(this@Adm_Tela_Dados, Adm_Tela_Dados::class.java))
                         true
                     }
                     R.id.action_acessar_perfil -> {
@@ -135,11 +135,11 @@ class Adm_Tela_Dados : AppCompatActivity() {
                         true
                     }
                     R.id.action_configuracoes_gerais -> {
-                        startActivity(Intent(this@Adm_Tela_Dados, Tela_Config_geral::class.java))
+                        startActivity(Intent(this@Adm_Tela_Dados, Adm_Config_Geral::class.java))
                         true
                     }
                     R.id.action_acessibilidade -> {
-                        startActivity(Intent(this@Adm_Tela_Dados, Tela_Acessibilidade::class.java))
+                        startActivity(Intent(this@Adm_Tela_Dados, Adm_Acessibilidade::class.java))
                         true
                     }
                     else -> false

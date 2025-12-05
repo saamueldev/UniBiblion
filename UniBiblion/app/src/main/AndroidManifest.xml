@@ -231,6 +231,14 @@
 
         <activity android:name=".Adm_Config_Geral"
             android:exported="false"/>
+        <activity android:name=".Adm_Tela_Email"
+            android:exported="false"/>
+
+        <activity android:name=".Adm_Tela_Nome"
+            android:exported="false"/>
+
+        <activity android:name=".Adm_Editar_Foto"
+            android:exported="false"/>
 
     </application>
 
