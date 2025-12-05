@@ -47,7 +47,7 @@ class Tela_Config_geral : AppCompatActivity() {
             startActivity(intent)
         }
 
-        bottomNavigation.selectedItemId = R.id.nav_chatbot
+        bottomNavigation.selectedItemId = R.id.nav_perfil
 
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -64,8 +64,6 @@ class Tela_Config_geral : AppCompatActivity() {
                 }
 
                 R.id.nav_perfil -> {
-                    startActivity(Intent(this, Tela_De_Perfil::class.java))
-                    finish()
                     true
                 }
 

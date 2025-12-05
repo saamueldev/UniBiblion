@@ -27,9 +27,22 @@ class Tela_De_Perfil : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tela_de_perfil)
 
         auth = FirebaseAuth.getInstance()
+
+        // 🚨 CORREÇÃO PRINCIPAL: Verifica a autenticação imediatamente
+        if (auth.currentUser == null) {
+            // Se não estiver logado, redireciona para a Tela_Login e finaliza a Activity
+            val intent = Intent(this, Tela_Login::class.java)
+            // Define flags para limpar a pilha de atividades, garantindo que o usuário não volte
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return // Sai do onCreate para evitar carregar a UI sem autenticação
+        }
+        // -------------------------------------------------------------
+
+        setContentView(R.layout.activity_tela_de_perfil)
 
         profileImageView = findViewById(R.id.profile_image)
         userNameTextView = findViewById(R.id.text_name)
@@ -41,12 +54,16 @@ class Tela_De_Perfil : AppCompatActivity() {
     }
 
     private fun populateProfileData() {
+        // Usuário agora é garantido como não-nulo pelo onCreate
         val user = auth.currentUser
+
+        // Embora user não deva ser null aqui, manter uma checagem de segurança pode ser bom.
         if (user != null) {
             db.collection("usuarios").document(user.uid).get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {
                         val nome = document.getString("nome") ?: "Usuário"
+                        // Usando o operador Elvis para testar duas chaves comuns de URL de foto
                         val fotoUrl = document.getString("profileImageUrl") ?: document.getString("fotoUrl")
 
                         userNameTextView.text = nome
@@ -67,6 +84,8 @@ class Tela_De_Perfil : AppCompatActivity() {
                     userNameTextView.text = user.displayName ?: "Usuário"
                 }
         } else {
+            // Este bloco agora é redundante, mas se for alcançado, significa um erro de estado.
+            Log.e("Tela_De_Perfil", "Erro de estado: Usuário nulo após checagem no onCreate.")
             startActivity(Intent(this, Tela_Login::class.java))
             finish()
         }
@@ -75,13 +94,15 @@ class Tela_De_Perfil : AppCompatActivity() {
     private fun loadBookSections() {
         val currentUserId = auth.currentUser?.uid
         if (currentUserId == null) {
+            // Este log será atingido se a checagem do onCreate falhar ou se o estado mudar após o onCreate
             Log.w("Tela_De_Perfil", "ID do usuário não encontrado para carregar livros.")
             return
         }
 
         val rentedBooksRecyclerView = findViewById<RecyclerView>(R.id.rented_books_recycler_view)
         rentedBooksRecyclerView.layoutManager = GridLayoutManager(this, 4)
-        rentedBooksRecyclerView.adapter = BookAdapter(emptyList()) {} // Agora usamos BookAdapter
+        // Certifique-se de que BookAdapter é a classe correta e aceita List<Livro>
+        rentedBooksRecyclerView.adapter = BookAdapter(emptyList()) {}
 
         db.collection("livrosalugados")
             .whereEqualTo("usuarioId", currentUserId)
@@ -127,6 +148,7 @@ class Tela_De_Perfil : AppCompatActivity() {
 
         query.get()
             .addOnSuccessListener { documents ->
+                // Certifique-se de que 'Livro' é uma data class compatível com toObjects
                 val booksList = documents.toObjects(Livro::class.java)
                 recyclerView.adapter = BookAdapter(booksList) { livro ->
                     Toast.makeText(this, "Clicado: ${livro.titulo}", Toast.LENGTH_SHORT).show()
@@ -156,6 +178,7 @@ class Tela_De_Perfil : AppCompatActivity() {
     private fun showPopupMenu(view: View) {
         val context = this
         val popup = PopupMenu(context, view)
+        // Certifique-se de que o menu_perfil_opcoes.xml existe e contém os IDs corretos
         popup.menuInflater.inflate(R.menu.menu_perfil_opcoes, popup.menu)
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
@@ -168,9 +191,9 @@ class Tela_De_Perfil : AppCompatActivity() {
                     true
                 }
                 R.id.action_configuracoes_gerais -> {
-                    auth.signOut()
+                    // Esta opção não deve fazer logout, mas sim abrir as configurações.
+                    // Removi a chamada auth.signOut() para este item de menu.
                     val intent = Intent(context, Tela_Config_geral::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                     true
                 }
@@ -182,11 +205,15 @@ class Tela_De_Perfil : AppCompatActivity() {
 
 
     private fun setupBottomNavigation() {
-        // A única mudança é aqui, no ID
+        // Certifique-se de que o ID da BottomNavigationView é 'bottom_navigation'
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.nav_perfil
 
         bottomNavigationView.setOnItemSelectedListener { item ->
+            // Note: Não estamos chamando finish() aqui, o que é um padrão aceitável
+            // para navegação Bottom Bar, mas pode levar a uma pilha de Activities maior.
+            // Se você quer o comportamento do primeiro código (chamar finish()),
+            // basta adicionar finish() após startActivity() em cada caso.
             when (item.itemId) {
                 R.id.nav_livraria -> {
                     startActivity(Intent(this, Tela_Central_Livraria::class.java))

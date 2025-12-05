@@ -42,6 +42,7 @@
         app:labelVisibilityMode="labeled"  app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="@color/bottom_nav_icon_color"
         app:itemTextColor="@color/black"
-        android:background="@color/roxo_institucional" />
+        android:background="@color/roxo_institucional"
+        android:layout_marginBottom="-15dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
