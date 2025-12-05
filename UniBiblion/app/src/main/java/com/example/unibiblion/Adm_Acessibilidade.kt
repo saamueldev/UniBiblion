@@ -74,7 +74,7 @@ class Adm_Acessibilidade : AppCompatActivity(), AdapterView.OnItemSelectedListen
         setupSpinner()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_bar)
-        bottomNavigationView.selectedItemId = R.id.nav_chatbot
+        bottomNavigationView.selectedItemId = R.id.nav_perfil
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
