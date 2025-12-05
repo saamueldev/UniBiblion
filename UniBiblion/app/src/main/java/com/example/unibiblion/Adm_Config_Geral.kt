@@ -48,7 +48,7 @@ class Adm_Config_Geral : AppCompatActivity() {
             startActivity(intent)
         }
 
-        bottomNavigation.selectedItemId = R.id.nav_chatbot
+        bottomNavigation.selectedItemId = R.id.nav_perfil
 
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
